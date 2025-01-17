@@ -2,16 +2,22 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>  // htons()
+#include <sys/poll.h> 
+#include <vector>
 
 class Server {
     public  :
-        int Socket_listen ;
+        std::vector<struct pollfd> poll_array;
+        struct pollfd poll_strc ;
         int bind_Arg ;
+        int poll_returnV  ;
+        int Socket_listen ;
         int socket_connection ;
         int acceptSocket_id   ;
         struct sockaddr_in accept_socket  ;
         struct sockaddr_in bindSocket_str ;
         Server() {
+            poll_array.push_back(poll_strc);
             bindSocket_str.sin_family = AF_INET ;
             bindSocket_str.sin_port = htons(8080);
             bindSocket_str.sin_addr.s_addr = INADDR_ANY;
@@ -20,7 +26,7 @@ class Server {
             std::cout << "Destructor is called !"<< std::endl;
         }
 };
-
+int check_status(int status, std::string value) ;
 
 
 //Socket Args --> 
