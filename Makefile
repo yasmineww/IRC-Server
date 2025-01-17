@@ -1,6 +1,6 @@
 SRC = irc.cpp function_tools.cpp Server.cpp
 OBJS = $(SRC:.cpp=.o)
-CC =  c++ -std=c++98
+CC =  c++ -std=c++98 -fsanitize=address -g
 CFLAGS = 
 RM = rm -rf
 NAME = irc

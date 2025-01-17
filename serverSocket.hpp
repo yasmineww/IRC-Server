@@ -7,6 +7,12 @@
 
 class Server {
     public  :
+        size_t Size_Read      ;
+        int Remove_Position   ;
+        char Recv_Buffer[1024];
+        std::string Store_msg ;
+        std::vector<struct pollfd>::iterator start ;
+        std::vector<struct pollfd>::iterator end ;
         std::vector<struct pollfd> poll_array;
         struct pollfd poll_strc ;
         int bind_Arg ;
