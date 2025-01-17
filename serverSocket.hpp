@@ -26,8 +26,8 @@ class Server {
             std::cout << "Destructor is called !"<< std::endl;
         }
 };
-int check_status(int status, std::string value) ;
-
+void Server_Socket_Creation();
+int  check_status(int status, std::string value);
 
 //Socket Args --> 
 // -- > First one Specifies the address family that the socket will use.

@@ -1,4 +1,4 @@
-SRC = irc.cpp function_tools.cpp
+SRC = irc.cpp function_tools.cpp Server.cpp
 OBJS = $(SRC:.cpp=.o)
 CC =  c++ -std=c++98
 CFLAGS = 
