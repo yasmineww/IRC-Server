@@ -5,9 +5,33 @@
 #include <sys/poll.h> 
 #include <vector>
 
+class Client {
+    public :
+        int fd ;
+        bool Auth  ;
+        bool Alive ;
+        std::string User;
+        std::string Nick_name ;
+        struct pollfd poll_strc ;
+        Client(bool auth, bool alive, int fd, std::string user, std::string nickname){
+            this->Auth = auth   ;
+            this->Alive = alive ;
+            this->fd = fd       ;
+            this->User = user   ;
+            this->Nick_name = nickname ;
+        };
+        Client(){
+            this->Auth = false     ;
+            this->Alive = false    ;
+            this->fd = -1          ;
+            this->User = "Default" ;
+            this->Nick_name = "Default";
+        };
+};
 
 class Server {
     public  :
+        Client Client_User ;
         struct pollfd poll_strc ;
         struct sockaddr_in bindSocket_str ;
         struct sockaddr_in accept_socket  ;
@@ -15,7 +39,8 @@ class Server {
         std::string Server_PassCode ;
         std::vector<struct pollfd>::iterator start;
         std::vector<struct pollfd>::iterator end  ;   
-        std::vector<struct pollfd> poll_array;
+        std::vector<Client> poll_array;
+        std::vector<struct pollfd> pollAr;
         size_t Size_Read  ;
         int bind_Arg      ;
         int poll_returnV  ;
@@ -25,7 +50,9 @@ class Server {
         int socket_connection ;
         char Recv_Buffer[1024];
         Server() {
-            poll_array.push_back(poll_strc);
+
+            Client ServerAuth(true, true, 0, "Server", "Parent_Server");
+            pollAr.push_back(poll_strc);
             bindSocket_str.sin_family = AF_INET ;
             bindSocket_str.sin_addr.s_addr = INADDR_ANY;
         };
@@ -33,6 +60,7 @@ class Server {
             std::cout << "Destructor is called !"<< std::endl;
         }
 };
+
 void  Server_Socket_Creation(std::string Port, std::string Pass_Code);
 int   check_status(int status, std::string value);
 void  isString_Ch_DG(std::string value);
