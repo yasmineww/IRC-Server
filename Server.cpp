@@ -11,7 +11,6 @@ void Check_client_Request(std::vector<struct pollfd> *Clients, Server *server_Cl
         if (server_Cls->start->revents & POLLIN){
             memset(server_Cls->Recv_Buffer, 0, sizeof(server_Cls->Recv_Buffer));
             server_Cls->Size_Read = recv(server_Cls->start->fd, server_Cls->Recv_Buffer, sizeof(server_Cls->Recv_Buffer) , 0);
-            std::cout << server_Cls->Size_Read << std::endl ;
             if (server_Cls->Size_Read == 0){
                 std::cout << "Client Disconnected " << std::endl ; ;
                 Clients->erase(Clients->begin() + server_Cls->Remove_Position - 1);
@@ -22,10 +21,14 @@ void Check_client_Request(std::vector<struct pollfd> *Clients, Server *server_Cl
     }
 };
 
+void Accept_Client_Connection(Server *server_Cls){
 
-void Server_Socket_Creation(){
+};
+
+void Server_Socket_Creation(std::string Port, std::string Pass_Code){
         Server server_Cls ;
         // Creation Of a socket 
+        server_Cls.Server_PassCode = Pass_Code ;
         server_Cls.socket_connection = socket(AF_INET, SOCK_STREAM, 0);
         check_status(server_Cls.socket_connection, "Socket Connection Faild !");
         server_Cls.bind_Arg = bind(server_Cls.socket_connection, (struct sockaddr *)&server_Cls.bindSocket_str, sizeof(server_Cls.bindSocket_str));
@@ -40,7 +43,6 @@ void Server_Socket_Creation(){
         // Initialization Of the First Poll() Struct For the Server
         server_Cls.poll_array[0].fd = server_Cls.socket_connection ;
         server_Cls.poll_array[0].events = POLLIN ;
-        std::cout << server_Cls.poll_array.size() << std::endl ;
         // the Server Running And Listennning For Connection !
         while (1){
             server_Cls.poll_returnV = poll(&server_Cls.poll_array[0], server_Cls.poll_array.size() , -1);
@@ -50,6 +52,8 @@ void Server_Socket_Creation(){
                     check_status(server_Cls.acceptSocket_id, "Accept Command Faild !");
                     if (server_Cls.acceptSocket_id > 0) {
                         std::cout << "Accept Called Successfully " << server_Cls.acceptSocket_id << std::endl ;
+                        server_Cls.Store_msg = "Welcome To Irc Server :) \n  ";
+                        send(server_Cls.acceptSocket_id, server_Cls.Store_msg.c_str(), server_Cls.Store_msg.size(), 0);
                         server_Cls.poll_strc.fd = server_Cls.acceptSocket_id ;
                         server_Cls.poll_strc.events = POLLIN ; 
                         server_Cls.poll_array.push_back(server_Cls.poll_strc);

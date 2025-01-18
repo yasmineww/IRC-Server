@@ -8,21 +8,22 @@
 
 class Server {
     public  :
-        size_t Size_Read      ;
-        int Remove_Position   ;
-        char Recv_Buffer[1024];
-        std::string Store_msg ;
-        std::vector<struct pollfd>::iterator start ;
-        std::vector<struct pollfd>::iterator end ;
-        std::vector<struct pollfd> poll_array;
         struct pollfd poll_strc ;
-        int bind_Arg ;
+        struct sockaddr_in bindSocket_str ;
+        struct sockaddr_in accept_socket  ;
+        std::string Store_msg ;
+        std::string Server_PassCode ;
+        std::vector<struct pollfd>::iterator start;
+        std::vector<struct pollfd>::iterator end  ;   
+        std::vector<struct pollfd> poll_array;
+        size_t Size_Read  ;
+        int bind_Arg      ;
         int poll_returnV  ;
         int Socket_listen ;
-        int socket_connection ;
+        int Remove_Position   ;
         int acceptSocket_id   ;
-        struct sockaddr_in accept_socket  ;
-        struct sockaddr_in bindSocket_str ;
+        int socket_connection ;
+        char Recv_Buffer[1024];
         Server() {
             poll_array.push_back(poll_strc);
             bindSocket_str.sin_family = AF_INET ;
@@ -33,9 +34,9 @@ class Server {
             std::cout << "Destructor is called !"<< std::endl;
         }
 };
-void Server_Socket_Creation();
-int  check_status(int status, std::string value);
-
+void  Server_Socket_Creation(std::string Port, std::string Pass_Code);
+int   check_status(int status, std::string value);
+void  isString_Ch_DG(std::string value);
 //Socket Args --> 
 // -- > First one Specifies the address family that the socket will use.
 // The address family defines the type of network protocol that will be used for communication.
