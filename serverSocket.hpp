@@ -27,7 +27,6 @@ class Server {
         Server() {
             poll_array.push_back(poll_strc);
             bindSocket_str.sin_family = AF_INET ;
-            bindSocket_str.sin_port = htons(8080);
             bindSocket_str.sin_addr.s_addr = INADDR_ANY;
         };
         ~Server(){
