@@ -1,18 +1,24 @@
-SRC = irc.cpp function_tools.cpp Server.cpp
-OBJS = $(SRC:.cpp=.o)
-CC =  c++ -std=c++98 -fsanitize=address -g
-CFLAGS = 
-RM = rm -rf
 NAME = irc
+
+SRC = main.cpp function_tools.cpp Server.cpp
+
+OBJS = $(SRC:.cpp=.o)
+
+CC =  c++
+
+FLAGS = -Wall -Wextra -Werror -std=c++98 -fsanitize=address -g
+
+RM = rm -rf
+
+HEADER = Server.hpp Client.hpp
 
 all : $(NAME)
 
-
 $(NAME) : $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -o $(NAME)
+	$(CC) $(FLAGS) $(OBJS) -o $(NAME)
 
-%.o : %.cpp
-	$(CC) $(CFLAGS) -c $< -o $@
+%.o : %.cpp $(HEADER)
+	$(CC) $(FLAGS) -c $< -o $@
 
 clean :
 	$(RM) $(OBJS)

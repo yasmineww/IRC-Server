@@ -4,30 +4,7 @@
 #include <arpa/inet.h>  // htons()
 #include <sys/poll.h> 
 #include <vector>
-
-class Client {
-    public :
-        int fd ;
-        bool Auth  ;
-        bool Alive ;
-        std::string User;
-        std::string Nick_name ;
-        struct pollfd poll_strc ;
-        Client(bool auth, bool alive, int fd, std::string user, std::string nickname){
-            this->Auth = auth   ;
-            this->Alive = alive ;
-            this->fd = fd       ;
-            this->User = user   ;
-            this->Nick_name = nickname ;
-        };
-        Client(){
-            this->Auth = false     ;
-            this->Alive = false    ;
-            this->fd = -1          ;
-            this->User = "Default" ;
-            this->Nick_name = "Default";
-        };
-};
+#include "Client.hpp"
 
 class Server {
     public  :
