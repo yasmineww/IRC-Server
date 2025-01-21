@@ -11,7 +11,17 @@
 #include "Client.hpp"
 
 class Server {
+    private :
+        bool Auth;
+        bool Alive;
+
     public  :
+
+        bool getAuth() const;
+        bool getAlive() const;
+        void setAuth(bool Auth);
+        void setAlive(bool Alive);
+
         Client Client_User ;
         struct pollfd poll_strc ;
         struct sockaddr_in bindSocket_str ;

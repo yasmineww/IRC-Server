@@ -6,7 +6,7 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/21 17:33:39 by ymakhlou          #+#    #+#             */
-/*   Updated: 2025/01/21 17:50:10 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/01/21 17:56:31 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,9 @@ std::string Client::getNick_name() const {
 }
 
 void Client::setFd(int fd){
+    if (fd < 0) {
+        throw (std::logic_error("File Descriptor Must Be Positive !"));
+    }
     this->fd = fd;
 }
 void Client::setAuth(bool Auth){
