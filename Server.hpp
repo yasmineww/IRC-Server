@@ -1,3 +1,7 @@
+
+#ifndef SERVER_HPP
+#define SERVER_HPP
+
 #include <iostream>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -50,3 +54,5 @@ void  isString_Ch_DG(std::string value);
 
 // -- > Specifies the protocol that should be used with the socket. Usually, you pass 0 to let 
 // the system automatically choose the appropriate protocol based on the address family (domain) and socket type (type).
+
+#endif

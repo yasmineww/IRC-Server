@@ -1,3 +1,7 @@
+
+#ifndef CLIENT_HPP
+#define CLIENT_HPP
+
 #include <iostream>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -27,3 +31,5 @@ class Client {
             this->Nick_name = "Default";
         };
 };
+
+#endif
