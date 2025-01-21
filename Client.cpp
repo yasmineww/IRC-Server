@@ -6,20 +6,34 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/21 17:33:39 by ymakhlou          #+#    #+#             */
-/*   Updated: 2025/01/21 18:16:14 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/01/21 22:38:08 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Client.hpp"
 
 Client::Client() : fd(-1), User_name("Default"), Nick_name("Default") {
-    if (fd < 0) {
-        throw Client::InvalidFdException();;
-    }
+    if (fd < 0)
+        throw std::logic_error("Invalid File Descriptor !");
+    commandMap["JOIN"] = &Client::JOINhandler;
+    commandMap["INVITE"] = &Client::INVITEhandler;
+    commandMap["KICK"] = &Client::KICKhandler;
+    commandMap["MODE"] = &Client::MODEhandler;
+    commandMap["PART"] = &Client::PARThandler;
+    commandMap["PRIVMSG"] = &Client::PRIVMSGhandler;
+    commandMap["QUIT"] = &Client::QUIThandler;
+    commandMap["TOPIC"] = &Client::TOPIChandler;
 }
 
 Client::Client(int fd, std::string user, std::string nickname) : fd(fd), User_name(user), Nick_name(nickname) {
-
+    commandMap["JOIN"] = &Client::JOINhandler;
+    commandMap["INVITE"] = &Client::INVITEhandler;
+    commandMap["KICK"] = &Client::KICKhandler;
+    commandMap["MODE"] = &Client::MODEhandler;
+    commandMap["PART"] = &Client::PARThandler;
+    commandMap["PRIVMSG"] = &Client::PRIVMSGhandler;
+    commandMap["QUIT"] = &Client::QUIThandler;
+    commandMap["TOPIC"] = &Client::TOPIChandler;
 }
 
 Client::Client(const Client& Copy) {
@@ -51,7 +65,7 @@ std::string Client::getNick_name() const {
 
 void Client::setFd(int fd){
     if (fd < 0) {
-        throw Client::InvalidFdException();
+        throw std::logic_error("Invalid File Descriptor !");
     }
     this->fd = fd;
 }
@@ -62,6 +76,15 @@ void Client::setNick_name(std::string Nick_name){
     this->Nick_name = Nick_name;
 }
 
-const char* Client::InvalidFdException::what() const throw(){
-    return "Invalid File Descriptor !";
+void Client::receiveData(const std::vector<std::string> &data){
+    if (data.empty())
+        throw std::logic_error("Data is Empty !");
+
+    const std::string &command = data[0];
+    
+    if (commandMap.find(command) != commandMap.end()) {
+        (this->*commandMap[command])(data);
+    } else {
+        throw std::logic_error("Invalid command: " + command);
+    }
 }

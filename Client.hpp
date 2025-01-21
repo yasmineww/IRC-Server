@@ -6,7 +6,7 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/21 17:33:44 by ymakhlou          #+#    #+#             */
-/*   Updated: 2025/01/21 18:17:28 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/01/21 22:21:18 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <sys/poll.h> 
+#include <vector>
+#include <map>
 
 class Client {
 
@@ -26,6 +28,17 @@ class Client {
         std::string User_name;
         std::string Nick_name;
 
+        std::map<std::string, void (Client::*)(const std::vector<std::string>&)> commandMap;
+        
+        void INVITEhandler(const std::vector<std::string> &data);
+        void JOINhandler(const std::vector<std::string> &data);
+        void KICKhandler(const std::vector<std::string> &data);
+        void MODEhandler(const std::vector<std::string> &data);
+        void PARThandler(const std::vector<std::string> &data);
+        void PRIVMSGhandler(const std::vector<std::string> &data);
+        void QUIThandler(const std::vector<std::string> &data);
+        void TOPIChandler(const std::vector<std::string> &data);
+    
     public :
         Client();
         Client(int fd, std::string user, std::string nickname);
@@ -41,13 +54,7 @@ class Client {
         void setUser_name(std::string User_name);
         void setNick_name(std::string Nick_name);
 
-        class InvalidFdException : public std::exception{
-            public:
-                const char* what() const throw();
-        };
-        
-        // void Client_Socket_Creation(std::string Port, std::string Pass_Code);
-
+        void receiveData(const std::vector<std::string> &data);
 };
 
 #endif
