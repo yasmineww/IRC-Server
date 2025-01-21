@@ -32,13 +32,13 @@ class Server {
         char Recv_Buffer[1024];
         Server() {
 
-            Client ServerAuth(true, true, 0, "Server", "Parent_Server");
+            Client ServerAuth(0, "Server", "Parent_Server");
             pollAr.push_back(poll_strc);
             bindSocket_str.sin_family = AF_INET ;
             bindSocket_str.sin_addr.s_addr = INADDR_ANY;
         };
         ~Server(){
-            std::cout << "Destructor is called !"<< std::endl;
+            std::cout << "Server Destructor is called !"<< std::endl;
         }
 };
 
