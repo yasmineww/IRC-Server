@@ -6,7 +6,7 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/21 17:33:44 by ymakhlou          #+#    #+#             */
-/*   Updated: 2025/01/21 22:21:18 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/01/21 23:46:02 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ class Client {
         void MODEhandler(const std::vector<std::string> &data);
         void PARThandler(const std::vector<std::string> &data);
         void PRIVMSGhandler(const std::vector<std::string> &data);
+        void NOTICEhandler(const std::vector<std::string> &data);
         void QUIThandler(const std::vector<std::string> &data);
         void TOPIChandler(const std::vector<std::string> &data);
     

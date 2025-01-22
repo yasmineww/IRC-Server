@@ -6,7 +6,7 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/21 17:33:39 by ymakhlou          #+#    #+#             */
-/*   Updated: 2025/01/21 22:38:08 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/01/21 23:47:29 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ Client::Client() : fd(-1), User_name("Default"), Nick_name("Default") {
     commandMap["MODE"] = &Client::MODEhandler;
     commandMap["PART"] = &Client::PARThandler;
     commandMap["PRIVMSG"] = &Client::PRIVMSGhandler;
+    commandMap["NOTICE"] = &Client::NOTICEhandler;
     commandMap["QUIT"] = &Client::QUIThandler;
     commandMap["TOPIC"] = &Client::TOPIChandler;
 }
@@ -32,6 +33,7 @@ Client::Client(int fd, std::string user, std::string nickname) : fd(fd), User_na
     commandMap["MODE"] = &Client::MODEhandler;
     commandMap["PART"] = &Client::PARThandler;
     commandMap["PRIVMSG"] = &Client::PRIVMSGhandler;
+    commandMap["NOTICE"] = &Client::NOTICEhandler;
     commandMap["QUIT"] = &Client::QUIThandler;
     commandMap["TOPIC"] = &Client::TOPIChandler;
 }
