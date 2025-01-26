@@ -9,6 +9,7 @@
 #include <sys/poll.h> 
 #include <vector>
 #include "Client.hpp"
+#include <unistd.h>
 
 class Server {
     private :
@@ -42,7 +43,6 @@ class Server {
         char Recv_Buffer[1024];
         Server() {
             Client ServerAuth(0, "Server", "Parent_Server");
-            pollAr.push_back(poll_strc);
             bindSocket_str.sin_family = AF_INET ;
             bindSocket_str.sin_addr.s_addr = INADDR_ANY;
         };
