@@ -1,11 +1,18 @@
 #include "Server.hpp"
 
+void Check_Commands(Server *Server_Cls, std::string Command){
+    (void)Server_Cls ;
+    (void)Command ;
+    PASS_Command(Command);
+};
+
 int Authenticate_User(int client_Id, Server *server_Cls, int pos){
-    std::cout << "Auth " << client_Id << std::endl ;
     server_Cls->Size_Read = 0;
-    memset(server_Cls->Recv_Buffer, 0, sizeof(server_Cls->Recv_Buffer));
-    server_Cls->Size_Read = recv(server_Cls->start->fd, server_Cls->Recv_Buffer, sizeof(server_Cls->Recv_Buffer) , 0);
-    std::cout << "Client Number : " << client_Id << " " << server_Cls->Recv_Buffer << std::endl ; 
+    char Recv_Buffer[1024];
+    memset(Recv_Buffer, 0, sizeof(Recv_Buffer));
+    server_Cls->Size_Read = recv(server_Cls->start->fd, Recv_Buffer, sizeof(Recv_Buffer) , 0);
+    std::cout << "Client Number : " << client_Id << " " << Recv_Buffer << std::endl ; 
+    Check_Commands(server_Cls, Recv_Buffer);
     if (server_Cls->Size_Read == 0){
         std::cout << "Client Disconnected " << pos << std::endl ;
         return (-1);

@@ -10,6 +10,7 @@
 #include <vector>
 #include "Client.hpp"
 #include <unistd.h>
+#include "Server_Command.hpp"
 
 class Server {
     private :
@@ -37,7 +38,6 @@ class Server {
         int bind_Arg      ;
         int poll_returnV  ;
         int Socket_listen ;
-        int Remove_Position   ;
         int acceptSocket_id   ;
         int socket_connection ;
         char Recv_Buffer[1024];
@@ -54,7 +54,9 @@ class Server {
 void  Server_Socket_Creation(std::string Port, std::string Pass_Code);
 int   check_status(int status, std::string value);
 void  isString_Ch_DG(std::string value);
+
 //Socket Args --> 
+
 // -- > First one Specifies the address family that the socket will use.
 // The address family defines the type of network protocol that will be used for communication.
 
