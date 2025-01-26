@@ -9,6 +9,28 @@ int Command_Lenght(std::string command){
     return (Total);
 };
 
+void NICK_command(std::string Command, int fd, Server *Server_Cls){
+    int flag = 0;
+    std::string words;
+    std::string string;
+    std::string Error_Display ;
+    std::stringstream s(Command) ;
+    std::map<int ,Client>::iterator it ;
+
+    it = Server_Cls->Users.find(fd);
+    if (it->second.AuthStep < 1 && !it->second.Auth_PASS) return ;
+    if (Command_Lenght(Command) < 2){
+        Error_Display = "ERR_NONICKNAMEGIVEN \n" ;
+        send(fd, Error_Display.c_str(), Error_Display.size(), 0);
+        return ;
+    }
+
+    for (;s >> words;){
+        std::cout << words << std::endl ;
+        flag++ ;
+    }
+};
+
 void PASS_Command(std::string Check, int fd, Server *Server_Cls){
     int Count_Command = 0;
     std::map<int , Client>::iterator it ;
@@ -22,7 +44,7 @@ void PASS_Command(std::string Check, int fd, Server *Server_Cls){
         return ;
     };
 
-    while (s >> words){
+    for (;s >> words;){
         Count_Command++ ;
         if (Count_Command > 1) break ;
     };
@@ -30,8 +52,14 @@ void PASS_Command(std::string Check, int fd, Server *Server_Cls){
     if (words == Server_Cls->Server_PassCode){
         std::cout << Server_Cls->Users.size() << std::endl ;
         it = Server_Cls->Users.find(fd) ;
+        if (it->second.AuthStep == true){
+            string = "ERR_ALREADYREGISTRED \n" ;
+            send(fd, string.c_str(), string.size(), 0);
+            return ;
+        }
         it->second.AuthStep = 1;
         it->second.Auth_PASS = true ;
+        std::cout << "Password Accepted" << std::endl ;
+        std::cout << "The One Being Used ! : " << it->first << std::endl ;
     };
-    std::cout << "Here  !" << std::endl ;
 };

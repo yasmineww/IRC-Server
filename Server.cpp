@@ -20,10 +20,11 @@ void Check_Commands(Server *Server_Cls, std::string Command, int fd){
             PASS_Command(Command, fd,Server_Cls);
             break ;
         case USER :
-            std::cout << "USER" << std::endl ;
+            std::cout << "---USER---" << std::endl ;
+            NICK_command(Command, fd, Server_Cls);
             break ;
         case NICK :
-            std::cout << "NICK" << std::endl ;
+            std::cout << "---NICK---" << std::endl ;
             break ;
         default : 
             break ;
@@ -31,11 +32,12 @@ void Check_Commands(Server *Server_Cls, std::string Command, int fd){
 };
 
 int Authenticate_User(int client_Id, Server *server_Cls, int pos){
+    (void)client_Id ;
     server_Cls->Size_Read = 0;
     char Recv_Buffer[1024];
     memset(Recv_Buffer, 0, sizeof(Recv_Buffer));
     server_Cls->Size_Read = recv(server_Cls->start->fd, Recv_Buffer, sizeof(Recv_Buffer) , 0);
-    std::cout << "Client Number : " << client_Id << " " << Recv_Buffer << std::endl ; 
+    std::cout << "|" << Recv_Buffer << "|" << std::endl ; 
     Check_Commands(server_Cls, Recv_Buffer, server_Cls->start->fd);
     if (server_Cls->Size_Read == 0){
         std::cout << "Client Disconnected " << pos << std::endl ;
@@ -115,7 +117,7 @@ void Server_Socket_Creation(std::string Port, std::string Pass_Code){
                         server_Cls.poll_strc.fd = server_Cls.acceptSocket_id ;
                         server_Cls.poll_strc.events = POLLIN ;
                         server_Cls.pollAr.push_back(server_Cls.poll_strc);
-                        TOADD.first = server_Cls.acceptSocket_id;
+                        TOADD.first = server_Cls.acceptSocket_id ;
                         server_Cls.Users.insert(TOADD);
                     }
                 }
