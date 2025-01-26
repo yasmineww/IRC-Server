@@ -41,7 +41,6 @@ class Server {
         int socket_connection ;
         char Recv_Buffer[1024];
         Server() {
-
             Client ServerAuth(0, "Server", "Parent_Server");
             pollAr.push_back(poll_strc);
             bindSocket_str.sin_family = AF_INET ;

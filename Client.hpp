@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mmaghri <mmaghri@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/21 17:33:44 by ymakhlou          #+#    #+#             */
-/*   Updated: 2025/01/21 23:46:02 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/01/26 09:23:53 by mmaghri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,41 +21,41 @@
 #include <vector>
 #include <map>
 
+// Note The function's Down There Are Defined But Does Not exist !!!!!!! 
+
 class Client {
 
     private :
-        int fd ;
-        std::string User_name;
-        std::string Nick_name;
-
-        std::map<std::string, void (Client::*)(const std::vector<std::string>&)> commandMap;
-        
-        void INVITEhandler(const std::vector<std::string> &data);
-        void JOINhandler(const std::vector<std::string> &data);
-        void KICKhandler(const std::vector<std::string> &data);
-        void MODEhandler(const std::vector<std::string> &data);
-        void PARThandler(const std::vector<std::string> &data);
-        void PRIVMSGhandler(const std::vector<std::string> &data);
-        void NOTICEhandler(const std::vector<std::string> &data);
-        void QUIThandler(const std::vector<std::string> &data);
-        void TOPIChandler(const std::vector<std::string> &data);
+        // std::map<std::string, void (Client::*)(const std::vector<std::string>&)> commandMap;
+        // void INVITEhandler(const std::vector<std::string> &data);
+        // void JOINhandler(const std::vector<std::string> &data);
+        // void KICKhandler(const std::vector<std::string> &data);
+        // void MODEhandler(const std::vector<std::string> &data);
+        // void PARThandler(const std::vector<std::string> &data);
+        // void PRIVMSGhandler(const std::vector<std::string> &data);
+        // void NOTICEhandler(const std::vector<std::string> &data);
+        // void QUIThandler(const std::vector<std::string> &data);
+        // void TOPIChandler(const std::vector<std::string> &data);
     
     public :
-        Client();
-        Client(int fd, std::string user, std::string nickname);
-        Client(const Client& Copy);
-        Client & operator=(const Client& Copy);
-        ~Client();
-
-        int getFd() const;
-        std::string getUser_name() const;
-        std::string getNick_name() const;
-
-        void setFd(int fd);
-        void setUser_name(std::string User_name);
-        void setNick_name(std::string Nick_name);
-
-        void receiveData(const std::vector<std::string> &data);
+        std::string User_name;
+        std::string Nick_name;
+        int fd ;
+        Client(){
+            this->Nick_name = "Default" ;
+            this->User_name = "Default" ;
+            this->fd = -1 ;
+        };
+        Client(int fd, std::string user, std::string nickname){
+            this->fd = fd ;
+            this->User_name = user ;
+            this->Nick_name = nickname ;
+        };
+        // Client(const Client& Copy);
+        // Client & operator=(const Client& Copy);
+        // ~Client();
+        // int getFd() const;
+        // void setFd(int fd);
 };
 
 #endif

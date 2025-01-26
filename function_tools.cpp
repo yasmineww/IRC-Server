@@ -1,7 +1,7 @@
 #include "Server.hpp"
 
 void isString_Ch_DG(std::string value){
-    for (int index = 0; index < value.size(); index++){
+    for (size_t index = 0; index < value.size(); index++){
         if (!isdigit(value.at(index))) throw (std::logic_error("Invalid Password Only Digits Allowed !"));
     };
 };

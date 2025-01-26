@@ -1,7 +1,6 @@
 #include "Server.hpp"
 
 int Authenticate_User(int client_Id, Server *server_Cls){
-    int Auth_Steps = 0;
     std::cout << "Auth " << client_Id << std::endl ;
     server_Cls->Remove_Position = 0;
     server_Cls->Size_Read = 0;
@@ -48,7 +47,7 @@ void Check_client_Request(Server *server_Cls) {
 };
 
 void Accept_Client_Connection(Server *server_Cls){
-
+    (void)server_Cls ;
 };
 
 

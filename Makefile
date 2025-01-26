@@ -1,6 +1,6 @@
 NAME = irc
 
-SRC = main.cpp function_tools.cpp Server.cpp
+SRC = main.cpp function_tools.cpp Server.cpp Client.cpp
 
 OBJS = $(SRC:.cpp=.o)
 
