@@ -1,9 +1,33 @@
 #include "Server.hpp"
+#include "Server_Command.hpp"
 
-void Check_Commands(Server *Server_Cls, std::string Command){
-    (void)Server_Cls ;
-    (void)Command ;
-    PASS_Command(Command);
+int First_Appearance(std::string Command){
+    std::stringstream s(Command);
+    std::string Value ;
+    s >> Value ;
+    if (Value == PASS_STR) return (PASS);
+    if (Value == USER_STR) return (USER);
+    if (Value == NICK_STR) return (NICK);
+    return (-1);
+};
+
+void Check_Commands(Server *Server_Cls, std::string Command, int fd){
+    int OUT = First_Appearance(Command);
+
+    switch (OUT)
+    {
+        case PASS : 
+            PASS_Command(Command, fd,Server_Cls);
+            break ;
+        case USER :
+            std::cout << "USER" << std::endl ;
+            break ;
+        case NICK :
+            std::cout << "NICK" << std::endl ;
+            break ;
+        default : 
+            break ;
+    }
 };
 
 int Authenticate_User(int client_Id, Server *server_Cls, int pos){
@@ -12,13 +36,14 @@ int Authenticate_User(int client_Id, Server *server_Cls, int pos){
     memset(Recv_Buffer, 0, sizeof(Recv_Buffer));
     server_Cls->Size_Read = recv(server_Cls->start->fd, Recv_Buffer, sizeof(Recv_Buffer) , 0);
     std::cout << "Client Number : " << client_Id << " " << Recv_Buffer << std::endl ; 
-    Check_Commands(server_Cls, Recv_Buffer);
+    Check_Commands(server_Cls, Recv_Buffer, server_Cls->start->fd);
     if (server_Cls->Size_Read == 0){
         std::cout << "Client Disconnected " << pos << std::endl ;
         return (-1);
     };
     return (0);
 };
+
 
 void Pint_Array(std::vector<struct pollfd> pollAr){
     std::vector<struct pollfd>::iterator start = pollAr.begin() ;
@@ -39,7 +64,6 @@ void Check_client_Request(Server *server_Cls) {
         server_Cls->start++ ;
         for (;server_Cls->start != server_Cls->end; server_Cls->start++){
             if (server_Cls->start->revents & POLLIN){
-                std::cout << "Not Anymore" << std::endl ;
                 Auth_Flag = Authenticate_User(server_Cls->start->fd, server_Cls, Remove_Position);
                 if (Auth_Flag == -1){
                     close(server_Cls->start->fd);
@@ -56,12 +80,11 @@ void Accept_Client_Connection(Server *server_Cls){
     (void)server_Cls ;
 };
 
-
 void Server_Socket_Creation(std::string Port, std::string Pass_Code){
         Server server_Cls ;
         Client ForMulti_poll ;
         server_Cls.bindSocket_str.sin_port = htons(atoi(Port.c_str()));
-        // Creation Of a socket 
+        // Creation Of a socket, struct pollfd StrcPol 
         server_Cls.Server_PassCode = Pass_Code ;
         server_Cls.socket_connection = socket(AF_INET, SOCK_STREAM, 0);
         check_status(server_Cls.socket_connection, "Socket Connection Faild !");
@@ -73,6 +96,7 @@ void Server_Socket_Creation(std::string Port, std::string Pass_Code){
         // the Client Struct For the Accept() function  
         struct sockaddr_in client_address;
         socklen_t client_addr_len = sizeof(client_address);
+        std::pair<int, Client> TOADD ;
 
         // Initialization Of the First Poll() Struct For the Server
         server_Cls.poll_strc.fd = server_Cls.socket_connection ;
@@ -91,6 +115,8 @@ void Server_Socket_Creation(std::string Port, std::string Pass_Code){
                         server_Cls.poll_strc.fd = server_Cls.acceptSocket_id ;
                         server_Cls.poll_strc.events = POLLIN ;
                         server_Cls.pollAr.push_back(server_Cls.poll_strc);
+                        TOADD.first = server_Cls.acceptSocket_id;
+                        server_Cls.Users.insert(TOADD);
                     }
                 }
             }

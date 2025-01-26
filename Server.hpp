@@ -2,6 +2,7 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
+#include "Macros.hpp"
 #include <iostream>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -10,37 +11,28 @@
 #include <vector>
 #include "Client.hpp"
 #include <unistd.h>
-#include "Server_Command.hpp"
-
+#include <map>
 class Server {
-    private :
-        bool Auth;
-        bool Alive;
-
     public  :
 
-        bool getAuth() const;
-        bool getAlive() const;
-        void setAuth(bool Auth);
-        void setAlive(bool Alive);
-
         Client Client_User ;
-        struct pollfd poll_strc ;
-        struct sockaddr_in bindSocket_str ;
-        struct sockaddr_in accept_socket  ;
-        std::string Store_msg ;
-        std::string Server_PassCode ;
-        std::vector<struct pollfd>::iterator start;
-        std::vector<struct pollfd>::iterator end  ;   
-        std::vector<Client> poll_array;
-        std::vector<struct pollfd> pollAr;
-        size_t Size_Read  ;
         int bind_Arg      ;
         int poll_returnV  ;
+        size_t Size_Read  ;
         int Socket_listen ;
         int acceptSocket_id   ;
         int socket_connection ;
         char Recv_Buffer[1024];
+        struct pollfd poll_strc ;
+        struct sockaddr_in bindSocket_str ;
+        struct sockaddr_in accept_socket  ;
+        std::map<int, Client> Users ;
+        std::string Store_msg ;
+        std::string Server_PassCode ;
+        std::vector<Client> poll_array;
+        std::vector<struct pollfd>::iterator start;
+        std::vector<struct pollfd>::iterator end  ;   
+        std::vector<struct pollfd> pollAr;
         Server() {
             Client ServerAuth(0, "Server", "Parent_Server");
             bindSocket_str.sin_family = AF_INET ;
