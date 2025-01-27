@@ -33,8 +33,6 @@ void USER_command(std::string Command, int fd, Server *Server_CLS){
     std::cout << "hostname   : " << tool.array[1] << std::endl ;
     std::cout << "servername : " << tool.array[2] << std::endl ;
     std::cout << "realname   : " << tool.array[3] << std::endl ;
-
-
 };
 
 void NICK_command(std::string Command, int fd, Server *Server_Cls){

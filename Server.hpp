@@ -16,7 +16,15 @@
 
 class Server {
     public  :
+        // ARRAY'S ----------
+        std::map<int, Client> Users ; // the Array of Clients Contains each One  
+        std::vector<struct pollfd> pollAr;
 
+        // Iterators -----------
+        std::vector<struct pollfd>::iterator start;
+        std::vector<struct pollfd>::iterator end  ;   
+
+        // Client Class That WE FILL FOR EACH User 
         Client Client_User ;
         int bind_Arg      ;
         int poll_returnV  ;
@@ -28,13 +36,9 @@ class Server {
         struct pollfd poll_strc ;
         struct sockaddr_in bindSocket_str ;
         struct sockaddr_in accept_socket  ;
-        std::map<int, Client> Users ;
         std::string Store_msg ;
         std::string Server_PassCode ;
         std::vector<Client> poll_array;
-        std::vector<struct pollfd>::iterator start;
-        std::vector<struct pollfd>::iterator end  ;   
-        std::vector<struct pollfd> pollAr;
         Server() {
             Client ServerAuth(0, "Server", "Parent_Server");
             bindSocket_str.sin_family = AF_INET ;

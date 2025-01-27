@@ -6,7 +6,7 @@
 /*   By: mmaghri <mmaghri@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/21 17:33:44 by ymakhlou          #+#    #+#             */
-/*   Updated: 2025/01/27 12:42:22 by mmaghri          ###   ########.fr       */
+/*   Updated: 2025/01/27 15:20:59 by mmaghri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 #include <vector>
 #include <map>
 
-// Note The function's Down There Are Defined But Does Not exist !!!!!!! 
+// The Client Array For each User 
 
 class Client {
 
