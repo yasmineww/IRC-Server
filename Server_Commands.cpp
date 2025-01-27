@@ -83,10 +83,10 @@ void USER_command(std::string Command, int fd, Server *Server_CLS){
     if (tool.array[1].size() == 1 && (tool.array[1][0] == '*' || tool.array[1][0] == '0')) it->second.HOST_name = "" ;
     if (tool.array[2].size() == 1 && (tool.array[2][0] == '*' || tool.array[2][0] == '0')) it->second.SERVER_name = "" ;
     if (tool.array[3].size() == 1 && (tool.array[3][0] == '*' || tool.array[3][0] == '0')) it->second.REAL_name = "" ;
-    std::cout << it->second.User_name << std::endl  ;
-    std::cout << it->second.HOST_name << std::endl  ;
-    std::cout << it->second.SERVER_name << std::endl  ;
-    std::cout << it->second.REAL_name << std::endl ;
+    std::cout << "User_name   : " << it->second.User_name << std::endl  ;
+    std::cout << "HOST_name   : " <<  it->second.HOST_name << std::endl  ;
+    std::cout << "SERVER_name : " << it->second.SERVER_name << std::endl  ;
+    std::cout << "SERVER_name : " << it->second.REAL_name << std::endl ;
     it->second.Auth_USER = true ;
     if (it->second.Auth_USER && it->second.Auth_NICK && it->second.Auth_PASS){
         SENDMESSAGE(RPL_WELCOME(it->second.Nick_name,  "IRC"), fd);

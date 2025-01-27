@@ -17,15 +17,12 @@ void Check_Commands(Server *Server_Cls, std::string Command, int fd){
     switch (OUT)
     {
         case PASS :
-            std::cout << "---PASS---" << std::endl ;
             PASS_Command(Command, fd,Server_Cls);
             break ;
         case USER :
-            std::cout << "---USER---" << std::endl ;
             USER_command(Command, fd, Server_Cls);
             break ;
         case NICK :
-            std::cout << "---NICK---" << std::endl ;
             NICK_command(Command, fd, Server_Cls);
             break ;
         default : 
