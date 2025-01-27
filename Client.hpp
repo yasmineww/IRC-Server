@@ -6,7 +6,7 @@
 /*   By: mmaghri <mmaghri@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/21 17:33:44 by ymakhlou          #+#    #+#             */
-/*   Updated: 2025/01/26 10:22:23 by mmaghri          ###   ########.fr       */
+/*   Updated: 2025/01/27 12:42:22 by mmaghri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,14 +38,16 @@ class Client {
         // void TOPIChandler(const std::vector<std::string> &data);
     public :
         int fd ;
-        std::string User_name;
-        std::string Nick_name;
+        std::string User_name  ;
+        std::string Nick_name  ;
+        std::string LOGIN_name ;
+        std::string SERVER_name;
+        std::string HOST_name  ;
+        std::string REAL_name  ;
         int  AuthStep ;
         bool Auth_PASS ;
         Client(){
-            this->Auth_PASS = false ;
-            this->Nick_name = "Default" ;
-            this->User_name = "Default" ;
+            this->Auth_PASS   = false ;
             this->AuthStep  = 0 ;
             this->fd = -1 ;
         };
