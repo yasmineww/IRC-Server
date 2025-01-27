@@ -2,16 +2,18 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
-#include "Macros.hpp"
-#include <iostream>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>  // htons()
-#include <sys/poll.h> 
-#include <vector>
-#include "Client.hpp"
-#include <unistd.h>
-#include <map>
+# include "Macros.hpp"
+# include <iostream>
+# include <sys/socket.h>
+# include <netinet/in.h>
+# include <arpa/inet.h>
+# include <sys/poll.h> 
+# include <vector>
+# include "Client.hpp"
+# include <unistd.h>
+# include <map>
+
+
 class Server {
     public  :
 
@@ -45,6 +47,7 @@ class Server {
 
 void  Server_Socket_Creation(std::string Port, std::string Pass_Code);
 int   check_status(int status, std::string value);
+void  SENDMESSAGE(std::string MESSAGE, int fd);
 void  isString_Ch_DG(std::string value);
 
 //Socket Args --> 

@@ -18,7 +18,6 @@ void Check_Commands(Server *Server_Cls, std::string Command, int fd){
     {
         case PASS :
             std::cout << "---PASS---" << std::endl ;
-
             PASS_Command(Command, fd,Server_Cls);
             break ;
         case USER :
@@ -114,9 +113,7 @@ void Server_Socket_Creation(std::string Port, std::string Pass_Code){
                     server_Cls.acceptSocket_id = accept(server_Cls.socket_connection, (sockaddr *)&client_address, &client_addr_len);
                     check_status(server_Cls.acceptSocket_id, "Accept Command Faild !");
                     if (server_Cls.acceptSocket_id > 0) {
-                        std::cout << "Accept Called Successfully " << server_Cls.acceptSocket_id << std::endl ;
-                        server_Cls.Store_msg = "Welcome To Irc Server :) \n  ";
-                        send(server_Cls.acceptSocket_id, server_Cls.Store_msg.c_str(), server_Cls.Store_msg.size(), 0);
+                        SENDMESSAGE("Welcome To Irc Server :) \n ",server_Cls.acceptSocket_id) ;
                         server_Cls.poll_strc.fd = server_Cls.acceptSocket_id ;
                         server_Cls.poll_strc.events = POLLIN ;
                         server_Cls.pollAr.push_back(server_Cls.poll_strc);
