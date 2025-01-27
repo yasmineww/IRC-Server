@@ -9,8 +9,32 @@ int Command_Lenght(std::string command){
     return (tool.flag);
 };
 
+int STRING_WITH_CHAR(std::string RGX, char ALP){
+    for (size_t index = 0; index < RGX.size(); index++){
+        if (ALP == RGX.at(index)) return (-1);
+    };
+    return (0);
+}
+int REGEX_STRING(std::string COMMAND, int TYPE){
+    std::string REGX = "!@#$%^&*()+=,.<>?/[]{}|;:\"\'";
+    if (TYPE == USERNAME){
+        for (size_t index = 0; index < COMMAND.size() ; index++){
+            if (isspace(COMMAND.at(index)) != 1 || STRING_WITH_CHAR(REGX ,COMMAND.at(index)) == -1)
+                return (-1);
+        };
+    };
+    if (TYPE == HOSTNAME){
+        for (size_t index = 0; index < COMMAND.size() ; index++){
+            if ((iswalnum(COMMAND.at(index))) != 1 || isspace(COMMAND.at(index)) != 1)
+                return (-1);
+        };
+    };
+    return (0);
+};
+
 void USER_command(std::string Command, int fd, Server *Server_CLS){
     Tools tool ;
+    bool FOR_NICKCHECK = false;
     std::stringstream s(Command) ;
     std::map<int ,Client>::iterator it ;
 
@@ -25,14 +49,19 @@ void USER_command(std::string Command, int fd, Server *Server_CLS){
     };
 
     for (;s >> tool.words;){
-        if (tool.flag > 0) tool.array[tool.flag - 1] = tool.words ;
+        if (FOR_NICKCHECK) tool.array[3] += " " + tool.words ;
+        if (tool.flag > 0 && FOR_NICKCHECK != true) tool.array[tool.flag - 1] = tool.words ;
+        if (tool.words[0] == ':' && FOR_NICKCHECK != true) FOR_NICKCHECK = true ;
         tool.flag++ ;
-        if (tool.flag == 5) break ;
+        if (tool.flag == 5 && FOR_NICKCHECK != true) break ;
     };
-    std::cout << "username   : " << tool.array[0] << std::endl ;
-    std::cout << "hostname   : " << tool.array[1] << std::endl ;
-    std::cout << "servername : " << tool.array[2] << std::endl ;
-    std::cout << "realname   : " << tool.array[3] << std::endl ;
+    if (FOR_NICKCHECK) tool.array[3] = tool.array[3].substr(1, tool.array[3].size());
+
+    it->second.User_name = tool.array[0] ;
+    std::cout << "username   :" << tool.array[0] << std::endl ;
+    std::cout << "hostname   :" << tool.array[1] << std::endl ;
+    std::cout << "servername :" << tool.array[2] << std::endl ;
+    std::cout << "realname   :" << tool.array[3] << std::endl ;
 };
 
 void NICK_command(std::string Command, int fd, Server *Server_Cls){

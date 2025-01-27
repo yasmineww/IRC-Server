@@ -12,7 +12,7 @@
 # include "Client.hpp"
 # include <unistd.h>
 # include <map>
-
+# include "Macros.hpp"
 
 class Server {
     public  :
