@@ -27,6 +27,7 @@ void Check_Commands(Server *Server_Cls, std::string Command, int fd){
             break ;
         case NICK :
             std::cout << "---NICK---" << std::endl ;
+            NICK_command(Command, fd, Server_Cls);
             break ;
         default : 
             break ;
@@ -71,6 +72,7 @@ void Check_client_Request(Server *server_Cls) {
                 if (Auth_Flag == -1){
                     close(server_Cls->start->fd);
                     std::cout << "Remove _> " << Remove_Position << std::endl ;
+                    server_Cls->Users.erase(server_Cls->Users.find(server_Cls->start->fd));
                     server_Cls->pollAr.erase(server_Cls->pollAr.begin() + Remove_Position);
                     return ;
                 }
@@ -119,6 +121,7 @@ void Server_Socket_Creation(std::string Port, std::string Pass_Code){
                         server_Cls.poll_strc.events = POLLIN ;
                         server_Cls.pollAr.push_back(server_Cls.poll_strc);
                         TOADD.first = server_Cls.acceptSocket_id ;
+                        TOADD.second.Auth_PASS = false ;
                         server_Cls.Users.insert(TOADD);
                     }   
                 }
