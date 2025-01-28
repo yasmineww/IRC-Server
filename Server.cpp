@@ -1,9 +1,12 @@
 #include "Server.hpp"
 #include "Server_Command.hpp"
 
-int First_Appearance(std::string Command){
+int First_Appearance(std::string Command, Server *Server_CLS,int fd){
+    std::map<int ,Client>::iterator it ;
     std::stringstream s(Command);
     std::string Value ;
+
+    it = Server_CLS->Users.find(fd);
     s >> Value ;
     if (Value == PASS_STR) return (PASS);
     if (Value == USER_STR) return (USER);
@@ -12,7 +15,7 @@ int First_Appearance(std::string Command){
 };
 
 void Check_Commands(Server *Server_Cls, std::string Command, int fd){
-    int OUT = First_Appearance(Command);
+    int OUT = First_Appearance(Command, Server_Cls, fd);
 
     switch (OUT)
     {
@@ -26,6 +29,7 @@ void Check_Commands(Server *Server_Cls, std::string Command, int fd){
             NICK_command(Command, fd, Server_Cls);
             break ;
         default : 
+            std::cout << "-> " << Command << std::endl ;
             break ;
     }
 };
@@ -110,7 +114,7 @@ void Server_Socket_Creation(std::string Port, std::string Pass_Code){
                     server_Cls.acceptSocket_id = accept(server_Cls.socket_connection, (sockaddr *)&client_address, &client_addr_len);
                     check_status(server_Cls.acceptSocket_id, "Accept Command Faild !");
                     if (server_Cls.acceptSocket_id > 0) {
-                        SENDMESSAGE("Welcome To Irc Server :) \n ",server_Cls.acceptSocket_id) ;
+                        SENDMESSAGE("Welcome To Irc Server :) :\n",server_Cls.acceptSocket_id) ;
                         server_Cls.poll_strc.fd = server_Cls.acceptSocket_id ;
                         server_Cls.poll_strc.events = POLLIN ;
                         server_Cls.pollAr.push_back(server_Cls.poll_strc);

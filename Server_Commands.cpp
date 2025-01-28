@@ -1,4 +1,4 @@
-#include "Server_Command.hpp"
+ #include "Server_Command.hpp"
 #include "tools.hpp"
 #include "RESP.hpp" 
 
@@ -34,12 +34,14 @@ int REGEX_STRING(std::string COMMAND, int TYPE){
 };
 
 void USER_command(std::string Command, int fd, Server *Server_CLS){
+    std::cout << Command << std::endl ; 
     Tools tool ;
     bool FOR_NICKCHECK = false;
     std::stringstream s(Command) ;
     std::map<int ,Client>::iterator it ;
 
     it = Server_CLS->Users.find(fd);
+    
     if (it->second.Auth_USER) {
         SENDMESSAGE("ERR_ALREADYREGISTRED \n", fd);
         return ;
@@ -88,11 +90,12 @@ void USER_command(std::string Command, int fd, Server *Server_CLS){
     std::cout << "SERVER_name : " << it->second.SERVER_name << std::endl  ;
     std::cout << "SERVER_name : " << it->second.REAL_name << std::endl ;
     it->second.Auth_USER = true ;
-    if (it->second.Auth_USER && it->second.Auth_NICK && it->second.Auth_PASS){
+    if (it->second.Auth_USER && it->second.Auth_NICK && it->second.Auth_PASS && it->second.AUTH_WELCOM){
         SENDMESSAGE(RPL_WELCOME(it->second.Nick_name,  "IRC"), fd);
         SENDMESSAGE(RPL_YOURHOST(it->second.Nick_name, "IRC"), fd);
         SENDMESSAGE(RPL_CREATED(it->second.Nick_name,  "IRC"), fd);
         SENDMESSAGE(RPL_MYINFO(it->second.Nick_name,   "IRC"), fd);
+        it->second.AUTH_WELCOM = false ;
     }
 };
 
@@ -102,6 +105,10 @@ void NICK_command(std::string Command, int fd, Server *Server_Cls){
     std::map<int ,Client>::iterator it ;
 
     it = Server_Cls->Users.find(fd);
+    if (Command_Lenght(Command) > 2){
+        SENDMESSAGE("ERR_NONICKNAMEGIVEN\n", fd);
+        return ;
+    };
     if (!it->second.Auth_PASS) {
         SENDMESSAGE("ERR_NOT_AUTHENTICATED\n", fd);
         return ;
@@ -111,19 +118,19 @@ void NICK_command(std::string Command, int fd, Server *Server_Cls){
         if (tool.flag == 2)
             break ;
     };
-    if (Command_Lenght(Command) < 2){
-        SENDMESSAGE("ERR_NONICKNAMEGIVEN\n", fd);
+    if (it->second.Auth_USER && it->second.Auth_NICK && it->second.Auth_PASS && !it->second.AUTH_WELCOM){
+        it->second.Nick_name = tool.words;   
+        SENDMESSAGE("NICK_CHANGED \n", fd);
         return ;
-    };
-    it->second.Nick_name = tool.words;
-    std::cout << it->second.Nick_name << std::endl ;
-
+    }
+    it->second.Nick_name = tool.words;   
     it->second.Auth_NICK = true ;
-    if (it->second.Auth_USER && it->second.Auth_NICK && it->second.Auth_PASS){
+    if (it->second.Auth_USER && it->second.Auth_NICK && it->second.Auth_PASS && it->second.AUTH_WELCOM){
         SENDMESSAGE(RPL_WELCOME(it->second.Nick_name,  "IRC"), fd);
         SENDMESSAGE(RPL_YOURHOST(it->second.Nick_name, "IRC"), fd);
         SENDMESSAGE(RPL_CREATED(it->second.Nick_name,  "IRC"), fd);
         SENDMESSAGE(RPL_MYINFO(it->second.Nick_name,   "IRC"), fd);
+        it->second.AUTH_WELCOM = false ;
     }
 
 };
@@ -134,6 +141,11 @@ void PASS_Command(std::string Check, int fd, Server *Server_Cls){
 
     std::stringstream s(Check) ;
     (void)Server_Cls ;
+    it = Server_Cls->Users.find(fd) ;
+    if (it->second.Auth_PASS == true){
+        SENDMESSAGE("ERR_ALREADYREGISTRED\n", fd);
+        return ;
+    }
     if (Command_Lenght(Check) > 2 || Command_Lenght(Check) < 2){
         SENDMESSAGE("ERR_NEEDMOREPARAMS\n", fd);
         return ;
@@ -144,11 +156,6 @@ void PASS_Command(std::string Check, int fd, Server *Server_Cls){
     };
     if (tool.words == Server_Cls->Server_PassCode){
         std::cout << Server_Cls->Users.size() << std::endl ;
-        it = Server_Cls->Users.find(fd) ;
-        if (it->second.Auth_PASS == true){
-            SENDMESSAGE("ERR_ALREADYREGISTRED\n", fd);
-            return ;
-        }
         it->second.AuthStep += 1;
         it->second.Auth_PASS = true ;
         std::cout << "Password Accepted" << std::endl ;

@@ -6,7 +6,7 @@
 /*   By: mmaghri <mmaghri@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/21 17:33:44 by ymakhlou          #+#    #+#             */
-/*   Updated: 2025/01/27 19:38:38 by mmaghri          ###   ########.fr       */
+/*   Updated: 2025/01/28 10:48:11 by mmaghri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,11 +47,13 @@ class Client {
         bool Auth_PASS ;
         bool Auth_NICK;
         bool Auth_USER ;
+        bool AUTH_WELCOM ;
         int  AuthStep ;
         Client(){
             this->Auth_PASS = false ;
             this->Auth_NICK = false ;
             this->Auth_USER = false ;
+            this->AUTH_WELCOM = true ;
 
             this->AuthStep  = 0 ;
             this->fd = -1 ;
