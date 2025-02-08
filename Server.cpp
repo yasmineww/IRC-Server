@@ -38,10 +38,12 @@ void Check_Commands(Server *Server_Cls, std::string Command, int fd)
         case MODE :
             MODE_command(Command, fd, Server_Cls);
             break ;
-        case PRIVMSG :
+            case PRIVMSG :
             PRIVMSG_command(Command, fd, Server_Cls);
-        case JOIN :
+            break ;
+            case JOIN :
             JOIN_command(Command, fd, Server_Cls);
+            break ;
         case HELP :
             HELP_command(Command, fd, Server_Cls);
             break ;
