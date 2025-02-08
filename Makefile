@@ -7,7 +7,7 @@ RESET = \033[0m
 
 NAME = ircserv
 
-SRC = main.cpp function_tools.cpp Server.cpp Client.cpp Server_Commands.cpp
+SRC = main.cpp function_tools.cpp Server.cpp Client.cpp Server_Commands.cpp Channel.cpp
 
 OBJS = $(SRC:.cpp=.o)
 
@@ -18,10 +18,11 @@ FLAGS = -Wall -Wextra -Werror -std=c++98 -fsanitize=address -g
 
 RM = rm -rf
 
-HEADER = Server.hpp Client.hpp
+HEADER = Server.hpp Client.hpp 
 
 all : credit $(NAME)
 	@echo "$(GREEN)██████████████████████ Compiling is DONE ███████████████████████$(RESET)"
+	clear
 
 
 top:

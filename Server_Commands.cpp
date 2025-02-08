@@ -188,21 +188,80 @@ void PRIVMSG_command(std::string command, int fd, Server *Server_CLS)
 };
 
 
-
+using namespace std;
 
 
 
 void JOIN_command(std::string command, int fd, Server *Server_CLS)
 {
-    (void) fd;
-    (void) Server_CLS;
-    Client client = Server_CLS->Users[fd];
+    Client user = Server_CLS->Users[fd];
+
+    std::stringstream ss(command);
+    std::string prefix, cmd, channelName;
+    
+    ss >> cmd >> channelName >> prefix; // Extract parts
 
 
-    std::cout << " >> " << command << std::endl;
 
-    if (!client.check_Authentication())
-        SENDMESSAGE("LAYMONA * : " + client.getNickName() + " You have not registered\n", fd);
+    // Check if the user is authenticated
+    // if (!user.check_Authentication()) {
+    //     SENDMESSAGE("LAYMONA * : " + user.getNickName() + " You have not registered\n", fd);
+    //     return;
+    // }
+
+	cout << "here i am -> " << cmd << endl;
+	cout << "<------> " << prefix << endl;
+	cout << "< - > " << channelName << endl;
+
+
+    
+	// Validate channel name
+    if (channelName.empty() || (channelName[0] != '#' && channelName[0] != '&'))
+	{
+        SENDMESSAGE("ERROR :Invalid channel name\r\n", fd);
+        return;
+    }
+
+    // Retrieve or create the channel
+    Channel* channel = Server_CLS->getChannel(channelName);
+    if (!channel)
+        channel = Server_CLS->createChannel(channelName);
+
+    // Check if the user is already in the channel
+    if (channel->isUserInChannel(user))
+	{
+        SENDMESSAGE("ERROR :You're already in the channel\r\n\r\n", fd);
+        return;
+    }
+
+    // Add the user to the channel
+    channel->addUser(user);  // Pass pointer to the user
+
+    // Send JOIN message to the channel
+    std::string joinMessage = ":" + user.getNickName() + " JOIN " + channelName + "\r\n";
+    channel->broadcast(joinMessage);
+
+    // Send topic message if the channel has a topic
+    if (!channel->getTopic().empty()) {
+        std::string topicMessage = ":server 332 " + user.getNickName() + " " + channelName + " :" + channel->getTopic() + "\r\n";
+        send(fd, topicMessage.c_str(), topicMessage.length(), 0);
+    }
+
+    // Send the names list to the user
+    std::string namesList = ":server 353 " + user.getNickName() + " = " + channelName + " :" + channel->getUserList() + "\r\n";
+    send(fd, namesList.c_str(), namesList.length(), 0);
+
+
+
+
+	// -------___-----___-----___----_____--
+
+
+
+    // On successful join, send a JOIN message back.
+    // In a complete implementation, you would also send numeric replies (RPL_TOPIC, RPL_NAMREPLY, etc.)
+    // and broadcast the JOIN to all members of the channel.
+    // SENDMESSAGE(":" + user.getNickName() + " JOIN " + channelList + "\n", fd);
 
 }
 

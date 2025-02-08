@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmaghri <mmaghri@student.42.fr>            +#+  +:+       +#+        */
+/*   By: youmoukh <youmoukh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/21 17:33:44 by ymakhlou          #+#    #+#             */
-/*   Updated: 2025/01/28 10:48:11 by mmaghri          ###   ########.fr       */
+/*   Updated: 2025/02/08 16:21:59 by youmoukh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,10 @@ class Client {
         };
 
         // ~Client() {}
+		
         // void setFd(int fd);
+		
+		
         bool check_Authentication()
         {
             if (Auth_PASS && Auth_NICK && Auth_USER)

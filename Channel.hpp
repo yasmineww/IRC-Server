@@ -1,43 +1,43 @@
 
 #pragma once
 
-#include <string>
-#include <vector>
-#include "Client.hpp"
+# include "Macros.hpp"
 
 
 class Channel
 {
+	private:
+    	std::string name;                  // Channel name (e.g., "#chat")
+    	std::string topic;                 // Channel topic
+    	std::map<int, Client> users;        // Users in the channel (key: fd, value: pointer to User)
+    	std::vector<int> operators;        // List of operator FDs (can be optimized)
+
 public:
-    std::string name;            // Channel name (e.g., "#general")
-    std::string key;             // Channel key (password), if any.
-    std::string topic;           // Current channel topic.
-    std::vector<Client*> members;  // List of client pointers in the channel.
+    // Constructor & Destructor
+    Channel(std::string channelName);
+    ~Channel();
 
+    // User Management
+    void addUser(Client user);
+    void removeUser(Client user);
+    bool isUserInChannel(Client user) const;
+    
+    // Operator Management
+    void addOperator(Client user);
+    void removeOperator(Client user);
+    bool isOperator(Client user) const;
 
-    Channel(const std::string &name, const std::string &key = "")
-        : name(name), key(key), topic("") {}
+    // Topic Management
+    void setTopic(std::string newTopic);
+    std::string getTopic() const;
 
-
-    int addMember(Client* client)
-    {
-        members.push_back(client);
-        return 1;
-    }
-
-    void removeMember(Client* client)
-    {
-
-    }
-
-    // Lists all user nicknames in the channel.
-    std::string listAllUsers()
-    {
-        std::string list;
-        for (auto member : members)
-            list += member->getNickName() + " ";
-        return list;
-    }
-
+    // Message Broadcasting
+    void broadcast(const std::string& message);
+    
+    // Getters
+    std::string getName() const;
+    std::string getUserList() const; // Returns a space-separated list of users
 };
+
+
 

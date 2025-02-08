@@ -1,6 +1,34 @@
 #include "Server.hpp"
 #include "Server_Command.hpp"
 
+
+
+Channel* Server::getChannel(const std::string& channelName)
+{
+    // Check if the channel exists in the map
+    if (channels.find(channelName) != channels.end())
+	{
+        return channels[channelName];
+    }
+    return 0x0; // Return null if the channel doesn't exist
+}
+
+// Create a new channel if it doesn't exist
+Channel* Server::createChannel(const std::string& channelName)
+{
+    // Check if the channel already exists
+    if (channels.find(channelName) != channels.end())
+        return channels[channelName]; // Return the existing channell
+
+    // Create a new channel
+    Channel* newChannel = new Channel(channelName);
+
+    channels[channelName] = newChannel; // Store the new channel in the map
+    return newChannel;
+}
+
+
+
 int First_Appearance(std::string Command, Server *Server_CLS,int fd){
     std::map<int ,Client>::iterator it ;
     std::stringstream s(Command);
@@ -26,15 +54,15 @@ void Check_Commands(Server *Server_Cls, std::string Command, int fd)
 
     switch (OUT)
     {
-        case PASS :
-            PASS_Command(Command, fd,Server_Cls);
-            break ;
-        case USER :
-            USER_command(Command, fd, Server_Cls);
-            break ;
-        case NICK :
-            NICK_command(Command, fd, Server_Cls);
-            break ;
+        // case PASS :
+        //     PASS_Command(Command, fd,Server_Cls);
+        //     break ;
+        // case USER :
+        //     USER_command(Command, fd, Server_Cls);
+        //     break ;
+        // case NICK :
+        //     NICK_command(Command, fd, Server_Cls);
+        //     break ;
         case MODE :
             MODE_command(Command, fd, Server_Cls);
             break ;

@@ -1,25 +1,20 @@
 
 #pragma once
 
-# include "Client.hpp"
-
-
-
-# include <iostream>
-# include <sys/socket.h>
-# include <netinet/in.h>
-# include <arpa/inet.h>
-# include <sys/poll.h>
-# include <vector>
-# include <unistd.h>
-# include <map>
 # include "Macros.hpp"
 
 
 
 
 
+
+class Channel;
+
 class Server {
+
+	// private :
+		// std::map<std::string, Channel*> Channel; // A map to store channels by their names
+
     public  :
         // ARRAY'S ----------
         std::map<int, Client> Users ; // the Array of Clients Contains each One
@@ -31,6 +26,11 @@ class Server {
 
         // Client Class That WE FILL FOR EACH User
         Client Client_User ;
+
+		// Channels on the server.
+		std::map<std::string, Channel*> channels;
+
+
         int bind_Arg      ;
         int poll_returnV  ;
         size_t Size_Read  ;
@@ -44,6 +44,16 @@ class Server {
         std::string Store_msg ;
         std::string Server_PassCode ;
         std::vector<Client> poll_array;
+
+		Client getUser(int fd)
+		{
+        	if (Users.find(fd) != Users.end()) {
+            	return Users[fd]; // Return a copy of the Client object
+        }
+        // Return a default Client object or handle the case if user is not found
+        // Optionally, you can throw an exception here instead of returning a default object.
+        return Client(); // Returning a default-constructed Client object as fallback
+    }
         Server() {
             Client ServerAuth(0, "Server", "Parent_Server");
             bindSocket_str.sin_family = AF_INET ;
@@ -52,14 +62,19 @@ class Server {
         ~Server(){
             std::cout << "Server Destructor is called !"<< std::endl;
         }
+    	// Get a channel by name
+    	Channel* getChannel(const std::string& channelName);
+
+    	// // // Create a new channel if it doesn't exist
+    	Channel* createChannel(const std::string& channelName);
 
 };
 
 std::string	Welcome_mssg(void);
-void  Server_Socket_Creation(std::string Port, std::string Pass_Code);
-int   check_status(int status, std::string value);
-void  SENDMESSAGE(std::string MESSAGE, int fd);
-void  isString_Ch_DG(std::string value);
+void  		Server_Socket_Creation(std::string Port, std::string Pass_Code);
+int   		check_status(int status, std::string value);
+void  		SENDMESSAGE(std::string MESSAGE, int fd);
+void  		isString_Ch_DG(std::string value);
 
 //Socket Args -->
 

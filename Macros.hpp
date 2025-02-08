@@ -28,3 +28,18 @@
 # define BLUE "\e[1;34m"
 
 
+# include <iostream>
+# include <sys/socket.h>
+# include <netinet/in.h>
+# include <arpa/inet.h>
+# include <sys/poll.h>
+# include <vector>
+# include <unistd.h>
+# include <map>
+# include "Client.hpp"
+# include "Server.hpp"
+# include "Channel.hpp"
+# include <cstring>
+# include <cstdlib>
+
+#include <cstring>
