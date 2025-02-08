@@ -54,11 +54,11 @@
 //     std::cout << "Client Destructor Called !" << std::endl;
 // }
 
-// int Client::getFd() const { 
-//     return (fd); 
+// int Client::getFd() const {
+//     return (fd);
 // }
-// std::string Client::getUser_name() const { 
-//     return (User_name); 
+// std::string Client::getUser_name() const {
+//     return (User_name);
 // }
 // std::string Client::getNick_name() const {
 //     return (Nick_name);
@@ -82,10 +82,14 @@
 //         throw std::logic_error("Data is Empty !");
 
 //     const std::string &command = data[0];
-    
+
 //     if (commandMap.find(command) != commandMap.end()) {
 //         (this->*commandMap[command])(data);
 //     } else {
 //         throw std::logic_error("Invalid command: " + command);
 //     }
 // }
+
+
+
+

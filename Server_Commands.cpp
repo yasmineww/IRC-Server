@@ -1,8 +1,11 @@
  #include "Server_Command.hpp"
 #include "tools.hpp"
-#include "RESP.hpp" 
+#include "RESP.hpp"
 
-int Command_Lenght(std::string command){
+
+using namespace std;
+int Command_Lenght(std::string command)
+{
     Tools tool ;
     std::stringstream s(command);
     while (s >> tool.words)
@@ -34,14 +37,14 @@ int REGEX_STRING(std::string COMMAND, int TYPE){
 };
 
 void USER_command(std::string Command, int fd, Server *Server_CLS){
-    std::cout << Command << std::endl ; 
+    std::cout << Command << std::endl ;
     Tools tool ;
     bool FOR_NICKCHECK = false;
     std::stringstream s(Command) ;
     std::map<int ,Client>::iterator it ;
 
     it = Server_CLS->Users.find(fd);
-    
+
     if (it->second.Auth_USER) {
         SENDMESSAGE("ERR_ALREADYREGISTRED \n", fd);
         return ;
@@ -119,11 +122,11 @@ void NICK_command(std::string Command, int fd, Server *Server_Cls){
             break ;
     };
     if (it->second.Auth_USER && it->second.Auth_NICK && it->second.Auth_PASS && !it->second.AUTH_WELCOM){
-        it->second.Nick_name = tool.words;   
+        it->second.Nick_name = tool.words;
         SENDMESSAGE("NICK_CHANGED \n", fd);
         return ;
     }
-    it->second.Nick_name = tool.words;   
+    it->second.Nick_name = tool.words;
     it->second.Auth_NICK = true ;
     if (it->second.Auth_USER && it->second.Auth_NICK && it->second.Auth_PASS && it->second.AUTH_WELCOM){
         SENDMESSAGE(RPL_WELCOME(it->second.Nick_name,  "IRC"), fd);
@@ -135,7 +138,9 @@ void NICK_command(std::string Command, int fd, Server *Server_Cls){
 
 };
 
-void PASS_Command(std::string Check, int fd, Server *Server_Cls){
+void PASS_Command(std::string Check, int fd, Server *Server_Cls)
+{
+
     Tools tool ;
     std::map<int , Client>::iterator it ;
 
@@ -164,3 +169,49 @@ void PASS_Command(std::string Check, int fd, Server *Server_Cls){
     };
     SENDMESSAGE("ERR_BADPASS\n", fd);
 };
+
+void MODE_command(std::string command, int fd, Server *Server_CLS)
+{
+    (void) command;
+    (void) fd;
+    (void) Server_CLS;
+
+};
+
+void PRIVMSG_command(std::string command, int fd, Server *Server_CLS)
+{
+    cout << " >> " << command << endl;
+    (void) command;
+    (void) fd;
+    (void) Server_CLS;
+
+};
+
+
+
+
+
+
+void JOIN_command(std::string command, int fd, Server *Server_CLS)
+{
+    (void) fd;
+    (void) Server_CLS;
+    Client client = Server_CLS->Users[fd];
+
+
+    std::cout << " >> " << command << std::endl;
+
+    if (!client.check_Authentication())
+        SENDMESSAGE("LAYMONA * : " + client.getNickName() + " You have not registered\n", fd);
+
+}
+
+
+void HELP_command(std::string Command, int fd, Server *Server_CLS)
+{
+    (void) Command;
+    (void) Server_CLS;
+    SENDMESSAGE("Step eins (1) :\n * Use Command PASS to enter the Vinci code : example >> PASS <password>\n", fd);
+    SENDMESSAGE("Step zwei (2) :\n * Use Command NICK to give you a legendary name : example >> NICK <nickname>\n", fd);
+    SENDMESSAGE("Step drei (3) :\n * Use Command USER to introduce yourself to the server : example >> USER <name> <whatever> : name\n", fd);
+}

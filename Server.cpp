@@ -11,11 +11,18 @@ int First_Appearance(std::string Command, Server *Server_CLS,int fd){
     if (Value == PASS_STR) return (PASS);
     if (Value == USER_STR) return (USER);
     if (Value == NICK_STR) return (NICK);
+    if (Value == JOIN_STR) return (JOIN);
+    if (Value == PRIVMSG_STR) return (PRIVMSG);
+    if (Value == MODE_STR) return (MODE);
+    if (Value == HELP_STR) return (HELP);
+
     return (-1);
 };
 
-void Check_Commands(Server *Server_Cls, std::string Command, int fd){
+void Check_Commands(Server *Server_Cls, std::string Command, int fd)
+{
     int OUT = First_Appearance(Command, Server_Cls, fd);
+
 
     switch (OUT)
     {
@@ -28,7 +35,17 @@ void Check_Commands(Server *Server_Cls, std::string Command, int fd){
         case NICK :
             NICK_command(Command, fd, Server_Cls);
             break ;
-        default : 
+        case MODE :
+            MODE_command(Command, fd, Server_Cls);
+            break ;
+        case PRIVMSG :
+            PRIVMSG_command(Command, fd, Server_Cls);
+        case JOIN :
+            JOIN_command(Command, fd, Server_Cls);
+        case HELP :
+            HELP_command(Command, fd, Server_Cls);
+            break ;
+        default :
             std::cout << "-> " << Command << std::endl ;
             break ;
     }
@@ -57,7 +74,7 @@ void Pint_Array(std::vector<struct pollfd> pollAr){
     }
 };
 
-// check The Acttion Of the Each Client Connected To the Server in the Poll() <Array> 
+// check The Acttion Of the Each Client Connected To the Server in the Poll() <Array>
 void Check_client_Request(Server *server_Cls) {
     int Auth_Flag = 0;
     int Remove_Position = 0;
@@ -85,11 +102,28 @@ void Accept_Client_Connection(Server *server_Cls){
     (void)server_Cls ;
 };
 
-void Server_Socket_Creation(std::string Port, std::string Pass_Code){
+std::string	Welcome_mssg(void)
+{
+	std::string welcome = GREEN;
+	welcome.append("\n");
+	welcome.append("██╗    ██╗███████╗██╗      ██████╗ ██████╗ ███╗   ███╗███████╗\n");
+	welcome.append("██║    ██║██╔════╝██║     ██╔════╝██╔═══██╗████╗ ████║██╔════╝\n");
+	welcome.append("██║ █╗ ██║█████╗  ██║     ██║     ██║   ██║██╔████╔██║█████╗\n");
+	welcome.append("██║███╗██║██╔══╝  ██║     ██║     ██║   ██║██║╚██╔╝██║██╔══╝\n");
+	welcome.append("╚███╔███╔╝███████╗███████╗╚██████╗╚██████╔╝██║ ╚═╝ ██║███████╗\n");
+	welcome.append(" ╚══╝╚══╝ ╚══════╝╚══════╝ ╚═════╝ ╚═════╝ ╚═╝     ╚═╝╚══════╝\n");
+	welcome.append(YELLOW);
+	welcome.append("Login in to use LAYMONA OR you can send HELP to see the MANUAL.\n");
+	welcome.append(RESET);
+	return (welcome);
+};
+
+void Server_Socket_Creation(std::string Port, std::string Pass_Code)
+{
         Server server_Cls ;
         Client ForMulti_poll ;
         server_Cls.bindSocket_str.sin_port = htons(atoi(Port.c_str()));
-        // Creation Of a socket, struct pollfd StrcPol 
+        // Creation Of a socket, struct pollfd StrcPol
         server_Cls.Server_PassCode = Pass_Code ;
         server_Cls.socket_connection = socket(AF_INET, SOCK_STREAM, 0);
         check_status(server_Cls.socket_connection, "Socket Connection Faild !");
@@ -98,11 +132,11 @@ void Server_Socket_Creation(std::string Port, std::string Pass_Code){
         server_Cls.Socket_listen = listen(server_Cls.socket_connection, 2);
         check_status(server_Cls.Socket_listen, "Listen Faild !");
 
-        // the Client Struct For the Accept() function  
+        // the Client Struct For the Accept() function
         struct sockaddr_in client_address;
         socklen_t client_addr_len = sizeof(client_address);
         std::pair<int, Client> TOADD ;
-    
+
         // Initialization Of the First Poll() Struct For the Server
         server_Cls.poll_strc.fd = server_Cls.socket_connection ;
         server_Cls.poll_strc.events = POLLIN ;
@@ -114,16 +148,19 @@ void Server_Socket_Creation(std::string Port, std::string Pass_Code){
                     server_Cls.acceptSocket_id = accept(server_Cls.socket_connection, (sockaddr *)&client_address, &client_addr_len);
                     check_status(server_Cls.acceptSocket_id, "Accept Command Faild !");
                     if (server_Cls.acceptSocket_id > 0) {
-                        SENDMESSAGE("Welcome To Irc Server :) :\n",server_Cls.acceptSocket_id) ;
+                        SENDMESSAGE(Welcome_mssg(),server_Cls.acceptSocket_id) ;
                         server_Cls.poll_strc.fd = server_Cls.acceptSocket_id ;
                         server_Cls.poll_strc.events = POLLIN ;
                         server_Cls.pollAr.push_back(server_Cls.poll_strc);
                         TOADD.first = server_Cls.acceptSocket_id ;
                         TOADD.second.Auth_PASS = false ;
                         server_Cls.Users.insert(TOADD);
-                    }   
+                    }
                 }
             }
             Check_client_Request(&server_Cls);
         }
 };
+
+
+

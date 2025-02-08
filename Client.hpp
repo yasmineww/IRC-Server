@@ -17,15 +17,20 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include <sys/poll.h> 
+#include <sys/poll.h>
 #include <vector>
 #include <map>
 
-// The Client Array For each User 
+// #include "Server.hpp"
+
+class Server;
+
+// The Client Array For each User
 
 class Client {
 
     private :
+
         // std::map<std::string, void (Client::*)(const std::vector<std::string>&)> commandMap;
         // void INVITEhandler(const std::vector<std::string> &data);
         // void JOINhandler(const std::vector<std::string> &data);
@@ -44,11 +49,13 @@ class Client {
         std::string SERVER_name;
         std::string HOST_name  ;
         std::string REAL_name  ;
+        int        is_Registered;
         bool Auth_PASS ;
         bool Auth_NICK;
         bool Auth_USER ;
         bool AUTH_WELCOM ;
         int  AuthStep ;
+
         Client(){
             this->Auth_PASS = false ;
             this->Auth_NICK = false ;
@@ -63,11 +70,36 @@ class Client {
             this->User_name = user ;
             this->Nick_name = nickname ;
         };
-        // Client(const Client& Copy);
-        // Client & operator=(const Client& Copy);
-        // ~Client();
-        // int getFd() const;
+
+        // ~Client() {}
         // void setFd(int fd);
+        bool check_Authentication()
+        {
+            if (Auth_PASS && Auth_NICK && Auth_USER)
+                return true;
+            return false;
+        }
+        /*             Setters                         */
+
+        void		setUserName(std::string UserName)	{ this->User_name = UserName; };
+        void		setNickName( std::string NickName )	{ this->Nick_name = NickName; };
+        void		setLogName( std::string LOGINName )	{ this->LOGIN_name = LOGINName; };
+        void		setServerName( std::string SERVERName )	{ this->SERVER_name = SERVERName; };
+        void		setHostName( std::string HOSTName )	{ this->HOST_name = HOSTName; };
+        void	    setREALName(std::string REALName)	 { this->REAL_name = REALName; };
+        void		setRegistered(int Registred)		 { this->is_Registered = Registred;  };
+
+
+        /*             Getters                         */
+        int			getRegistered()		const { return (this->is_Registered); };
+        std::string	getUserName()		const { return (this->User_name); };
+        std::string	getNickName()		const { return (this->Nick_name); };
+        std::string	getLogName()		const { return (this->LOGIN_name); };
+        std::string getServerName()		const { return (this->SERVER_name); };
+        std::string getHostName()		const { return (this->HOST_name); }
+        std::string	getREALName()		const { return (this->REAL_name); };
+        int	        getClientFd()		const { return (this->fd); };
+
 };
 
 #endif
