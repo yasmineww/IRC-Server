@@ -11,6 +11,7 @@ class Channel
     	std::string topic;                 // Channel topic
     	std::map<int, Client> users;        // Users in the channel (key: fd, value: pointer to User)
     	std::vector<int> operators;        // List of operator FDs (can be optimized)
+        std::string _key;
 
 public:
     // Constructor & Destructor
@@ -21,7 +22,7 @@ public:
     void addUser(Client user);
     void removeUser(Client user);
     bool isUserInChannel(Client user) const;
-    
+
     // Operator Management
     void addOperator(Client user);
     void removeOperator(Client user);
@@ -33,10 +34,17 @@ public:
 
     // Message Broadcasting
     void broadcast(const std::string& message);
-    
+
     // Getters
     std::string getName() const;
     std::string getUserList() const; // Returns a space-separated list of users
+
+    // Function to get the key of the channel
+    std::string getKey() const ;
+
+        // Function to set/change the key of the channel
+        void setKey(const std::string &key) ;
+
 };
 
 

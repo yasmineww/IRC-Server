@@ -5,10 +5,13 @@
 
 
 
+#include <iostream>
+#include "Client.hpp"
 
 
 
 class Channel;
+class Client;
 
 class Server {
 

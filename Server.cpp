@@ -7,9 +7,7 @@ Channel* Server::getChannel(const std::string& channelName)
 {
     // Check if the channel exists in the map
     if (channels.find(channelName) != channels.end())
-	{
         return channels[channelName];
-    }
     return 0x0; // Return null if the channel doesn't exist
 }
 

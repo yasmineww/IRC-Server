@@ -26,13 +26,13 @@ void Channel::removeUser(Client user) {
 }
 
 // Check if a user is in the channel
-bool Channel::isUserInChannel(Client user) const 
+bool Channel::isUserInChannel(Client user) const
 {
     return (users.find(user.getClientFd()) != users.end());
 }
 
 // Add operator
-void Channel::addOperator(Client user) 
+void Channel::addOperator(Client user)
 {
     if (!isOperator(user)) {
         operators.push_back(user.getClientFd());
@@ -40,7 +40,7 @@ void Channel::addOperator(Client user)
 }
 
 // Remove operator
-void Channel::removeOperator(Client user) 
+void Channel::removeOperator(Client user)
 {
     for (std::vector<int>::iterator it = operators.begin(); it != operators.end(); ++it)
 	{
@@ -94,4 +94,15 @@ std::string Channel::getUserList() const
     // return ss.str();
 
 	return "";
+}
+
+
+// Function to get the key of the channel
+std::string Channel::getKey() const {
+    return _key;
+}
+
+// Function to set/change the key of the channel
+void Channel::setKey(const std::string &key) {
+    _key = key;
 }

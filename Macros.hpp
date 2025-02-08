@@ -1,14 +1,24 @@
-# define PASS 1
-# define USER 2
-# define NICK 3
-# define MODE 4
-# define JOIN 5
-# define HELP 6
-# define PRIVMSG 7
-# define REALNAME 99
-# define USERNAME 88
-# define SERVERNAME 77
-# define HOSTNAME 66
+#pragma once
+
+
+# include "Server_Command.hpp"
+# include "tools.hpp"
+# include "RESP.hpp"
+# include "Client.hpp"
+# include "Server.hpp"
+# include "Channel.hpp"
+
+# include <sys/socket.h>
+# include <netinet/in.h>
+# include <arpa/inet.h>
+# include <sys/poll.h>
+# include <unistd.h>
+
+# include <iostream>
+# include <map>
+# include <vector>
+# include <cstring>
+# include <cstdlib>
 
 
 #define PASS_STR "PASS"
@@ -28,18 +38,16 @@
 # define BLUE "\e[1;34m"
 
 
-# include <iostream>
-# include <sys/socket.h>
-# include <netinet/in.h>
-# include <arpa/inet.h>
-# include <sys/poll.h>
-# include <vector>
-# include <unistd.h>
-# include <map>
-# include "Client.hpp"
-# include "Server.hpp"
-# include "Channel.hpp"
-# include <cstring>
-# include <cstdlib>
+# define PASS 1
+# define USER 2
+# define NICK 3
+# define MODE 4
+# define JOIN 5
+# define HELP 6
+# define PRIVMSG 7
+# define REALNAME 99
+# define USERNAME 88
+# define SERVERNAME 77
+# define HOSTNAME 66
 
-#include <cstring>
+

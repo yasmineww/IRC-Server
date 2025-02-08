@@ -1,4 +1,4 @@
-#include <iostream>
+#include "Macros.hpp"
 
 #define RPL_WELCOME(nick, hostname)  std::string(":") + std::string(hostname) + std::string(" 001 ") + std::string(nick) + std::string(" :Welcome ") + std::string(nick) + std::string(" to the ft_irc network !\r\n")
 #define RPL_YOURHOST(nick, hostname) std::string(":") + std::string(hostname) + std::string(" 002 ") + std::string(nick) + std::string(" :Your host is ") + std::string(hostname) + std::string(" running version 1.0 !\r\n")
@@ -7,7 +7,7 @@
 
 
 
-// Add the std::string For the Messages Print To avoid The error's 
+// Add the std::string For the Messages Print To avoid The error's
 
 // #define ERR_PASSWDMISMATCH(nick, hostname)                                ":" + hostname + " 464 " + nick + " :Password incorrect !\r\n"
 // #define ERR_ALREADYREGISTERED(nick, hostname)                              ":" + hostname + " 462 " + nick + " :You may not reregister !\r\n"
@@ -23,12 +23,12 @@
 // #define ERR_NEEDMOREPARAMS(nick, hostname)                                  ":" + hostname + " 461 " + nick + " :Not enough parameters !\r\n"
 
 
-    
+
 // # define ERR_BADCHANNELMASK(nick, hostname, mask, correction)               ":" + hostname + " 476 " + nick + " " + mask + " :Invalid channel mask." + correction + "\r\n"
 // # define ERR_CHANNELISFULL(nick, hostname)                                  ":" + hostname + " 471 " + channelName + " :Cannot join channel (+l)\r\n"
 // # define ERR_BADCHANNELKEY(nick, hostname, channelName)                     ":" + hostname + " 475 " + nick + " " + channelName + " :Cannot join channel (+K) - bad key\r\n"
 // # define ERR_INVITEONLY(nick, hostname)                                     ":" + hostname + " 473 " + channelName + " :Cannot join channel (+i)\r\n"
-    
+
 // # define RPL_UMODEIS(hostname, channelname)                                 ":" + hostname + " MODE " + channelname + " +nt\r\n"
 // # define RPL_JOIN(nick, username, channelname, ipaddress)                   ":" + nick + "!~" + username + "@" + ipaddress + " JOIN " + channelname + "\r\n"
 // # define RPL_TOPIC(hostname, topic, nick)                                   ":" + hostname + " 332 " + nick + " " + channelName + " " + topic + "\r\n"
@@ -56,14 +56,14 @@
 
 
 // #define ERR_INPUTTOOLONG(nick, hostname) ":" + hostname + " 417 " + nick + " :Input line was too long !\r\n"
- 
 
-// # define RPL_VIEWTOPIC(hostname, nick, channel, topic)                      ":" + hostname + " 332 " + nick + " " + channel + " :" + topic + "\r\n" 
+
+// # define RPL_VIEWTOPIC(hostname, nick, channel, topic)                      ":" + hostname + " 332 " + nick + " " + channel + " :" + topic + "\r\n"
 // # define RPL_VIEWTIME(hostname, nick, channel, time)                        ":" + hostname + " 333 " + nick + " " + channel + " " + nick + " " + time + "\r\n"
 // # define RPL_SETTOPIC(nick, hostname, channel, topic)                       ":" + nick + "!" + nick + "@" + hostname + " TOPIC " + channel + " :" + topic + "\r\n"
 
-// # define RPL_BOT(hostname, nick, message)                      ":" + hostname + " 001 " + nick + " Dad joke: " +  message + "\r\n" 
-// # define ERR_BOT(hostname, nick)                      ":" + hostname + " 450 " + nick + "enter [BOT generate] to generate a joke" + "\r\n" 
+// # define RPL_BOT(hostname, nick, message)                      ":" + hostname + " 001 " + nick + " Dad joke: " +  message + "\r\n"
+// # define ERR_BOT(hostname, nick)                      ":" + hostname + " 450 " + nick + "enter [BOT generate] to generate a joke" + "\r\n"
 
 
 

@@ -1,4 +1,8 @@
-#include "Server.hpp"
+#pragma once
+
+#include "Macros.hpp"
+
+#include <iostream>
 
 class Tools {
     public :
