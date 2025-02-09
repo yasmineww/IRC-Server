@@ -6,7 +6,7 @@
 class Channel;
 class Client;
 
-class Server 
+class Server
 {
     public  :
         // ARRAY'S ----------
@@ -55,6 +55,10 @@ class Server
 
     	//  Create a new channel if it doesn't exist
     	Channel* createChannel(const std::string& channelName);
+        int getclient()
+        {
+            return Client_User.fd;
+        }
 
 };
 

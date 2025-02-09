@@ -39,14 +39,14 @@ class Client
 		/* Class const dest */
         Client();
         Client(int fd, std::string user, std::string nickname);
-		
 
-        ~Client(); 
-		
-		
+
+        ~Client();
+
+
 		/* Func */
         bool check_Authentication();
-		
+
         /*             Setters                         */
         void		setUserName(std::string UserName)	;
         void		setNickName( std::string NickName )	;
@@ -54,7 +54,7 @@ class Client
         void		setServerName( std::string SERVERName);
         void		setHostName( std::string HOSTName );
 		void	    setREALName(std::string REALName);
-		void		setRegistered(int Registred); 
+		void		setRegistered(int Registred);
 
 
         /*             Getters                         */
@@ -63,7 +63,7 @@ class Client
         std::string	getNickName()		const ;
         std::string	getLogName()		const ;
         std::string getServerName()		const ;
-        std::string getHostName()		const ;        
+        std::string getHostName()		const ;
 		std::string	getREALName()		const ;
         int	        getClientFd()		const;
 

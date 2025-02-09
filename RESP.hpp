@@ -71,7 +71,7 @@
 
 
 // #define ERR_NEEDMOREPARAMS(nick, hostname) ":" + hostname + " 461 " + nick + " :Not enough parameters !\r\n"
-// #define ERR_NOSUCHCHANNELl(nick, hostname) ":" + hostname + " 403 " + nick + " :No such channel !\r\n"
+#define ERR_NOSUCHCHANNELl(nick, hostname)  std::string(":") + std::string(hostname) + std::string(" 403 ") + std::string(nick) + std::string(" :No such channel !\r\n")
 // #define ERR_CHANOPRIVSNEEDED(nick, hostname) ":" + hostname + " 482 " + nick + " :You're not channel operator !\r\n"
 // #define ERR_USERNOTINCHANNELl(nick, hostname) ":" + hostname + " 441 " + nick + " :They aren't on that channel !\r\n"
 // #define ERR_NOTONCHANNELl(nick, hostname) ":" + hostname + " 442 " + nick + " :You're not on that channel !\r\n"
@@ -89,4 +89,3 @@
 
 
 
-// #define PART_RPL(nick, channelName) ":"+nick+"!~"+nick+"@localhost" + " PART " + channelName + "\r\n"

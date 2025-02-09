@@ -3,7 +3,10 @@
 #include "Channel.hpp"
 
 
-Channel::Channel(std::string channelName) : name(channelName), topic("") {}
+// Channel::Channel(std::string channelName) : name(channelName), topic("") {}
+
+
+
 
 Channel::~Channel() {}
 
@@ -27,9 +30,15 @@ void Channel::removeUser(Client user) {
 }
 
 // Check if a user is in the channel
-bool Channel::isUserInChannel(Client user) const
+bool Channel::isUserInChannel(int fd)
 {
-    return (users.find(user.getClientFd()) != users.end());
+
+    if (users.find(fd) != users.end())
+    {
+        puts("THE USER IS IN THE CHANNEL");
+        return true;
+    }
+    return (false);
 }
 
 // Add operator
@@ -73,9 +82,16 @@ std::string Channel::getTopic() const {
 // Broadcast message to all users in the channel
 void Channel::broadcast(const std::string& message, int fd)
 {
-
+    (void) fd;
     for (std::map<int, Client>::iterator it = users.begin(); it != users.end(); ++it)
-        send(fd, message.c_str(), message.length(), 0);
+    {
+        int FD = it->first;
+        if (isUserInChannel(FD))
+            SENDMESSAGE(message, FD);
+    }
+
+    // SENDMESSAGE(message, fd);
+        // send(fd, message.c_str(), message.length(), 0);
 }
 
 // Get the channel name
@@ -84,7 +100,7 @@ std::string Channel::getName() const {
 }
 
 // Get a list of all users in the channel
-std::string Channel::getUserList() 
+std::string Channel::getUserList()
 {
     std::stringstream ss;
     for (std::map<int, Client>::iterator it = users.begin(); it != users.end(); ++it)
@@ -103,4 +119,12 @@ std::string Channel::getKey() const {
 // Function to set/change the key of the channel
 void Channel::setKey(const std::string &key) {
     _key = key;
+}
+
+
+void Channel::removeUser(int fd)
+{
+    std::map<int, Client>::iterator it = users.find(fd);
+    if (it != users.end())
+        users.erase(it);
 }

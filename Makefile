@@ -9,6 +9,7 @@ NAME = ircserv
 
 SRC = main.cpp function_tools.cpp Server.cpp Client.cpp Server_Commands.cpp Channel.cpp \
 	  Join.cpp \
+	  Part.cpp \
 	  Temp.cpp \
 
 OBJS = $(SRC:.cpp=.o)

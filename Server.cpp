@@ -44,6 +44,7 @@ int First_Appearance(std::string Command, Server *Server_CLS,int fd){
     if (Value == PRIVMSG_STR) return (PRIVMSG);
     if (Value == MODE_STR) return (MODE);
     if (Value == HELP_STR) return (HELP);
+    if (Value == PART_STR) return (PART);
 
     return (-1);
 };
@@ -67,14 +68,17 @@ void Check_Commands(Server *Server_Cls, std::string Command, int fd)
         case MODE :
             MODE_command(Command, fd, Server_Cls);
             break ;
-            case PRIVMSG :
+        case PRIVMSG :
             PRIVMSG_command(Command, fd, Server_Cls);
             break ;
-            case JOIN :
+        case JOIN :
             JOIN_command(Command, fd, Server_Cls);
             break ;
         case HELP :
             HELP_command(Command, fd, Server_Cls);
+            break ;
+        case PART :
+            PART_command(Command, fd, Server_Cls);
             break ;
         default :
             std::cout << "-> " << Command << std::endl ;

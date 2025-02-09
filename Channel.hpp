@@ -17,13 +17,17 @@ class Channel
 
 public:
     // Constructor & Destructor
-    Channel(std::string channelName);
+
+    Channel(std::string _name, std::string key = "") : name(_name), _key(key) {}
+
+
+
     ~Channel();
 
     // User Management
     void addUser(Client user, int fd);
     void removeUser(Client user);
-    bool isUserInChannel(Client user) const;
+    bool isUserInChannel(int fd) ;
 
     // Operator Management
     void addOperator(Client user);
@@ -45,7 +49,12 @@ public:
     std::string getKey() const ;
 
         // Function to set/change the key of the channel
-        void setKey(const std::string &key) ;
+    void setKey(const std::string &key) ;
+
+
+    // PART cmd
+    void removeUser(int fd);
+
 
 };
 

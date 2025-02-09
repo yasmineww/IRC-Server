@@ -1,12 +1,30 @@
 
+IRC HISTORIQUO
+
+
+---------> YOUNAN THE GREAT <---------
+
+
+Channel Operations :
+- JOIN Finished ✅
+- PART
+- MODE
 
 
 
 
 
-JOIN :
+PART DETAILS :
 
-To implement the JOIN command in  IRC server, you'll need to: 
+
+
+
+
+
+
+JOIN DETAILS :
+
+To implement the JOIN command in  IRC server, you'll need to:
 
 Parse the command: Extract the channel name(s) and optional keys from the command string.
 Check validity: Ensure the channel name is valid (# or & prefix) and handle errors.
@@ -29,6 +47,19 @@ example :
    JOIN #foo,#bar                  ; join channels #foo and #bar.
 
    :WiZ JOIN #Twilight_zone        ; JOIN message from WiZ
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

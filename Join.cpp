@@ -1,6 +1,5 @@
 #include "Macros.hpp"
 
-using namespace std;
 
 void JOIN_command(std::string command, int fd, Server *Server_CLS)
 {
@@ -53,7 +52,7 @@ void JOIN_command(std::string command, int fd, Server *Server_CLS)
 
     printchannelvectorlist(keys);
 
-    
+
 
     // Iterate through each channel
     for (size_t i = 0; i < channels.size(); i++)
@@ -70,10 +69,22 @@ void JOIN_command(std::string command, int fd, Server *Server_CLS)
         // Retrieve or create the channel
         Channel* channel = Server_CLS->getChannel(channelName);
         if (!channel)
+        {
+            // If channel does not exist, create it with the provided key
             channel = Server_CLS->createChannel(channelName);
+            channel->setKey(key); // Set key if provided
+        }
+        else
+        {
+            // If channel has a key, check if the user provided the correct one
+            if (!channel->getKey().empty() && channel->getKey() != key) {
+                SENDMESSAGE("ERROR :Incorrect channel key\r\n", fd);
+                continue;
+            }
+        }
 
         // Check if the user is already in the channel
-        if (channel->isUserInChannel(user))
+        if (channel->isUserInChannel(fd))
 		{
             SENDMESSAGE("ERROR :You're already in the channel\r\n", fd);
             continue;
