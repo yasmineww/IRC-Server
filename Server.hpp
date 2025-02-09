@@ -3,17 +3,11 @@
 
 # include "Macros.hpp"
 
-#include "Client.hpp"
-
 class Channel;
-
 class Client;
 
-class Server {
-
-	// private :
-		// std::map<std::string, Channel*> Channel; // A map to store channels by their names
-
+class Server 
+{
     public  :
         // ARRAY'S ----------
         std::map<int, Client> Users ; // the Array of Clients Contains each One
@@ -24,11 +18,11 @@ class Server {
         std::vector<struct pollfd>::iterator end  ;
 
         // Client Class That WE FILL FOR EACH User
-        Client Client_User ;
 
 		// Channels on the server.
 		std::map<std::string, Channel*> channels;
 
+        Client Client_User;
 
         int bind_Arg      ;
         int poll_returnV  ;
@@ -44,26 +38,22 @@ class Server {
         std::string Server_PassCode ;
         std::vector<Client> poll_array;
 
-		// Client getUser(int fd)
-		// {
-        // 	if (Users.find(fd) != Users.end())
-        //     	return Users[fd]; // Return a copy of the Client object
-        // 	return Client(); // Returning a default-constructed Client object as fallback
-    	// }
 
         Server()
 		{
-            Client ServerAuth(0, "Server", "Parent_Server");
+			// Client ServerAuth(0, "Server", "Parent_Server");
             bindSocket_str.sin_family = AF_INET ;
             bindSocket_str.sin_addr.s_addr = INADDR_ANY;
         };
+
+
         ~Server(){
             std::cout << "Server Destructor is called !"<< std::endl;
         }
     	// Get a channel by name
     	Channel* getChannel(const std::string& channelName);
 
-    	// // // Create a new channel if it doesn't exist
+    	//  Create a new channel if it doesn't exist
     	Channel* createChannel(const std::string& channelName);
 
 };

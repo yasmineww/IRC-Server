@@ -8,8 +8,9 @@ Channel::Channel(std::string channelName) : name(channelName), topic("") {}
 Channel::~Channel() {}
 
 // Add user to channel
-void Channel::addUser(Client user) {
-    users[user.getClientFd()] = user;
+void Channel::addUser(Client user, int fd)
+{
+    users[fd] = user;
 }
 
 // Remove user from channel
@@ -70,13 +71,11 @@ std::string Channel::getTopic() const {
 }
 
 // Broadcast message to all users in the channel
-void Channel::broadcast(const std::string& message)
+void Channel::broadcast(const std::string& message, int fd)
 {
 
-	(void) message;
-    // for (std::map<int, Client*>::iterator it = users.begin(); it != users.end(); ++it) {
-    //     send(it.first, message.c_str(), message.length(), 0);
-    // }
+    for (std::map<int, Client>::iterator it = users.begin(); it != users.end(); ++it)
+        send(fd, message.c_str(), message.length(), 0);
 }
 
 // Get the channel name

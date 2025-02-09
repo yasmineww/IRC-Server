@@ -1,7 +1,14 @@
 #pragma once
 
+using namespace std;
 
 
+// temp headers
+
+
+#include "stdio.h"
+
+// --------
 
 # include <sys/socket.h>
 # include <netinet/in.h>
@@ -21,7 +28,7 @@
 
 
 
-# include "Server_Command.hpp"
+// # include "Server_Commands.hpp
 # include "tools.hpp"
 # include "RESP.hpp"
 # include "Client.hpp"
@@ -59,12 +66,17 @@
 # define HOSTNAME 66
 
 
-void PASS_Command(std::string Check, int fd, Server *Server_Cls);
-void NICK_command(std::string Command, int fd, Server *Server_Cls);
-void USER_command(std::string Command, int fd, Server *Server_CLS);
-void MODE_command(std::string Command, int fd, Server *Server_CLS);
-void PRIVMSG_command(std::string Command, int fd, Server *Server_CLS);
-void JOIN_command(std::string Command, int fd, Server *Server_CLS);
-void HELP_command(std::string Command, int fd, Server *Server_CLS);
+/* Authentication */
 
+void	PASS_Command(std::string Check, int fd, Server *Server_Cls);
+void 	NICK_command(std::string Command, int fd, Server *Server_Cls);
+void 	USER_command(std::string Command, int fd, Server *Server_CLS);
+
+/* Commands */ 
+void 	MODE_command(std::string Command, int fd, Server *Server_CLS);
+void 	PRIVMSG_command(std::string Command, int fd, Server *Server_CLS);
+void 	JOIN_command(std::string Command, int fd, Server *Server_CLS);
+void 	HELP_command(std::string Command, int fd, Server *Server_CLS);
+
+/* Extra Temp Func */
 void    printchannelvectorlist(std::vector<std::string> channels);

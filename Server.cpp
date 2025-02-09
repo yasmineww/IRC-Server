@@ -5,6 +5,8 @@
 
 Channel* Server::getChannel(const std::string& channelName)
 {
+	std::cout << "Getting Channel" << endl;
+
     // Check if the channel exists in the map
     if (channels.find(channelName) != channels.end())
         return channels[channelName];
@@ -14,6 +16,7 @@ Channel* Server::getChannel(const std::string& channelName)
 // Create a new channel if it doesn't exist
 Channel* Server::createChannel(const std::string& channelName)
 {
+	std::cout << "Creating Channel" << endl;
     // Check if the channel already exists
     if (channels.find(channelName) != channels.end())
         return channels[channelName]; // Return the existing channell
@@ -21,7 +24,7 @@ Channel* Server::createChannel(const std::string& channelName)
     // Create a new channel
     Channel* newChannel = new Channel(channelName);
 
-    channels[channelName] = newChannel; // Store the new channel in the map
+    channels[channelName] = newChannel; // Store the new channel in the channel's    map
     return newChannel;
 }
 
@@ -79,10 +82,12 @@ void Check_Commands(Server *Server_Cls, std::string Command, int fd)
     }
 };
 
-int Authenticate_User(int client_Id, Server *server_Cls, int pos){
+int Authenticate_User(int client_Id, Server *server_Cls, int pos)
+{
     (void)client_Id ;
     server_Cls->Size_Read = 0;
     char Recv_Buffer[1024];
+
     memset(Recv_Buffer, 0, sizeof(Recv_Buffer));
     server_Cls->Size_Read = recv(server_Cls->start->fd, Recv_Buffer, sizeof(Recv_Buffer) , 0);
     Check_Commands(server_Cls, Recv_Buffer, server_Cls->start->fd);
@@ -94,7 +99,8 @@ int Authenticate_User(int client_Id, Server *server_Cls, int pos){
 };
 
 
-void Pint_Array(std::vector<struct pollfd> pollAr){
+void Pint_Array(std::vector<struct pollfd> pollAr)
+{
     std::vector<struct pollfd>::iterator start = pollAr.begin() ;
     std::vector<struct pollfd>::iterator end = pollAr.end()     ;
     for (;start != end; start++){
@@ -189,6 +195,7 @@ void Server_Socket_Creation(std::string Port, std::string Pass_Code)
             Check_client_Request(&server_Cls);
         }
 };
+
 
 
 

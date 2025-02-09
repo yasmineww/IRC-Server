@@ -275,12 +275,14 @@ void JOIN_command(std::string command, int fd, Server *Server_CLS)
             continue;
         }
 
+
+		puts("HAAANANANANANANANANANANANANANANAN");
         // Add the user to the channel
-        channel->addUser(user);
+        channel->addUser(user, fd);
 
         // Broadcast JOIN message to the channel
         std::string joinMessage = ":" + user.getNickName() + " JOIN " + channelName + "\r\n";
-        channel->broadcast(joinMessage);
+        channel->broadcast(joinMessage, fd);
 
         // Send the topic message if the channel has a topic
         if (!channel->getTopic().empty())
@@ -293,7 +295,7 @@ void JOIN_command(std::string command, int fd, Server *Server_CLS)
         std::string namesList = ":server 353 " + user.getNickName() + " = " + channelName + " :" + channel->getUserList() + "\r\n";
         send(fd, namesList.c_str(), namesList.length(), 0);
 
-}
+	}
 
 
 

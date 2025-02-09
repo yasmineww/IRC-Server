@@ -4,6 +4,8 @@
 # include "Macros.hpp"
 
 
+class Client;
+
 class Channel
 {
 	private:
@@ -19,7 +21,7 @@ public:
     ~Channel();
 
     // User Management
-    void addUser(Client user);
+    void addUser(Client user, int fd);
     void removeUser(Client user);
     bool isUserInChannel(Client user) const;
 
@@ -33,7 +35,7 @@ public:
     std::string getTopic() const;
 
     // Message Broadcasting
-    void broadcast(const std::string& message);
+    void broadcast(const std::string& message, int fd);
 
     // Getters
     std::string getName() const;
