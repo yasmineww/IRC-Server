@@ -7,7 +7,9 @@ RESET = \033[0m
 
 NAME = ircserv
 
-SRC = main.cpp function_tools.cpp Server.cpp Client.cpp Server_Commands.cpp Channel.cpp Temp.cpp
+SRC = main.cpp function_tools.cpp Server.cpp Client.cpp Server_Commands.cpp Channel.cpp \
+	  Join.cpp \
+	  Temp.cpp \
 
 OBJS = $(SRC:.cpp=.o)
 

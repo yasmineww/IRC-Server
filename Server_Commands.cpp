@@ -1,7 +1,6 @@
 
 #include "Macros.hpp"
 
-using namespace std;
 
 int Command_Lenght(std::string command)
 {
@@ -191,119 +190,12 @@ void PRIVMSG_command(std::string command, int fd, Server *Server_CLS)
 
 
 
-void JOIN_command(std::string command, int fd, Server *Server_CLS)
-{
-    // Retrieve the user from the server's Users map
-    Client user = Server_CLS->Users[fd];
-
-    std::stringstream ss(command);
-    std::string cmd, channelList, keyList;
-
-    ss >> cmd >> channelList >> keyList;  // Extract parts: command, channels, keys (if any)
-
-
-
-	cout << "cmd <-> " << cmd << endl;
-	cout << "keys <------> " << keyList << endl;
-	cout << "chan names <---> " << channelList << endl;
-
-    // Ensure user is authenticated
-    if (!user.check_Authentication())
-    {
-        SENDMESSAGE("LAYMONA * : " + user.getNickName() + " You have not registered\n", fd);
-        return;
-    }
-    std::vector<std::string> channels;
-    std::vector<std::string> keys;
-
-
-    // Split channel names by commas
-    size_t pos = 0;
-    while ((pos = channelList.find(',')) != std::string::npos)
-    {
-        channels.push_back(channelList.substr(0, pos));
-        channelList.erase(0, pos + 1);
-    }
-    channels.push_back(channelList); // Add the last channel
-
-    printchannelvectorlist(channels);
-
-    // Split keys by commas (if any keys exist)
-    if (!keyList.empty())
-    {
-        pos = 0;
-        while ((pos = keyList.find(',')) != std::string::npos)
-        {
-            keys.push_back(keyList.substr(0, pos));
-            keyList.erase(0, pos + 1);
-        }
-        keys.push_back(keyList); // Add the last key
-    }
-
-    printchannelvectorlist(keys);
-
-    
-
-    // Iterate through each channel
-    for (size_t i = 0; i < channels.size(); i++)
-	{
-        std::string channelName = channels[i];
-        std::string key = (i < keys.size()) ? keys[i] : ""; // Get key if provided
-
-        // Validate channel name
-        if (channelName.empty() || (channelName[0] != '#' && channelName[0] != '&')) {
-            SENDMESSAGE("ERROR :Invalid channel name\r\n", fd);
-            continue;
-        }
-
-        // Retrieve or create the channel
-        Channel* channel = Server_CLS->getChannel(channelName);
-        if (!channel)
-            channel = Server_CLS->createChannel(channelName);
-
-        // Check if the user is already in the channel
-        if (channel->isUserInChannel(user))
-		{
-            SENDMESSAGE("ERROR :You're already in the channel\r\n", fd);
-            continue;
-        }
-
-        // If the channel has a key, check if the user provided the correct one
-        if (!channel->getKey().empty() && channel->getKey() != key)
-		{
-            SENDMESSAGE("ERROR :Incorrect channel key\r\n", fd);
-            continue;
-        }
-
-
-		puts("HAAANANANANANANANANANANANANANANAN");
-        // Add the user to the channel
-        channel->addUser(user, fd);
-
-        // Broadcast JOIN message to the channel
-        std::string joinMessage = ":" + user.getNickName() + " JOIN " + channelName + "\r\n";
-        channel->broadcast(joinMessage, fd);
-
-        // Send the topic message if the channel has a topic
-        if (!channel->getTopic().empty())
-		{
-            std::string topicMessage = ":server 332 " + user.getNickName() + " " + channelName + " :" + channel->getTopic() + "\r\n";
-            send(fd, topicMessage.c_str(), topicMessage.length(), 0);
-        }
-
-        // Send the names list to the user
-        std::string namesList = ":server 353 " + user.getNickName() + " = " + channelName + " :" + channel->getUserList() + "\r\n";
-        send(fd, namesList.c_str(), namesList.length(), 0);
-
-	}
 
 
 
 
 
-    // SENDMESSAGE(":" + user.getNickName() + " JOIN " + channelList + "\n", fd);
 
-}
 
 
 void HELP_command(std::string Command, int fd, Server *Server_CLS)

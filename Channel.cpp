@@ -56,8 +56,8 @@ void Channel::removeOperator(Client user)
 bool Channel::isOperator(Client user) const
 {
 	(void) user;
-	return false;
-    // return std::find(operators.begin(), operators.end(), user.getFd()) != operators.end();
+    // return std::find(operators.begin(), operators.end(), user.getClientFd()) != operators.end();
+	return 0x0;
 }
 
 // Set the channel topic
@@ -84,15 +84,14 @@ std::string Channel::getName() const {
 }
 
 // Get a list of all users in the channel
-std::string Channel::getUserList() const
+std::string Channel::getUserList() 
 {
-    // std::stringstream ss;
-    // for (std::map<int, Client*>::const_iterator it = users.begin(); it != users.end(); ++it) {
-    //     ss << it.second.getNickName() << " ";
-    // }
-    // return ss.str();
-
-	return "";
+    std::stringstream ss;
+    for (std::map<int, Client>::iterator it = users.begin(); it != users.end(); ++it)
+	{
+        ss << it->second.getNickName() << " ";
+    }
+    return ss.str();
 }
 
 

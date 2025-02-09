@@ -39,7 +39,7 @@ public:
 
     // Getters
     std::string getName() const;
-    std::string getUserList() const; // Returns a space-separated list of users
+    std::string getUserList() ; // Returns a space-separated list of users
 
     // Function to get the key of the channel
     std::string getKey() const ;
