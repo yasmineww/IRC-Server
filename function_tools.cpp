@@ -1,5 +1,6 @@
 #include "Server.hpp"
 #include "tools.hpp"
+#include "Macros.hpp"
 
 void isString_Ch_DG(std::string value){
     for (size_t index = 0; index < value.size(); index++){

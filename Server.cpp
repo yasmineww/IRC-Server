@@ -1,5 +1,5 @@
-#include "Server.hpp"
-#include "Server_Command.hpp"
+
+#include "Macros.hpp"
 
 
 
@@ -52,15 +52,15 @@ void Check_Commands(Server *Server_Cls, std::string Command, int fd)
 
     switch (OUT)
     {
-        // case PASS :
-        //     PASS_Command(Command, fd,Server_Cls);
-        //     break ;
-        // case USER :
-        //     USER_command(Command, fd, Server_Cls);
-        //     break ;
-        // case NICK :
-        //     NICK_command(Command, fd, Server_Cls);
-        //     break ;
+        case PASS :
+            PASS_Command(Command, fd,Server_Cls);
+            break ;
+        case USER :
+            USER_command(Command, fd, Server_Cls);
+            break ;
+        case NICK :
+            NICK_command(Command, fd, Server_Cls);
+            break ;
         case MODE :
             MODE_command(Command, fd, Server_Cls);
             break ;

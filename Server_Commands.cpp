@@ -2,6 +2,7 @@
 #include "Macros.hpp"
 
 using namespace std;
+
 int Command_Lenght(std::string command)
 {
     Tools tool ;
@@ -186,7 +187,7 @@ void PRIVMSG_command(std::string command, int fd, Server *Server_CLS)
 };
 
 
-using namespace std;
+
 
 
 
@@ -202,18 +203,20 @@ void JOIN_command(std::string command, int fd, Server *Server_CLS)
 
 
 
-	cout << "here i am -> " << cmd << endl;
-	cout << "<------> " << keyList << endl;
-	cout << "< - > " << channelList << endl;
+	cout << "cmd <-> " << cmd << endl;
+	cout << "keys <------> " << keyList << endl;
+	cout << "chan names <---> " << channelList << endl;
 
     // Ensure user is authenticated
-    // if (!user.check_Authentication())
-    // {
-    //     SENDMESSAGE("LAYMONA * : " + user.getNickName() + " You have not registered\n", fd);
-    //     return;
-    // }
+    if (!user.check_Authentication())
+    {
+        SENDMESSAGE("LAYMONA * : " + user.getNickName() + " You have not registered\n", fd);
+        return;
+    }
     std::vector<std::string> channels;
     std::vector<std::string> keys;
+
+
     // Split channel names by commas
     size_t pos = 0;
     while ((pos = channelList.find(',')) != std::string::npos)
@@ -224,6 +227,7 @@ void JOIN_command(std::string command, int fd, Server *Server_CLS)
     channels.push_back(channelList); // Add the last channel
 
     printchannelvectorlist(channels);
+
     // Split keys by commas (if any keys exist)
     if (!keyList.empty())
     {
@@ -235,10 +239,14 @@ void JOIN_command(std::string command, int fd, Server *Server_CLS)
         }
         keys.push_back(keyList); // Add the last key
     }
-    return ;
+
+    printchannelvectorlist(keys);
+
+    
 
     // Iterate through each channel
-    for (size_t i = 0; i < channels.size(); i++) {
+    for (size_t i = 0; i < channels.size(); i++)
+	{
         std::string channelName = channels[i];
         std::string key = (i < keys.size()) ? keys[i] : ""; // Get key if provided
 
@@ -254,13 +262,15 @@ void JOIN_command(std::string command, int fd, Server *Server_CLS)
             channel = Server_CLS->createChannel(channelName);
 
         // Check if the user is already in the channel
-        if (channel->isUserInChannel(user)) {
+        if (channel->isUserInChannel(user))
+		{
             SENDMESSAGE("ERROR :You're already in the channel\r\n", fd);
             continue;
         }
 
         // If the channel has a key, check if the user provided the correct one
-        if (!channel->getKey().empty() && channel->getKey() != key) {
+        if (!channel->getKey().empty() && channel->getKey() != key)
+		{
             SENDMESSAGE("ERROR :Incorrect channel key\r\n", fd);
             continue;
         }
@@ -273,7 +283,8 @@ void JOIN_command(std::string command, int fd, Server *Server_CLS)
         channel->broadcast(joinMessage);
 
         // Send the topic message if the channel has a topic
-        if (!channel->getTopic().empty()) {
+        if (!channel->getTopic().empty())
+		{
             std::string topicMessage = ":server 332 " + user.getNickName() + " " + channelName + " :" + channel->getTopic() + "\r\n";
             send(fd, topicMessage.c_str(), topicMessage.length(), 0);
         }

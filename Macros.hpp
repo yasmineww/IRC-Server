@@ -1,12 +1,7 @@
 #pragma once
 
 
-# include "Server_Command.hpp"
-# include "tools.hpp"
-# include "RESP.hpp"
-# include "Client.hpp"
-# include "Server.hpp"
-# include "Channel.hpp"
+
 
 # include <sys/socket.h>
 # include <netinet/in.h>
@@ -19,6 +14,19 @@
 # include <vector>
 # include <cstring>
 # include <cstdlib>
+# include <string>
+# include <sstream> 
+
+
+
+
+
+# include "Server_Command.hpp"
+# include "tools.hpp"
+# include "RESP.hpp"
+# include "Client.hpp"
+# include "Server.hpp"
+# include "Channel.hpp"
 
 
 #define PASS_STR "PASS"
@@ -51,3 +59,12 @@
 # define HOSTNAME 66
 
 
+void PASS_Command(std::string Check, int fd, Server *Server_Cls);
+void NICK_command(std::string Command, int fd, Server *Server_Cls);
+void USER_command(std::string Command, int fd, Server *Server_CLS);
+void MODE_command(std::string Command, int fd, Server *Server_CLS);
+void PRIVMSG_command(std::string Command, int fd, Server *Server_CLS);
+void JOIN_command(std::string Command, int fd, Server *Server_CLS);
+void HELP_command(std::string Command, int fd, Server *Server_CLS);
+
+void    printchannelvectorlist(std::vector<std::string> channels);

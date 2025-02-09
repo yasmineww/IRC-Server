@@ -3,14 +3,10 @@
 
 # include "Macros.hpp"
 
-
-
-#include <iostream>
 #include "Client.hpp"
 
-
-
 class Channel;
+
 class Client;
 
 class Server {
@@ -48,16 +44,15 @@ class Server {
         std::string Server_PassCode ;
         std::vector<Client> poll_array;
 
-		Client getUser(int fd)
+		// Client getUser(int fd)
+		// {
+        // 	if (Users.find(fd) != Users.end())
+        //     	return Users[fd]; // Return a copy of the Client object
+        // 	return Client(); // Returning a default-constructed Client object as fallback
+    	// }
+
+        Server()
 		{
-        	if (Users.find(fd) != Users.end()) {
-            	return Users[fd]; // Return a copy of the Client object
-        }
-        // Return a default Client object or handle the case if user is not found
-        // Optionally, you can throw an exception here instead of returning a default object.
-        return Client(); // Returning a default-constructed Client object as fallback
-    }
-        Server() {
             Client ServerAuth(0, "Server", "Parent_Server");
             bindSocket_str.sin_family = AF_INET ;
             bindSocket_str.sin_addr.s_addr = INADDR_ANY;
