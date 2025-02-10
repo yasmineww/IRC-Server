@@ -49,7 +49,7 @@ void JOIN_command(std::string command, int fd, Server *Server_CLS)
     }
     channels.push_back(channelList); // Add the last channel
 
-    printchannelvectorlist(channels);
+    printchannelvectorlist("channels", channels);
 
     // Split keys by commas (if any keys exist)
     if (!keyList.empty())
@@ -63,7 +63,7 @@ void JOIN_command(std::string command, int fd, Server *Server_CLS)
         keys.push_back(keyList); // Add the last key
     }
 
-    printchannelvectorlist(keys);
+    printchannelvectorlist("keys", keys);
 
 
 
@@ -112,7 +112,7 @@ void JOIN_command(std::string command, int fd, Server *Server_CLS)
             continue;
         }
 
-		
+
 
         // Add the user to the channel
         channel->addUser(user, fd);
@@ -131,7 +131,7 @@ void JOIN_command(std::string command, int fd, Server *Server_CLS)
         // Send the names list to the user
         std::string namesList = ":server 353 " + user.getNickName() + " = " + channelName + " :" + channel->getUserList() + "\r\n";
         send(fd, namesList.c_str(), namesList.length(), 0);
-		
+
 		// Printing the Client details :
 
 

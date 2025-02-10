@@ -100,7 +100,7 @@ void    PART_command(std::string command, int fd, Server* Server_CLS);
 void    MODE_command(std::string command, int fd, Server* Server_CLS);
 
 /* Extra Temp Func */
-void    printchannelvectorlist(std::vector<std::string> channels);
+void    printchannelvectorlist(std::string msg, std::vector<std::string> channels);
 
 
 
