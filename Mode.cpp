@@ -15,87 +15,97 @@
 
 void    MODE_command(std::string command, int fd, Server* Server_CLS)
 {
-	
+
 	Client user = Server_CLS->Users[fd];
 
     if (!user.check_Authentication())
 	{
-        return SENDMESSAGE("ERROR : You are not registred\n", fd);
+        return SENDMESSAGE("LAYMONA * : You are not registred\n", fd);
 	}
-	
+
 	cout << "---->>>>> cmd -----> " << command << endl;
-	
+
 
 	std::stringstream ss(command);
 	std::string minicmd;
 	std::string chanName;
 
-	
+
 	std::vector<std::string> splited; // split command into words
 	std::vector<std::string> permittedOPTIONS;  // to store options with (+)
 	std::vector<std::string> NONpermittedOPTIONS; // to store options with (-)
-	
-	
+
+
 
 	while (std::getline(ss, minicmd, ' '))
 		splited.push_back(minicmd);
-	
+
 	chanName = splited[1];
-	
-	
-	
-	cout << "chan Name : " << chanName <<  endl;
-	
-	for(std::vector<std::string>::iterator it = splited.begin()qqq; it < splited.end(); ++it)
+
+
+
+	// cout << "chan Name : " << chanName <<  endl;
+
+	for(std::vector<std::string>::iterator it = splited.begin(); it < splited.end(); ++it)
 	{
 		if ((*it)[0] == '-' )
 		{
+			cout << "LENgth " << it->length() << endl;
 			if (it->length() > 2)
 			{
-				size_t i = 0;
+				size_t i = 1;
 				while (i < it->length())
 				{
-					NONpermittedOPTIONS.push_back(it->substr(i + 1, std::string::npos));
+
+					cout << "nonPer " <<  it->substr(i, std::string::npos) << endl;
+					// NONpermittedOPTIONS.push_back(it->substr(i + 1, std::string::npos));
+					i++;
 				}
 			}
 			else
 			{
-				NONpermittedOPTIONS.push_back(it->substr(1, std::string::npos));
+				cout << "options with (-)  ,,,, ----> " << it->substr(1, std::string::npos) << endl;
+				// NONpermittedOPTIONS.push_back(it->substr(1, std::string::npos));
 			}
-			cout << "options with (-)  ,,,, ----> " << it->substr(1, std::string::npos) << endl;
 		}
 		if ((*it)[0] == '+')
 		{
+			cout << "LENgth if plus " << it->length() << endl;
 			if (it->length() > 2)
 			{
-				size_t j = 0;
-				while (j < it->length())
+				size_t j = 1;
+				while (j < it->length() )
 				{
-						permittedOPTIONS.push_back(it->substr(j + 1, std::string::npos));
+					std::string temp = it->substr(j, std::string::npos);
+					cout << "Per " <<  temp << endl;
+					// permittedOPTIONS.push_back(it->substr(j + 1, std::string::npos));
+					j++;
 				}
 			}
-		}
-		else
-		{
-			permittedOPTIONS.push_back(it->substr(1, std::string::npos));
+			else
+			{
+				// permittedOPTIONS.push_back(it->substr(1, std::string::npos));
+				cout << "options with (+)  ,,,, ----> " << it->substr(1, std::string::npos) << endl;
 
+			}
 		}
-		cout << "options with (+)  ,,,, ----> " << it->substr(1, std::string::npos) << endl;
-			
+
 	}
-		// cout << "__ >>> " << *it << endl;
-	
-	
-	puts("\n\n-----contents----------\n\n");
-	printchannelvectorlist(splited);
-	
+	// 	// cout << "__ >>> " << *it << endl;
 
-	
-// MODE #chan +ioktl -o -i +l 100 Bob secret123
-	
+
+	// puts("\n\n-----contents----------\n\n");
+	// printchannelvectorlist(splited);
 
 
 
-	
+/*
+	MODE #chan +ioktl -o -i +l 100 Bob secret123
+*/
+
+
+
+
+
 }
 
