@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Channel.cpp                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: youmoukh <youmoukh@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/10 11:04:43 by youmoukh          #+#    #+#             */
+/*   Updated: 2025/02/10 11:13:56 by youmoukh         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 
 
 #include "Channel.hpp"
@@ -62,15 +74,21 @@ void Channel::removeOperator(Client user)
 }
 
 // Check if a user is an operator
-bool Channel::isOperator(Client user) const
+bool Channel::isOperator(Client user) 
 {
-	(void) user;
-    // return std::find(operators.begin(), operators.end(), user.getClientFd()) != operators.end();
-	return 0x0;
+	
+    for (std::vector<int>::iterator it = operators.begin(); it != operators.end(); ++it)
+	{
+		if (*it == user.getClientFd())
+			return true;
+	}
+    return false;
+
 }
 
 // Set the channel topic
-void Channel::setTopic(std::string newTopic) {
+void Channel::setTopic(std::string newTopic)
+{
     topic = newTopic;
 }
 
@@ -95,9 +113,11 @@ void Channel::broadcast(const std::string& message, int fd)
 }
 
 // Get the channel name
-std::string Channel::getName() const {
+std::string Channel::getName() const
+{
     return name;
 }
+
 
 // Get a list of all users in the channel
 std::string Channel::getUserList()

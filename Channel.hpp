@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Channel.hpp                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: youmoukh <youmoukh@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/10 10:51:48 by youmoukh          #+#    #+#             */
+/*   Updated: 2025/02/10 11:09:21 by youmoukh         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 
 #pragma once
 
@@ -32,7 +44,7 @@ public:
     // Operator Management
     void addOperator(Client user);
     void removeOperator(Client user);
-    bool isOperator(Client user) const;
+    bool isOperator(Client user) ;
 
     // Topic Management
     void setTopic(std::string newTopic);

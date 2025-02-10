@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Server.cpp                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: youmoukh <youmoukh@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/10 13:35:59 by youmoukh          #+#    #+#             */
+/*   Updated: 2025/02/10 13:37:06 by youmoukh         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 
 #include "Macros.hpp"
 
@@ -30,7 +42,8 @@ Channel* Server::createChannel(const std::string& channelName)
 
 
 
-int First_Appearance(std::string Command, Server *Server_CLS,int fd){
+int First_Appearance(std::string Command, Server *Server_CLS,int fd)
+{
     std::map<int ,Client>::iterator it ;
     std::stringstream s(Command);
     std::string Value ;
@@ -66,8 +79,12 @@ void Check_Commands(Server *Server_Cls, std::string Command, int fd)
             NICK_command(Command, fd, Server_Cls);
             break ;
         case MODE :
+		{
+			puts("LEGENDARYYYYYYY");
             MODE_command(Command, fd, Server_Cls);
             break ;
+			
+		}
         case PRIVMSG :
             PRIVMSG_command(Command, fd, Server_Cls);
             break ;

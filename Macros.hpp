@@ -1,3 +1,16 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Macros.hpp                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: youmoukh <youmoukh@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/10 10:52:04 by youmoukh          #+#    #+#             */
+/*   Updated: 2025/02/10 11:09:38 by youmoukh         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+
 #pragma once
 
 
@@ -44,6 +57,9 @@ using namespace std;
 #define JOIN_STR "JOIN"
 #define HELP_STR "HELP"
 #define PART_STR "PART"
+#define MODE_STR "MODE"
+
+
 
 # define GREEN "\e[1;32m"
 # define RESET "\e[0m"
@@ -81,6 +97,7 @@ void 	PRIVMSG_command(std::string Command, int fd, Server *Server_CLS);
 void 	JOIN_command(std::string Command, int fd, Server *Server_CLS);
 void 	HELP_command(std::string Command, int fd, Server *Server_CLS);
 void    PART_command(std::string command, int fd, Server* Server_CLS);
+void    MODE_command(std::string command, int fd, Server* Server_CLS);
 
 /* Extra Temp Func */
 void    printchannelvectorlist(std::vector<std::string> channels);

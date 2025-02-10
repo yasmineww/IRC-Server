@@ -1,3 +1,15 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: youmoukh <youmoukh@student.42.fr>          +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2025/02/10 10:52:26 by youmoukh          #+#    #+#              #
+#    Updated: 2025/02/10 10:54:47 by youmoukh         ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
 
 RED = \033[1;31m
 GREEN = \033[1;32m
@@ -10,6 +22,7 @@ NAME = ircserv
 SRC = main.cpp function_tools.cpp Server.cpp Client.cpp Server_Commands.cpp Channel.cpp \
 	  Join.cpp \
 	  Part.cpp \
+	  Mode.cpp \
 	  Temp.cpp \
 
 OBJS = $(SRC:.cpp=.o)
@@ -29,7 +42,7 @@ all : credit $(NAME)
 
 
 top:
-	@echo "$(GREEN)█████████████████████ Making ft_irc Soup ███████████████████████$(RESET)"
+	@echo "$(GREEN)█████████████████████ Making ft_irc 🍊 ███████████████████████$(RESET)"
 
 $(NAME) : top $(OBJS)
 	@$(CC) $(FLAGS) $(OBJS) -o $(NAME)
@@ -55,9 +68,9 @@ credit:
 	@echo " 			 ┃┃ ┃┗━┛┃┃┃ ┗┛ 				"
 	@echo " 			 ┃┃ ┃┏┓┏┛┃┃ ┏┓ 				"
 	@echo " 			┏┫┣┓┃┃┃┗┓┃┗━┛┃ 				"
-	@echo " 			┗━━┛┗┛┗━┛┗━━━┛ 	$(YELLOW)LAYMOUNA.$(RESET)	"
+	@echo " 			┗━━┛┗┛┗━┛┗━━━┛ 	$(YELLOW)🍊 LAYMOUNA 🍊 $(RESET)	"
 	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-	@echo "━━━━━━━━━┃ Made with $(RED)❤️$(RESET) by : \033[1;91 gyoumoukh ymakhlou mmaghri\033[m ┃━━━━━━━━━"
+	@echo "━━━━━━━━━┃ 🍊 Made with $(RED)❤️$(RESET) by : \033[1;91 gyoumoukh ymakhlou mmaghri\033[m ┃━━━━━━━━━"
 	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
 

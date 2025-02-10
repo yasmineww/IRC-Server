@@ -168,13 +168,6 @@ void PASS_Command(std::string Check, int fd, Server *Server_Cls)
     SENDMESSAGE("ERR_BADPASS\n", fd);
 };
 
-void MODE_command(std::string command, int fd, Server *Server_CLS)
-{
-    (void) command;
-    (void) fd;
-    (void) Server_CLS;
-
-};
 
 void PRIVMSG_command(std::string command, int fd, Server *Server_CLS)
 {

@@ -1,3 +1,16 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Join.cpp                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: youmoukh <youmoukh@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/10 10:52:17 by youmoukh          #+#    #+#             */
+/*   Updated: 2025/02/10 11:19:32 by youmoukh         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+
 #include "Macros.hpp"
 
 
@@ -73,6 +86,8 @@ void JOIN_command(std::string command, int fd, Server *Server_CLS)
             // If channel does not exist, create it with the provided key
             channel = Server_CLS->createChannel(channelName);
             channel->setKey(key); // Set key if provided
+			// giving the client the priveleges to be an operator because he is the first one who creates it
+			channel->addOperator(user);
         }
         else
         {
@@ -97,6 +112,7 @@ void JOIN_command(std::string command, int fd, Server *Server_CLS)
             continue;
         }
 
+		
 
         // Add the user to the channel
         channel->addUser(user, fd);
@@ -104,7 +120,6 @@ void JOIN_command(std::string command, int fd, Server *Server_CLS)
         // Broadcast JOIN message to the channel
         std::string joinMessage = ":" + user.getNickName() + " JOIN " + channelName + "\r\n";
         channel->broadcast(joinMessage, fd);
-		puts("HAAANANANANANANANANANANANANANANAN");
 
         // Send the topic message if the channel has a topic
         if (!channel->getTopic().empty())
@@ -116,6 +131,9 @@ void JOIN_command(std::string command, int fd, Server *Server_CLS)
         // Send the names list to the user
         std::string namesList = ":server 353 " + user.getNickName() + " = " + channelName + " :" + channel->getUserList() + "\r\n";
         send(fd, namesList.c_str(), namesList.length(), 0);
+		
+		// Printing the Client details :
+
 
 	}
 }
