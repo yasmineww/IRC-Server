@@ -16,7 +16,8 @@ void Channel::addUser(Client user, int fd)
 }
 
 // Remove user from channel
-void Channel::removeUser(Client user) {
+void Channel::removeUser(Client user)
+{
     users.erase(user.getClientFd());
 
     // Remove from operator list if they were an operator
