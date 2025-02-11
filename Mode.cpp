@@ -14,19 +14,47 @@
 
 
 // check if an option is already exits so we cannot store it again
-bool	Is_Already_exist(std::vector<std::string> NONpermittedOPTIONS, std::vector<std::string> NONpermittedOPTIONS,, std::string option)
+bool	Is_Already_exist(std::vector<std::string> container, std::string option)
 {
-	for (std::vector<std::string>::iterator it = hector.begin(); it < hector.end(); ++it)
+	for (std::vector<std::string>::iterator it = container.begin(); it < container.end(); ++it)
 	{
 		if (*it == option)
-		{
-			cout << "Option " << option << " is already existed" << endl;
 			return false;
-		}
 	}
 	return true;
 }
 
+void i_t_verification(std::vector<std::string> &permittedOPTIONS, std::vector<std::string> &NONpermittedOPTIONS)
+{
+    std::vector<std::vector<std::string>::iterator> toErasePer, toEraseNon;
+
+    for (std::vector<std::string>::iterator it = permittedOPTIONS.begin(); it != permittedOPTIONS.end(); ++it)
+	{
+
+        for (std::vector<std::string>::iterator it1 = NONpermittedOPTIONS.begin(); it1 != NONpermittedOPTIONS.end(); ++it1)
+		{
+            if ((*it == "i" || *it == "t") && *it == *it1)
+			{
+                toErasePer.push_back(it);
+                toEraseNon.push_back(it1);
+            }
+        }
+    }
+
+    // Erase Doubles from permittedOPTIONS
+    for (size_t i = 0; i < toErasePer.size(); ++i)
+        permittedOPTIONS.erase(toErasePer[i]);
+
+    // Erase Doubles from NONpermittedOPTIONS
+    for (size_t j = 0; j < toEraseNon.size(); ++j)
+        NONpermittedOPTIONS.erase(toEraseNon[j]);
+}
+
+/*
+
+MODE #chan +ioktl -o -i -t +l 100 Bob secret123
+
+*/
 
 void	store_options(std::vector<std::string> &splited, std::vector<std::string> &permittedOPTIONS, std::vector<std::string> &NONpermittedOPTIONS, std::vector<std::string> &Values, std::string &chanName)
 {
@@ -45,14 +73,14 @@ void	store_options(std::vector<std::string> &splited, std::vector<std::string> &
 				while (j < it->length())
 				{
 					std::string temp(1, (*it)[j]);
-					if (Is_Already_exist(NONpermittedOPTIONS, permittedOPTIONS, temp))
+					if (Is_Already_exist(NONpermittedOPTIONS, temp))
 							NONpermittedOPTIONS.push_back(temp);
 					j++;
 				}
 			}
 			else
 			{
-				if (Is_Already_exist(NONpermittedOPTIONS, permittedOPTIONS, (it->substr(1, std::string::npos))))
+				if (Is_Already_exist(NONpermittedOPTIONS, (it->substr(1, std::string::npos))))
 					NONpermittedOPTIONS.push_back(it->substr(1, std::string::npos));
 			}
 		}
@@ -64,14 +92,14 @@ void	store_options(std::vector<std::string> &splited, std::vector<std::string> &
 				while (j < it->length())
 				{
 					std::string temp1(1, (*it)[j]);
-					if (Is_Already_exist(NONpermittedOPTIONS, permittedOPTIONS, temp1))
+					if (Is_Already_exist(NONpermittedOPTIONS, temp1))
 						permittedOPTIONS.push_back(temp1);
 					j++;
 				}
 			}
 			else
 			{
-				if (Is_Already_exist(NONpermittedOPTIONS, permittedOPTIONS, it->substr(1, std::string::npos)))
+				if (Is_Already_exist(permittedOPTIONS, it->substr(1, std::string::npos)))
 					permittedOPTIONS.push_back(it->substr(1, std::string::npos));
 			}
 		} // options finished.
@@ -88,86 +116,154 @@ void	store_options(std::vector<std::string> &splited, std::vector<std::string> &
 	// Verify for repeated options like : MODE #chan -i +i -t +t
 	// this verification is only for i and t
 
-	// i_t_verification(permittedOPTIONS, NONpermittedOPTIONS);
+	i_t_verification(permittedOPTIONS, NONpermittedOPTIONS);
+
+    cout << "DONE storing ✅ " << endl;
 
 }
 
 void    MODE_command(std::string command, int fd, Server* Server_CLS)
 {
 
-	Client user = Server_CLS->Users[fd];
+    cout << "Client FD == " << fd << endl;
+    cout << "---->>>>> cmd -----> " << command << endl;
+    Client user = Server_CLS->Users[fd];
 
-    // if (!user.check_Authentication())
-	// 	return SENDMESSAGE("LAYMONA * : You are not registred\n", fd);
-
-	cout << "---->>>>> cmd -----> " << command << endl;
+    if (!user.check_Authentication())
+		return SENDMESSAGE("LAYMONA * : You are not registred\n", fd);
 
 
 	std::stringstream ss(command);
 	std::string minicmd;
 	std::string chanName;
-
-
 	std::vector<std::string> splited; // split command into words
 	std::vector<std::string> Values; //to store values
 	std::vector<std::string> permittedOPTIONS;  // to store options with (+)
 	std::vector<std::string> NONpermittedOPTIONS; // to store options with (-)
-
-
 
 	while (std::getline(ss, minicmd, ' '))
 		splited.push_back(minicmd);
 
 	chanName = splited[1];
 
-
-
 	cout << "chan Name : " << chanName <<  endl;
 
-	// FULL FILL Parametres : OPTIONS values 
+	// FULL FILL Parametres : OPTIONS values
 	store_options(splited, permittedOPTIONS, NONpermittedOPTIONS, Values, chanName);
 
-
-
-	// 	// cout << "__ >>> " << *it << endl;
-
-
 	puts("\n\n-----contents----------\n\n");
-	printchannelvectorlist("splited", splited);
-	printchannelvectorlist("Values", Values);
-	printchannelvectorlist("permittedOPTIONS", permittedOPTIONS);
-	printchannelvectorlist("NONpermittedOPTIONS", NONpermittedOPTIONS);
+	printchannelvectorlist("cmd splited", splited); printchannelvectorlist("permittedOPTIONS", permittedOPTIONS); printchannelvectorlist("NONpermittedOPTIONS", NONpermittedOPTIONS); printchannelvectorlist("Values", Values);
+
+    // Check if the channel exists
+    Channel *channel = Server_CLS->getChannel(chanName);
+    if (!channel)
+        return SENDMESSAGE(":Server 403 " + user.getNickName() + " " + chanName + " :No such channel\n", fd);
+
+
+
+    cout << " just here " << endl;
+    // Verify that the user has operator privileges to modify modes
+    if (channel->isOperator(fd) == false)
+    {
+        cout << " wa 3ami lmsg ha l3ar la ma ban " << endl;
+        return SENDMESSAGE(":Server 482 " + user.getNickName() + " " + chanName + " :You're not a channel operator\n", fd);
+    }
+    else
+    {
+        cout << "the user is an operator " << endl;
+    }
+    channel->print_operators();
+
+    return ;
+    // Apply permitted modes (+)
+    for (size_t i = 0, valIndex = 0; i < permittedOPTIONS.size(); i++) {
+        std::string mode = permittedOPTIONS[i];
+
+        if (mode == "i") {
+            channel->setInviteOnly(true);
+        }
+        else if (mode == "t") {
+            channel->setTopicRestricted(true);
+        }
+        else if (mode == "k") {
+            if (valIndex < Values.size()) {
+                channel->setKey(Values[valIndex++]);  // Assign password
+            } else {
+                SENDMESSAGE(":Server 461 " + user.getNickName() + " MODE +k :Not enough parameters\n", user.getClientFd());
+            }
+        }
+        else if (mode == "o") {
+            if (valIndex < Values.size()) {
+                Client *target = Server_CLS->getClientByName(Values[valIndex++]);
+                if (target && channel->hasUser(*target)) {
+                    channel->addOperator(target->getClientFd());
+                } else {
+                    SENDMESSAGE(":Server 401 " + user.getNickName() + " " + Values[valIndex - 1] + " :No such nick\n", user.getClientFd());
+                }
+            } else {
+                SENDMESSAGE(":Server 461 " + user.getNickName() + " MODE +o :Not enough parameters\n", user.getClientFd());
+            }
+        }
+        else if (mode == "l") {
+            if (valIndex < Values.size()) {
+                int limit = std::atoi(Values[valIndex++].c_str());
+                channel->setUserLimit(limit);
+            } else {
+                SENDMESSAGE(":Server 461 " + user.getNickName() + " MODE +l :Not enough parameters\n", user.getClientFd());
+            }
+        }
+    }
+
+    // Apply non-permitted modes (-)
+    for (size_t i = 0, valIndex = 0; i < NONpermittedOPTIONS.size(); i++) {
+        std::string mode = NONpermittedOPTIONS[i];
+
+        if (mode == "i") {
+            channel->setInviteOnly(false);
+        }
+        else if (mode == "t") {
+            channel->setTopicRestricted(false);
+        }
+        else if (mode == "k") {
+            channel->removeKey();
+        }
+        else if (mode == "o") {
+            if (valIndex < Values.size()) {
+                Client *target = Server_CLS->getClientByName(Values[valIndex++]);
+                if (target && channel->hasUser(*target)) {
+                    channel->removeOperator(target->getClientFd());
+                } else {
+                    SENDMESSAGE(":Server 401 " + user.getNickName() + " " + Values[valIndex - 1] + " :No such nick\n", user.getClientFd());
+                }
+            } else {
+                SENDMESSAGE(":Server 461 " + user.getNickName() + " MODE -o :Not enough parameters\n", user.getClientFd());
+            }
+        }
+        else if (mode == "l") {
+            channel->removeUserLimit();
+        }
+    }
+
+    // Broadcast mode changes to all users in the channel
+    std::string modeChangeMessage = ":" + user.getNickName() + " MODE " + chanName;
+
+    for (size_t i = 0; i < permittedOPTIONS.size(); i++) modeChangeMessage += " +" + permittedOPTIONS[i];
+    for (size_t i = 0; i < NONpermittedOPTIONS.size(); i++) modeChangeMessage += " -" + NONpermittedOPTIONS[i];
+
+    channel->broadcast(modeChangeMessage + "\n", fd);
+
+
+
 
 }
 
 /*
 	- working on the worst case :
 
-MODE #chan +ioktl -o -i +l 100 Bob secret123
+MODE #chan +ioktl -o -i -t +l 100 Bob secret123
 
 */
 
-
-// In the IRC MODE command for channels (RFC 1459), the following mode options require values (parameters):
-/*
-
-
-Mode	Description	Requires Parameter?	Parameter Type
-
-+k	Set a channel key (password)	----->	Key (string)
-+l	Set a user limit for the channel	----->	Limit (integer)
-+o	Grant operator status to a user ----->	Nickname (string)
-
-
-*/
-
-
-
-
-// Example Usage
-// bash
-// Copy
-// Edit
 // MODE #channel +k secret123   # Sets channel key to "secret123"
 // MODE #channel +l 50          # Limits channel to 50 users
 // MODE #channel +o Alice       # Gives operator rights to Alice

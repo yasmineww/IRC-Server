@@ -26,8 +26,11 @@ class Channel
     	std::map<int, Client> users;        // Users in the channel (key: fd, value: pointer to User)
     	std::vector<int> operators;        // List of operator FDs (can be optimized)
         std::string _key;
+        bool    inviteOnly;
+        bool    topicRestricted;
+        int     userLimit;
 
-public:
+        public:
     // Constructor & Destructor
 
     Channel(std::string _name, std::string key = "") : name(_name), _key(key) {}
@@ -38,13 +41,13 @@ public:
 
     // User Management
     void addUser(Client user, int fd);
-    void removeUser(Client user);
+    void removeUser(int fd);
     bool isUserInChannel(int fd) ;
 
     // Operator Management
-    void addOperator(Client user);
-    void removeOperator(Client user);
-    bool isOperator(Client user) ;
+    void addOperator(int fd);
+    void removeOperator(int fd);
+    bool isOperator(int fd) ;
 
     // Topic Management
     void setTopic(std::string newTopic);
@@ -64,8 +67,99 @@ public:
     void setKey(const std::string &key) ;
 
 
-    // PART cmd
-    void removeUser(int fd);
+
+        // Add an operator to the channel
+
+        // Remove an operator from the channel
+
+        // Check if a user is in the channel
+        bool hasUser(Client& client) {
+            return users.find(client.getClientFd()) != users.end();
+        }
+
+        // Add a user to the channel
+        // void addUser(Client& client)
+        // {
+        //     users[client.getClientFd()] = &client;
+        // }
+
+
+
+        // Set the channel to invite-only mode (+i)
+        void setInviteOnly(bool state)
+        {
+            inviteOnly = state;
+        }
+
+        // Check if the channel is invite-only
+        bool isInviteOnly() const
+        {
+            return inviteOnly;
+        }
+
+        // Set the channel topic restriction mode (+t)
+        void setTopicRestricted(bool state)
+        {
+            topicRestricted = state;
+        }
+
+        // Check if topic is restricted to operators
+        bool isTopicRestricted() const
+        {
+            return topicRestricted;
+        }
+
+
+
+        // Remove the channel key (-k)
+        void removeKey()
+        {
+            _key.clear();
+        }
+
+        // Check if the channel has a key set
+        bool hasKey() const
+        {
+            return !_key.empty();
+        }
+
+
+        // Set a user limit for the channel (+l)
+        void setUserLimit(int limit)
+        {
+            userLimit = limit;
+        }
+
+        // Remove the user limit (-l)
+        void removeUserLimit()
+        {
+            userLimit = -1;
+        }
+
+        // Get the user limit (-1 means no limit)
+        int getUserLimit() const {
+            return userLimit;
+        }
+
+        // Get the number of users in the channel
+        int getUserCount() const
+        {
+            return users.size();
+        }
+
+
+        // printf op
+        void print_operators(){
+
+            // cout << " OPERATORSSSS   >>> " << endl;
+            std::cout << "Number of operators: " << operators.size() << std::endl;
+
+            for (std::vector<int>::iterator it = operators.begin(); it != operators.end(); ++it) {
+                std::cout << "->>>>>>> " << *it << std::endl;
+            }
+
+        }
+
 
 
 };

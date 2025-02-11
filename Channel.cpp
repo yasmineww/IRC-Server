@@ -24,22 +24,10 @@ Channel::~Channel() {}
 // Add user to channel
 void Channel::addUser(Client user, int fd)
 {
+    cout << "adding user " << endl;
     users[fd] = user;
 }
 
-// Remove user from channel
-void Channel::removeUser(Client user)
-{
-    users.erase(user.getClientFd());
-
-    // Remove from operator list if they were an operator
-    for (std::vector<int>::iterator it = operators.begin(); it != operators.end(); ++it) {
-        if (*it == user.getClientFd()) {
-            operators.erase(it);
-            break;
-        }
-    }
-}
 
 // Check if a user is in the channel
 bool Channel::isUserInChannel(int fd)
@@ -54,19 +42,25 @@ bool Channel::isUserInChannel(int fd)
 }
 
 // Add operator
-void Channel::addOperator(Client user)
+void Channel::addOperator(int fd)
 {
-    if (!isOperator(user)) {
-        operators.push_back(user.getClientFd());
+    if (!isOperator(fd))
+    {
+        cout << "adding the client to be operator " << endl;
+        cout << "fd from channel " << fd << endl;
+        operators.push_back(fd);
+        std::cout << "Number of operators: FIRSTTTTTTT " << operators.size() << std::endl;
+
     }
 }
 
 // Remove operator
-void Channel::removeOperator(Client user)
+void Channel::removeOperator(int fd)
 {
     for (std::vector<int>::iterator it = operators.begin(); it != operators.end(); ++it)
 	{
-        if (*it == user.getClientFd()) {
+        if (*it == fd)
+        {
             operators.erase(it);
             break;
         }
@@ -74,14 +68,10 @@ void Channel::removeOperator(Client user)
 }
 
 // Check if a user is an operator
-bool Channel::isOperator(Client user) 
+bool Channel::isOperator(int fd)
 {
-	
-    for (std::vector<int>::iterator it = operators.begin(); it != operators.end(); ++it)
-	{
-		if (*it == user.getClientFd())
-			return true;
-	}
+    if (users.find(fd) != users.end())
+		return true;
     return false;
 
 }
@@ -93,7 +83,8 @@ void Channel::setTopic(std::string newTopic)
 }
 
 // Get the channel topic
-std::string Channel::getTopic() const {
+std::string Channel::getTopic() const
+{
     return topic;
 }
 
@@ -124,20 +115,20 @@ std::string Channel::getUserList()
 {
     std::stringstream ss;
     for (std::map<int, Client>::iterator it = users.begin(); it != users.end(); ++it)
-	{
         ss << it->second.getNickName() << " ";
-    }
     return ss.str();
 }
 
 
 // Function to get the key of the channel
-std::string Channel::getKey() const {
+std::string Channel::getKey() const
+{
     return _key;
 }
 
 // Function to set/change the key of the channel
-void Channel::setKey(const std::string &key) {
+void Channel::setKey(const std::string &key)
+{
     _key = key;
 }
 

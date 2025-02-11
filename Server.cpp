@@ -83,7 +83,7 @@ void Check_Commands(Server *Server_Cls, std::string Command, int fd)
 			puts("LEGENDARYYYYYYY");
             MODE_command(Command, fd, Server_Cls);
             break ;
-			
+
 		}
         case PRIVMSG :
             PRIVMSG_command(Command, fd, Server_Cls);

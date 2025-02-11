@@ -60,6 +60,17 @@ class Server
             return Client_User.fd;
         }
 
+        Client* getClientByName(const std::string& nickname)
+        {
+            for (std::map<int, Client>::iterator it = Users.begin(); it != Users.end(); ++it) {
+                if (it->second.getNickName() == nickname) {
+                    return &it->second;  // Return pointer to the found client
+                }
+            }
+            return NULL;  // Return NULL if no client is found
+        }
+
+
 };
 
 std::string	Welcome_mssg(void);

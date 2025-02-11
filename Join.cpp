@@ -16,6 +16,8 @@
 
 void JOIN_command(std::string command, int fd, Server *Server_CLS)
 {
+
+    cout << " JOIn FD +++ = " << fd << endl;
     // Retrieve the user from the server's Users map
     Client user = Server_CLS->Users[fd];
 
@@ -24,21 +26,12 @@ void JOIN_command(std::string command, int fd, Server *Server_CLS)
 
     ss >> cmd >> channelList >> keyList;  // Extract parts: command, channels, keys (if any)
 
-
-
-	cout << "cmd <-> " << cmd << endl;
-	cout << "keys <------> " << keyList << endl;
-	cout << "chan names <---> " << channelList << endl;
-
     // Ensure user is authenticated
     if (!user.check_Authentication())
-    {
-        SENDMESSAGE("LAYMONA * : " + user.getNickName() + " You have not registered\n", fd);
-        return;
-    }
+        return SENDMESSAGE("LAYMONA * : " + user.getNickName() + " You have not registered\n", fd);
+
     std::vector<std::string> channels;
     std::vector<std::string> keys;
-
 
     // Split channel names by commas
     size_t pos = 0;
@@ -74,7 +67,8 @@ void JOIN_command(std::string command, int fd, Server *Server_CLS)
         std::string key = (i < keys.size()) ? keys[i] : ""; // Get key if provided
 
         // Validate channel name
-        if (channelName.empty() || (channelName[0] != '#' && channelName[0] != '&')) {
+        if (channelName.empty() || (channelName[0] != '#' && channelName[0] != '&'))
+        {
             SENDMESSAGE("ERROR :Invalid channel name\r\n", fd);
             continue;
         }
@@ -83,16 +77,18 @@ void JOIN_command(std::string command, int fd, Server *Server_CLS)
         Channel* channel = Server_CLS->getChannel(channelName);
         if (!channel)
         {
+            cout << "dont know why THE MOTHEF** is here ,, here's his FD : " << fd  << endl;
             // If channel does not exist, create it with the provided key
             channel = Server_CLS->createChannel(channelName);
             channel->setKey(key); // Set key if provided
 			// giving the client the priveleges to be an operator because he is the first one who creates it
-			channel->addOperator(user);
+			channel->addOperator(fd);
         }
         else
         {
             // If channel has a key, check if the user provided the correct one
-            if (!channel->getKey().empty() && channel->getKey() != key) {
+            if (!channel->getKey().empty() && channel->getKey() != key)
+            {
                 SENDMESSAGE("ERROR :Incorrect channel key\r\n", fd);
                 continue;
             }
@@ -125,15 +121,14 @@ void JOIN_command(std::string command, int fd, Server *Server_CLS)
         if (!channel->getTopic().empty())
 		{
             std::string topicMessage = ":server 332 " + user.getNickName() + " " + channelName + " :" + channel->getTopic() + "\r\n";
-            send(fd, topicMessage.c_str(), topicMessage.length(), 0);
+            SENDMESSAGE(topicMessage, fd);
         }
 
         // Send the names list to the user
         std::string namesList = ":server 353 " + user.getNickName() + " = " + channelName + " :" + channel->getUserList() + "\r\n";
-        send(fd, namesList.c_str(), namesList.length(), 0);
+        SENDMESSAGE(namesList, fd);
 
-		// Printing the Client details :
-
+        channel->print_operators();
 
 	}
 }
