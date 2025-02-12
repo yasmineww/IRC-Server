@@ -123,9 +123,6 @@ void	store_options(std::vector<std::string> &splited, std::vector<std::string> &
 
 void    MODE_command(std::string command, int fd, Server* Server_CLS)
 {
-
-    cout << "Client FD == " << fd << endl;
-    // cout << "---->>>>> cmd -----> " << command << endl;
     Client user = Server_CLS->Users[fd];
 
     // if (!user.check_Authentication())
@@ -158,7 +155,7 @@ void    MODE_command(std::string command, int fd, Server* Server_CLS)
     if (!channel)
         return SENDMESSAGE(":Server 403 " + user.getNickName() + " " + chanName + " :No such channel\n", fd);
 
-
+    cout << "channel user limit : " << channel->getUserLimit();
 
     cout << " just here " << endl;
     // Verify that the user has operator privileges to modify modes
@@ -166,7 +163,8 @@ void    MODE_command(std::string command, int fd, Server* Server_CLS)
         return SENDMESSAGE(":Server 482 " + user.getNickName() + " " + chanName + " :You're not a channel operator\n", fd);
 
     // Apply permitted modes (+)
-    for (size_t i = 0, valIndex = 0; i < permittedOPTIONS.size(); i++) {
+    for (size_t i = 0, valIndex = 0; i < permittedOPTIONS.size(); i++)
+    {
         std::string mode = permittedOPTIONS[i];
 
         if (mode == "i") {
@@ -201,6 +199,8 @@ void    MODE_command(std::string command, int fd, Server* Server_CLS)
             {
                 int limit = std::atoi(Values[valIndex++].c_str());
                 channel->setUserLimit(limit);
+
+                cout << "user limits after : " << channel->getUserLimit() << endl;
             }
             else
                 SENDMESSAGE(":Server 461 " + user.getNickName() + " MODE +l :Not enough parameters\n", user.getClientFd());

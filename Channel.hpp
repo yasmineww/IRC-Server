@@ -31,13 +31,20 @@ class Channel
         int     userLimit;
 
         public:
+        int     ClientsAmount;
     // Constructor & Destructor
 
-    Channel(std::string _name, std::string key = "") : name(_name), _key(key) {}
+    Channel(std::string _name, std::string key = "") : name(_name), _key(key)
+    {
+        ClientsAmount = 0;
+        userLimit = -1;
+    }
 
 
 
     ~Channel();
+
+
 
     // User Management
     void addUser(Client user, int fd);
@@ -98,7 +105,10 @@ class Channel
             return topicRestricted;
         }
 
-
+        int getOperatorsSize()
+        {
+            return operators.size();
+        }
 
         // Remove the channel key (-k)
         void removeKey()

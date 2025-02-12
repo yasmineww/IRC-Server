@@ -28,6 +28,10 @@ void JOIN_command(std::string command, int fd, Server *Server_CLS)
     if (!user.check_Authentication())
         return SENDMESSAGE("LAYMONA * : " + user.getNickName() + " You have not registered\n", fd);
 
+
+    // Check MODE
+
+
     std::vector<std::string> channels;
     std::vector<std::string> keys;
 
@@ -84,6 +88,7 @@ void JOIN_command(std::string command, int fd, Server *Server_CLS)
                 continue;
             }
         }
+
 
         // Check if the user is already in the channel
         if (channel->isUserInChannel(fd))

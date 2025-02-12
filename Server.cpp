@@ -192,7 +192,8 @@ void Server_Socket_Creation(std::string Port, std::string Pass_Code)
         server_Cls.poll_strc.fd = server_Cls.socket_connection ;
         server_Cls.poll_strc.events = POLLIN ;
         server_Cls.pollAr.push_back(server_Cls.poll_strc);
-        while (1){
+        while (1)
+        {
             server_Cls.poll_returnV = poll(server_Cls.pollAr.data(), server_Cls.pollAr.size(), -1);
             if (server_Cls.poll_returnV > 0){
                 if (server_Cls.pollAr[0].revents & POLLIN) {
