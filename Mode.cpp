@@ -12,7 +12,6 @@
 
 #include "Macros.hpp"
 
-
 // check if an option is already exits so we cannot store it again
 bool	Is_Already_exist(std::vector<std::string> container, std::string option)
 {
@@ -126,11 +125,11 @@ void    MODE_command(std::string command, int fd, Server* Server_CLS)
 {
 
     cout << "Client FD == " << fd << endl;
-    cout << "---->>>>> cmd -----> " << command << endl;
+    // cout << "---->>>>> cmd -----> " << command << endl;
     Client user = Server_CLS->Users[fd];
 
-    if (!user.check_Authentication())
-		return SENDMESSAGE("LAYMONA * : You are not registred\n", fd);
+    // if (!user.check_Authentication())
+	// 	return SENDMESSAGE("LAYMONA * : You are not registred\n", fd);
 
 
 	std::stringstream ss(command);
@@ -146,13 +145,13 @@ void    MODE_command(std::string command, int fd, Server* Server_CLS)
 
 	chanName = splited[1];
 
-	cout << "chan Name : " << chanName <<  endl;
+	// cout << "chan Name : " << chanName <<  endl;
 
 	// FULL FILL Parametres : OPTIONS values
 	store_options(splited, permittedOPTIONS, NONpermittedOPTIONS, Values, chanName);
 
-	puts("\n\n-----contents----------\n\n");
-	printchannelvectorlist("cmd splited", splited); printchannelvectorlist("permittedOPTIONS", permittedOPTIONS); printchannelvectorlist("NONpermittedOPTIONS", NONpermittedOPTIONS); printchannelvectorlist("Values", Values);
+	// puts("\n\n-----contents----------\n\n");
+	// printchannelvectorlist("cmd splited", splited); printchannelvectorlist("permittedOPTIONS", permittedOPTIONS); printchannelvectorlist("NONpermittedOPTIONS", NONpermittedOPTIONS); printchannelvectorlist("Values", Values);
 
     // Check if the channel exists
     Channel *channel = Server_CLS->getChannel(chanName);
@@ -164,15 +163,7 @@ void    MODE_command(std::string command, int fd, Server* Server_CLS)
     cout << " just here " << endl;
     // Verify that the user has operator privileges to modify modes
     if (channel->isOperator(fd) == false)
-    {
-        cout << " wa 3ami lmsg ha l3ar la ma ban " << endl;
         return SENDMESSAGE(":Server 482 " + user.getNickName() + " " + chanName + " :You're not a channel operator\n", fd);
-    }
-    else
-    {
-        cout << "the user is an operator " << endl;
-    }
-    channel->print_operators();
 
     return ;
     // Apply permitted modes (+)

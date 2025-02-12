@@ -27,8 +27,8 @@ void JOIN_command(std::string command, int fd, Server *Server_CLS)
     ss >> cmd >> channelList >> keyList;  // Extract parts: command, channels, keys (if any)
 
     // Ensure user is authenticated
-    if (!user.check_Authentication())
-        return SENDMESSAGE("LAYMONA * : " + user.getNickName() + " You have not registered\n", fd);
+    // if (!user.check_Authentication())
+    //     return SENDMESSAGE("LAYMONA * : " + user.getNickName() + " You have not registered\n", fd);
 
     std::vector<std::string> channels;
     std::vector<std::string> keys;

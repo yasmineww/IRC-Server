@@ -70,8 +70,13 @@ void Channel::removeOperator(int fd)
 // Check if a user is an operator
 bool Channel::isOperator(int fd)
 {
-    if (users.find(fd) != users.end())
+    if (std::find(operators.begin(), operators.end(), fd) != operators.end())
+    {
+        cout << "fd from vector " << users.find(fd)->first << endl;
+        cout << "fd  " << fd << endl;
+        cout << "is everyone ADMIN " << endl;
 		return true;
+    }
     return false;
 
 }

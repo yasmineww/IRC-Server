@@ -79,12 +79,8 @@ void Check_Commands(Server *Server_Cls, std::string Command, int fd)
             NICK_command(Command, fd, Server_Cls);
             break ;
         case MODE :
-		{
-			puts("LEGENDARYYYYYYY");
             MODE_command(Command, fd, Server_Cls);
             break ;
-
-		}
         case PRIVMSG :
             PRIVMSG_command(Command, fd, Server_Cls);
             break ;
@@ -98,7 +94,7 @@ void Check_Commands(Server *Server_Cls, std::string Command, int fd)
             PART_command(Command, fd, Server_Cls);
             break ;
         default :
-            std::cout << "-> " << Command << std::endl ;
+            std::cout << "THE LINE U JUST ENTRED As Client --> :  " << Command << std::endl ;
             break ;
     }
 };
