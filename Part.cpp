@@ -68,7 +68,7 @@ void    PART_command(std::string command, int fd, Server* Server_CLS)
 
         // Send PART message to all users in the channel
         std::string partMessage = ":" + user.getNickName() + " PART " + chanName + "\r\n";
-        channnel->broadcast(partMessage, fd);
+        channnel->broadcast(partMessage);
     }
 
 

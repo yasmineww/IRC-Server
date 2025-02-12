@@ -54,7 +54,7 @@ class Channel
     std::string getTopic() const;
 
     // Message Broadcasting
-    void broadcast(const std::string& message, int fd);
+    void broadcast(const std::string& message);
 
     // Getters
     std::string getName() const;
@@ -68,21 +68,10 @@ class Channel
 
 
 
-        // Add an operator to the channel
-
-        // Remove an operator from the channel
-
         // Check if a user is in the channel
         bool hasUser(Client& client) {
             return users.find(client.getClientFd()) != users.end();
         }
-
-        // Add a user to the channel
-        // void addUser(Client& client)
-        // {
-        //     users[client.getClientFd()] = &client;
-        // }
-
 
 
         // Set the channel to invite-only mode (+i)

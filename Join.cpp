@@ -16,8 +16,6 @@
 
 void JOIN_command(std::string command, int fd, Server *Server_CLS)
 {
-
-    cout << " JOIn FD +++ = " << fd << endl;
     // Retrieve the user from the server's Users map
     Client user = Server_CLS->Users[fd];
 
@@ -27,8 +25,8 @@ void JOIN_command(std::string command, int fd, Server *Server_CLS)
     ss >> cmd >> channelList >> keyList;  // Extract parts: command, channels, keys (if any)
 
     // Ensure user is authenticated
-    // if (!user.check_Authentication())
-    //     return SENDMESSAGE("LAYMONA * : " + user.getNickName() + " You have not registered\n", fd);
+    if (!user.check_Authentication())
+        return SENDMESSAGE("LAYMONA * : " + user.getNickName() + " You have not registered\n", fd);
 
     std::vector<std::string> channels;
     std::vector<std::string> keys;
@@ -42,8 +40,6 @@ void JOIN_command(std::string command, int fd, Server *Server_CLS)
     }
     channels.push_back(channelList); // Add the last channel
 
-    printchannelvectorlist("channels", channels);
-
     // Split keys by commas (if any keys exist)
     if (!keyList.empty())
     {
@@ -55,10 +51,6 @@ void JOIN_command(std::string command, int fd, Server *Server_CLS)
         }
         keys.push_back(keyList); // Add the last key
     }
-
-    printchannelvectorlist("keys", keys);
-
-
 
     // Iterate through each channel
     for (size_t i = 0; i < channels.size(); i++)
@@ -77,7 +69,6 @@ void JOIN_command(std::string command, int fd, Server *Server_CLS)
         Channel* channel = Server_CLS->getChannel(channelName);
         if (!channel)
         {
-            cout << "dont know why THE MOTHEF** is here ,, here's his FD : " << fd  << endl;
             // If channel does not exist, create it with the provided key
             channel = Server_CLS->createChannel(channelName);
             channel->setKey(key); // Set key if provided
@@ -108,14 +99,12 @@ void JOIN_command(std::string command, int fd, Server *Server_CLS)
             continue;
         }
 
-
-
         // Add the user to the channel
         channel->addUser(user, fd);
 
         // Broadcast JOIN message to the channel
         std::string joinMessage = ":" + user.getNickName() + " JOIN " + channelName + "\r\n";
-        channel->broadcast(joinMessage, fd);
+        channel->broadcast(joinMessage);
 
         // Send the topic message if the channel has a topic
         if (!channel->getTopic().empty())
@@ -126,9 +115,7 @@ void JOIN_command(std::string command, int fd, Server *Server_CLS)
 
         // Send the names list to the user
         std::string namesList = ":server 353 " + user.getNickName() + " = " + channelName + " :" + channel->getUserList() + "\r\n";
+        channel->broadcast(namesList);
         SENDMESSAGE(namesList, fd);
-
-        channel->print_operators();
-
 	}
 }

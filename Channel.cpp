@@ -24,7 +24,6 @@ Channel::~Channel() {}
 // Add user to channel
 void Channel::addUser(Client user, int fd)
 {
-    cout << "adding user " << endl;
     users[fd] = user;
 }
 
@@ -34,10 +33,7 @@ bool Channel::isUserInChannel(int fd)
 {
 
     if (users.find(fd) != users.end())
-    {
-        puts("THE USER IS IN THE CHANNEL");
         return true;
-    }
     return (false);
 }
 
@@ -45,13 +41,7 @@ bool Channel::isUserInChannel(int fd)
 void Channel::addOperator(int fd)
 {
     if (!isOperator(fd))
-    {
-        cout << "adding the client to be operator " << endl;
-        cout << "fd from channel " << fd << endl;
         operators.push_back(fd);
-        std::cout << "Number of operators: FIRSTTTTTTT " << operators.size() << std::endl;
-
-    }
 }
 
 // Remove operator
@@ -71,12 +61,7 @@ void Channel::removeOperator(int fd)
 bool Channel::isOperator(int fd)
 {
     if (std::find(operators.begin(), operators.end(), fd) != operators.end())
-    {
-        cout << "fd from vector " << users.find(fd)->first << endl;
-        cout << "fd  " << fd << endl;
-        cout << "is everyone ADMIN " << endl;
 		return true;
-    }
     return false;
 
 }
@@ -94,18 +79,14 @@ std::string Channel::getTopic() const
 }
 
 // Broadcast message to all users in the channel
-void Channel::broadcast(const std::string& message, int fd)
+void Channel::broadcast(const std::string& message)
 {
-    (void) fd;
     for (std::map<int, Client>::iterator it = users.begin(); it != users.end(); ++it)
     {
         int FD = it->first;
         if (isUserInChannel(FD))
             SENDMESSAGE(message, FD);
     }
-
-    // SENDMESSAGE(message, fd);
-        // send(fd, message.c_str(), message.length(), 0);
 }
 
 // Get the channel name

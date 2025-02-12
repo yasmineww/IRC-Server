@@ -165,7 +165,6 @@ void    MODE_command(std::string command, int fd, Server* Server_CLS)
     if (channel->isOperator(fd) == false)
         return SENDMESSAGE(":Server 482 " + user.getNickName() + " " + chanName + " :You're not a channel operator\n", fd);
 
-    return ;
     // Apply permitted modes (+)
     for (size_t i = 0, valIndex = 0; i < permittedOPTIONS.size(); i++) {
         std::string mode = permittedOPTIONS[i];
@@ -176,63 +175,64 @@ void    MODE_command(std::string command, int fd, Server* Server_CLS)
         else if (mode == "t") {
             channel->setTopicRestricted(true);
         }
-        else if (mode == "k") {
-            if (valIndex < Values.size()) {
+        else if (mode == "k")
+        {
+            if (valIndex < Values.size())
                 channel->setKey(Values[valIndex++]);  // Assign password
-            } else {
+            else
                 SENDMESSAGE(":Server 461 " + user.getNickName() + " MODE +k :Not enough parameters\n", user.getClientFd());
-            }
         }
-        else if (mode == "o") {
-            if (valIndex < Values.size()) {
+        else if (mode == "o")
+        {
+            if (valIndex < Values.size())
+            {
                 Client *target = Server_CLS->getClientByName(Values[valIndex++]);
-                if (target && channel->hasUser(*target)) {
+                if (target && channel->hasUser(*target))
                     channel->addOperator(target->getClientFd());
-                } else {
+                else
                     SENDMESSAGE(":Server 401 " + user.getNickName() + " " + Values[valIndex - 1] + " :No such nick\n", user.getClientFd());
-                }
-            } else {
-                SENDMESSAGE(":Server 461 " + user.getNickName() + " MODE +o :Not enough parameters\n", user.getClientFd());
             }
+            else
+                SENDMESSAGE(":Server 461 " + user.getNickName() + " MODE +o :Not enough parameters\n", user.getClientFd());
         }
-        else if (mode == "l") {
-            if (valIndex < Values.size()) {
+        else if (mode == "l")
+        {
+            if (valIndex < Values.size())
+            {
                 int limit = std::atoi(Values[valIndex++].c_str());
                 channel->setUserLimit(limit);
-            } else {
-                SENDMESSAGE(":Server 461 " + user.getNickName() + " MODE +l :Not enough parameters\n", user.getClientFd());
             }
+            else
+                SENDMESSAGE(":Server 461 " + user.getNickName() + " MODE +l :Not enough parameters\n", user.getClientFd());
         }
     }
 
     // Apply non-permitted modes (-)
-    for (size_t i = 0, valIndex = 0; i < NONpermittedOPTIONS.size(); i++) {
+    for (size_t i = 0, valIndex = 0; i < NONpermittedOPTIONS.size(); i++)
+    {
         std::string mode = NONpermittedOPTIONS[i];
 
-        if (mode == "i") {
+        if (mode == "i")
             channel->setInviteOnly(false);
-        }
-        else if (mode == "t") {
+        else if (mode == "t")
             channel->setTopicRestricted(false);
-        }
-        else if (mode == "k") {
+        else if (mode == "k")
             channel->removeKey();
-        }
-        else if (mode == "o") {
-            if (valIndex < Values.size()) {
+        else if (mode == "o")
+        {
+            if (valIndex < Values.size())
+            {
                 Client *target = Server_CLS->getClientByName(Values[valIndex++]);
-                if (target && channel->hasUser(*target)) {
+                if (target && channel->hasUser(*target))
                     channel->removeOperator(target->getClientFd());
-                } else {
+                else
                     SENDMESSAGE(":Server 401 " + user.getNickName() + " " + Values[valIndex - 1] + " :No such nick\n", user.getClientFd());
-                }
-            } else {
-                SENDMESSAGE(":Server 461 " + user.getNickName() + " MODE -o :Not enough parameters\n", user.getClientFd());
             }
+            else
+                SENDMESSAGE(":Server 461 " + user.getNickName() + " MODE -o :Not enough parameters\n", user.getClientFd());
         }
-        else if (mode == "l") {
+        else if (mode == "l")
             channel->removeUserLimit();
-        }
     }
 
     // Broadcast mode changes to all users in the channel
@@ -241,7 +241,7 @@ void    MODE_command(std::string command, int fd, Server* Server_CLS)
     for (size_t i = 0; i < permittedOPTIONS.size(); i++) modeChangeMessage += " +" + permittedOPTIONS[i];
     for (size_t i = 0; i < NONpermittedOPTIONS.size(); i++) modeChangeMessage += " -" + NONpermittedOPTIONS[i];
 
-    channel->broadcast(modeChangeMessage + "\n", fd);
+    channel->broadcast(modeChangeMessage + "\n");
 
 
 
