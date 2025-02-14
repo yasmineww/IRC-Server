@@ -1,4 +1,4 @@
-#include "Macros.hpp"
+
 
 #define RPL_WELCOME(nick, hostname)  std::string(":") + std::string(hostname) + std::string(" 001 ") + std::string(nick) + std::string(" :Welcome ") + std::string(nick) + std::string(" to the ft_irc network !\r\n")
 #define RPL_YOURHOST(nick, hostname) std::string(":") + std::string(hostname) + std::string(" 002 ") + std::string(nick) + std::string(" :Your host is ") + std::string(hostname) + std::string(" running version 1.0 !\r\n")
@@ -6,8 +6,55 @@
 #define RPL_MYINFO(nick, hostname)   std::string(":") + std::string(hostname) + std::string(" 004 ") + std::string(nick) + std::string(" :Host: ") + std::string(hostname) + std::string(", Version: 1.0, User mode: none, Channel modes: o, t, k, i !\r\n")
 
 
+// Authentication
+#define ERR_PASSWDMISMATCH(nick, hostname)                                std::string(":") + std::string(hostname) + " 464 " + std::string(nick) + " :Password incorrect !\r\n"
+#define ERR_ALREADYREGISTERED(nick, hostname)                             std::string(":") + std::string(hostname) + " 462 " + std::string(nick) + " :You may not reregister !\r\n"
 
-// Add the std::string For the Messages Print To avoid The error's
+// Nickname
+#define ERR_ERRONEUSNICKNAME(nick, hostname)                            std::string(":") + std::string(hostname) + " 432 " + std::string(nick) + " :Erroneus nickname !\r\n"
+#define ERR_NONICKNAMEGIVEN(nick, hostname)                               std::string(":") + std::string(hostname) + " 431 " + std::string(nick) + " :No nickname given !\r\n"
+#define ERR_NICKNAMEINUSE(nick, hostname)                                  std::string(":") + std::string(hostname) + " 433 " + std::string(nick) + " :Nickname is already in use !\r\n"
+#define RPL_NICKCHANGE(oldNick, nick, hostname)                            std::string(":") + std::string(oldNick) + " NICK "  + std::string(nick) + "\r\n"
+
+// Channel Operations
+#define ERR_BADCHANNELMASK(nick, hostname, mask, correction)               std::string(":") + std::string(hostname) + " 476 " + std::string(nick) + " " + std::string(mask) + " :Invalid channel mask." + std::string(correction) + "\r\n"
+#define ERR_CHANNELISFULL(nick, hostname, channelName)                     std::string(":") + std::string(hostname) + " 471 " + std::string(channelName) + " :Cannot join channel (+l)\r\n"
+#define ERR_BADCHANNELKEY(nick, hostname, channelName)                     std::string(":") + std::string(hostname) + " 475 " + std::string(nick) + " " + std::string(channelName) + " :Cannot join channel (+K) - bad key\r\n"
+#define ERR_INVITEONLY(nick, hostname, channelName)                        std::string(":") + std::string(hostname) + " 473 " + std::string(channelName) + " :Cannot join channel (+i)\r\n"
+
+// Mode Replies
+#define RPL_UMODEIS(hostname, channelname)                                 std::string(":") + std::string(hostname) + " MODE " + std::string(channelname) + " +nt\r\n"
+#define RPL_JOIN(nick, username, channelname, ipaddress)                   std::string(":") + std::string(nick) + "!~" + std::string(username) + "@" + std::string(ipaddress) + " JOIN " + std::string(channelname) + "\r\n"
+#define RPL_TOPIC(hostname, topic, nick, channelName)                      std::string(":") + std::string(hostname) + " 332 " + std::string(nick) + " " + std::string(channelName) + " " + std::string(topic) + "\r\n"
+#define RPL_TOPICWHOTIME(topicsetter, time, nick, hostname, channelName)   std::string(":") + std::string(hostname) + " 333 " + std::string(nick) + " " + std::string(channelName) + " " + std::string(topicsetter) + "!~" + std::string(topicsetter) + "@" + std::string(hostname) + " " + std::string(time) + "\r\n"
+
+// Names List
+#define RPL_NAMREPLY(hostname, clients, channelname, nick)                std::string(":") + std::string(hostname) + " 353 " + std::string(nick) + " = " + std::string(channelname) + " :" + std::string(clients) + "\r\n"
+#define RPL_ENDOFNAMES(hostname, nick, channelname)                       std::string(":") + std::string(hostname) + " 366 " + std::string(nick) + " " + std::string(channelname) + " :END of /NAMES list\r\n"
+
+// Mode Management
+#define RPL_MODEIS(channel, hostname, mode)                               std::string(":") + std::string(hostname) + " MODE " + std::string(channel) + " " + std::string(mode) + "\r\n"
+#define ERR_INVALIDMODEPARAM(channel, hostname, flag)                     std::string(":") + std::string(hostname) + " 696 " + std::string(channel) + " " + std::string(flag) + " * you must specifiy a parameter for the op mode\r\n"
+
+// Invite System
+#define RPL_INVITING(hostname, inviting, invited, channel)                std::string(":") + std::string(hostname) + " 341 " + std::string(inviting) + " " + std::string(invited) + " " + std::string(channel) + " :Inviting " + std::string(invited) + " to " + std::string(channel) + "\r\n"
+#define RPL_INVITE(nick, username, clienthostname, invited, channel)      std::string(":") + std::string(nick) + "!" + std::string(username) + "@" + std::string(clienthostname) + " INVITE " + std::string(invited) + " :" + std::string(channel) + "\r\n"
+
+// Error Replies
+#define ERR_NOTONCHANNEL(hostname, channel)                               std::string(":") + std::string(hostname) + " 442 " + std::string(channel) + " :You're not on that channel\r\n"
+#define ERR_NOSUCHCHANNEL(hostname, channel, nick)                        std::string(":") + std::string(hostname) + " 403 " + std::string(nick) + " " + std::string(channel) + " :No such channel\r\n"
+#define ERR_NOSUCHNICK(hostname, channel, argument)                       std::string(":") + std::string(hostname) + " 401 " + std::string(channel) + " " + std::string(argument) + " :No such nick/channel\r\n"
+#define ERR_USERONCHANNEL(hostname, channel, nick)                        std::string(":") + std::string(hostname) + " 443 " + std::string(nick) + " " + std::string(channel) + " :is already on channel\r\n"
+
+// Utility
+#define ERR_INPUTTOOLONG(nick, hostname)                                  std::string(":") + std::string(hostname) + " 417 " + std::string(nick) + " :Input line was too long !\r\n"
+#define RPL_BOT(hostname, nick, message)                                  std::string(":") + std::string(hostname) + " 001 " + std::string(nick) + " Dad joke: " + std::string(message) + "\r\n"
+
+
+//
+
+
+
 
 // #define ERR_PASSWDMISMATCH(nick, hostname)                                ":" + hostname + " 464 " + nick + " :Password incorrect !\r\n"
 // #define ERR_ALREADYREGISTERED(nick, hostname)                              ":" + hostname + " 462 " + nick + " :You may not reregister !\r\n"
@@ -71,7 +118,7 @@
 
 
 // #define ERR_NEEDMOREPARAMS(nick, hostname) ":" + hostname + " 461 " + nick + " :Not enough parameters !\r\n"
-#define ERR_NOSUCHCHANNELl(nick, hostname)  std::string(":") + std::string(hostname) + std::string(" 403 ") + std::string(nick) + std::string(" :No such channel !\r\n")
+// #define ERR_NOSUCHCHANNELl(nick, hostname)  std::string(":") + std::string(hostname) + std::string(" 403 ") + std::string(nick) + std::string(" :No such channel !\r\n")
 // #define ERR_CHANOPRIVSNEEDED(nick, hostname) ":" + hostname + " 482 " + nick + " :You're not channel operator !\r\n"
 // #define ERR_USERNOTINCHANNELl(nick, hostname) ":" + hostname + " 441 " + nick + " :They aren't on that channel !\r\n"
 // #define ERR_NOTONCHANNELl(nick, hostname) ":" + hostname + " 442 " + nick + " :You're not on that channel !\r\n"

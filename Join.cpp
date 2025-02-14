@@ -25,8 +25,8 @@ void JOIN_command(std::string command, int fd, Server *Server_CLS)
     ss >> cmd >> channelList >> keyList;  // Extract parts: command, channels, keys (if any)
 
     // Ensure user is authenticated
-    if (!user.check_Authentication())
-        return SENDMESSAGE("LAYMONA * : " + user.getNickName() + " You have not registered\n", fd);
+    // if (!user.check_Authentication())
+    //     return SENDMESSAGE("LAYMONA * : " + user.getNickName() + " You have not registered\n", fd);
 
 
     // Check MODE
@@ -84,6 +84,7 @@ void JOIN_command(std::string command, int fd, Server *Server_CLS)
             // If channel has a key, check if the user provided the correct one
             if (!channel->getKey().empty() && channel->getKey() != key)
             {
+                cout << "[" << channel->getKey() << "]" << " != [" << key << "]" << endl;
                 SENDMESSAGE("ERROR :Incorrect channel key\r\n", fd);
                 continue;
             }
@@ -100,6 +101,7 @@ void JOIN_command(std::string command, int fd, Server *Server_CLS)
         // If the channel has a key, check if the user provided the correct one
         if (!channel->getKey().empty() && channel->getKey() != key)
 		{
+            cout << channel->getKey() << " != " << key << endl;
             SENDMESSAGE("ERROR :Incorrect channel key\r\n", fd);
             continue;
         }

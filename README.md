@@ -6,10 +6,13 @@
 
 
 
-Channel Operations :
+Channel Operations : (Finished bu not tested).
 - `JOIN` Finished ✅
 - `PART` Finished ✅
-- `MODE` Working on it
+- `MODE` Finished ✅
+- `KICK` Finished ✅
+- `INVITE` Working on
+- `QUIT` .
 
 
 I added `HELP`Command to make the login operation easy.

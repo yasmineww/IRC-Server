@@ -20,22 +20,26 @@ bool Client::check_Authentication()
     return false;
 }
 
-Client::Client()
+ Client::Client()
 {
+    puts("\n\nHEHEHEHEHEHEHEHEHEHEHASFKJASKJFASF\n\n");
     this->Auth_PASS = false ;
     this->Auth_NICK = false ;
     this->Auth_USER = false ;
     this->AUTH_WELCOM = true ;
     this->AuthStep  = 0 ;
-    this->fd = -1 ;
+    this->fd = -1;
 };
 
 Client::Client(int fd, std::string user, std::string nickname)
 {
+    puts("BLOOEOEOEOEOEOEOEOEO\n");
     this->fd = fd ;
     this->User_name = user ;
     this->Nick_name = nickname ;
 };
+
+
 
 Client::~Client() {}
 

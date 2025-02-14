@@ -8,6 +8,6 @@ void    printchannelvectorlist(std::string msg, std::vector<std::string> channel
     std::vector<std::string>::iterator end = channels.end();
     for (; start != end; start++)
     {
-        std::cout << "- : " << *start << std::endl;
+        std::cout << "- : [" << *start << "]" << std::endl;
     }
 };

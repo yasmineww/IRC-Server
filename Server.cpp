@@ -53,11 +53,16 @@ int First_Appearance(std::string Command, Server *Server_CLS,int fd)
     if (Value == PASS_STR) return (PASS);
     if (Value == USER_STR) return (USER);
     if (Value == NICK_STR) return (NICK);
+    if (Value == KICK_STR) return (KICK);
     if (Value == JOIN_STR) return (JOIN);
     if (Value == PRIVMSG_STR) return (PRIVMSG);
     if (Value == MODE_STR) return (MODE);
     if (Value == HELP_STR) return (HELP);
     if (Value == PART_STR) return (PART);
+    if (Value == INVITE_STR) return (INVITE);
+
+// In Check_Commands switch
+
 
     return (-1);
 };
@@ -78,6 +83,9 @@ void Check_Commands(Server *Server_Cls, std::string Command, int fd)
         case NICK :
             NICK_command(Command, fd, Server_Cls);
             break ;
+        case KICK :
+            KICK_command(Command, fd, Server_Cls);
+            break ;
         case MODE :
             MODE_command(Command, fd, Server_Cls);
             break ;
@@ -93,6 +101,9 @@ void Check_Commands(Server *Server_Cls, std::string Command, int fd)
         case PART :
             PART_command(Command, fd, Server_Cls);
             break ;
+        case INVITE:
+            INVITE_command(Command, fd, Server_Cls);
+            break;
         default :
             std::cout << "THE LINE U JUST ENTRED As Client --> :  " << Command << std::endl ;
             break ;
@@ -169,8 +180,27 @@ std::string	Welcome_mssg(void)
 	return (welcome);
 };
 
+std::string	Server_Opening(void)
+{
+	std::string welcome = GREEN;
+	welcome.append("\n");
+	welcome.append("██╗    ██╗███████╗██╗      ██████╗ ██████╗ ███╗   ███╗███████╗\n");
+	welcome.append("██║    ██║██╔════╝██║     ██╔════╝██╔═══██╗████╗ ████║██╔════╝\n");
+	welcome.append("██║ █╗ ██║█████╗  ██║     ██║     ██║   ██║██╔████╔██║█████╗\n");
+	welcome.append("██║███╗██║██╔══╝  ██║     ██║     ██║   ██║██║╚██╔╝██║██╔══╝\n");
+	welcome.append("╚███╔███╔╝███████╗███████╗╚██████╗╚██████╔╝██║ ╚═╝ ██║███████╗\n");
+	welcome.append(" ╚══╝╚══╝ ╚══════╝╚══════╝ ╚═════╝ ╚═════╝ ╚═╝     ╚═╝╚══════╝\n");
+	welcome.append(YELLOW);
+	welcome.append("Server is Loading ... \n\n");
+	welcome.append(RESET);
+	return (welcome);
+};
+
 void Server_Socket_Creation(std::string Port, std::string Pass_Code)
 {
+
+        cout << Server_Opening() << endl;
+
         Server server_Cls ;
         Client ForMulti_poll ;
         server_Cls.bindSocket_str.sin_port = htons(atoi(Port.c_str()));

@@ -19,6 +19,8 @@ Channel::~Channel() {}
 // Add user to channel
 void Channel::addUser(Client user, int fd)
 {
+    // cout << "actual user AMount " << getUserCount() << endl;
+    // cout << "actual user Limit " << userLimit << endl;
     if (userLimit != -1 && getUserCount() >= userLimit && !isOperator(fd))
         return SENDMESSAGE(":Server 471 " + user.getNickName() + " " + name + " :Cannot join channel (+l)\n", fd);
     users[fd] = user;

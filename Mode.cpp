@@ -109,16 +109,18 @@ void	store_options(std::vector<std::string> &splited, std::vector<std::string> &
 				- UND getting user name
 			*/
 			if (!((*it) == chanName || (*it) == splited[0]))
-				Values.push_back(*it);
+            {
+                it->erase(std::remove(it->begin(), it->end(), '\n'), it->end());
+                Values.push_back(*it);
+            }
 		}
 	}
-	// Verify for repeated options like : MODE #chan -i +i -t +t
-	// this verification is only for i and t
+    /*
+	    --- > Verify for repeated options like : MODE #chan -i +i -t +t
+        --- > this verification is only for i and t
+    */
 
 	i_t_verification(permittedOPTIONS, NONpermittedOPTIONS);
-
-    cout << "DONE storing ✅ " << endl;
-
 }
 
 void    MODE_command(std::string command, int fd, Server* Server_CLS)
@@ -142,22 +144,17 @@ void    MODE_command(std::string command, int fd, Server* Server_CLS)
 
 	chanName = splited[1];
 
-	// cout << "chan Name : " << chanName <<  endl;
-
 	// FULL FILL Parametres : OPTIONS values
 	store_options(splited, permittedOPTIONS, NONpermittedOPTIONS, Values, chanName);
 
-	// puts("\n\n-----contents----------\n\n");
-	// printchannelvectorlist("cmd splited", splited); printchannelvectorlist("permittedOPTIONS", permittedOPTIONS); printchannelvectorlist("NONpermittedOPTIONS", NONpermittedOPTIONS); printchannelvectorlist("Values", Values);
+
+    printchannelvectorlist("values", Values);
 
     // Check if the channel exists
     Channel *channel = Server_CLS->getChannel(chanName);
     if (!channel)
         return SENDMESSAGE(":Server 403 " + user.getNickName() + " " + chanName + " :No such channel\n", fd);
 
-    cout << "channel user limit : " << channel->getUserLimit();
-
-    cout << " just here " << endl;
     // Verify that the user has operator privileges to modify modes
     if (channel->isOperator(fd) == false)
         return SENDMESSAGE(":Server 482 " + user.getNickName() + " " + chanName + " :You're not a channel operator\n", fd);
@@ -184,9 +181,9 @@ void    MODE_command(std::string command, int fd, Server* Server_CLS)
         {
             if (valIndex < Values.size())
             {
-                Client *target = Server_CLS->getClientByName(Values[valIndex++]);
-                if (target && channel->hasUser(*target))
-                    channel->addOperator(target->getClientFd());
+                int target = Server_CLS->getClientByName(Values[valIndex++]);\
+                if (target != -1 && channel->hasUser(target))
+                    channel->addOperator(target);
                 else
                     SENDMESSAGE(":Server 401 " + user.getNickName() + " " + Values[valIndex - 1] + " :No such nick\n", user.getClientFd());
             }
@@ -199,8 +196,6 @@ void    MODE_command(std::string command, int fd, Server* Server_CLS)
             {
                 int limit = std::atoi(Values[valIndex++].c_str());
                 channel->setUserLimit(limit);
-
-                cout << "user limits after : " << channel->getUserLimit() << endl;
             }
             else
                 SENDMESSAGE(":Server 461 " + user.getNickName() + " MODE +l :Not enough parameters\n", user.getClientFd());
@@ -222,9 +217,9 @@ void    MODE_command(std::string command, int fd, Server* Server_CLS)
         {
             if (valIndex < Values.size())
             {
-                Client *target = Server_CLS->getClientByName(Values[valIndex++]);
-                if (target && channel->hasUser(*target))
-                    channel->removeOperator(target->getClientFd());
+                int target = Server_CLS->getClientByName(Values[valIndex++]);
+                if (target != -1 && channel->hasUser(target))
+                    channel->removeOperator(target);
                 else
                     SENDMESSAGE(":Server 401 " + user.getNickName() + " " + Values[valIndex - 1] + " :No such nick\n", user.getClientFd());
             }
@@ -242,10 +237,6 @@ void    MODE_command(std::string command, int fd, Server* Server_CLS)
     for (size_t i = 0; i < NONpermittedOPTIONS.size(); i++) modeChangeMessage += " -" + NONpermittedOPTIONS[i];
 
     channel->broadcast(modeChangeMessage + "\n");
-
-
-
-
 }
 
 /*

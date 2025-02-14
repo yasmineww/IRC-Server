@@ -76,8 +76,15 @@ class Channel
 
 
         // Check if a user is in the channel
-        bool hasUser(Client& client) {
-            return users.find(client.getClientFd()) != users.end();
+        bool hasUser(int fd)
+        {
+            cout <<  "ddddd _> " <<  fd  << endl;
+            if (users.find(fd) != users.end())
+            {
+                cout << "the user is in the channel "<< endl;
+                return (true);
+            }
+            return false;
         }
 
 
