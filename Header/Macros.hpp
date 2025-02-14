@@ -28,6 +28,8 @@
 # include <sys/poll.h>
 # include <unistd.h>
 
+
+# include <fstream>
 # include <iostream>
 # include <map>
 # include <vector>
@@ -42,11 +44,10 @@ using namespace std;
 
 
 
-# include "tools.hpp"
-# include "RESP.hpp"
-# include "Client.hpp"
-# include "Server.hpp"
-# include "Channel.hpp"
+# include "../Tools/tools.hpp"
+# include "../Client/Client.hpp"
+# include "../Server/Server.hpp"
+# include "../Channel/Channel.hpp"
 
 
 #define PASS_STR "PASS"
@@ -60,6 +61,10 @@ using namespace std;
 #define PART_STR "PART"
 #define MODE_STR "MODE"
 #define INVITE_STR "INVITE"
+#define TOPIC_STR "TOPIC"
+#define NOTICE_STR "NOTICE"
+#define QUIT_STR "QUIT"
+#define SEND_STR "SEND"
 
 
 
@@ -82,6 +87,10 @@ using namespace std;
 # define PART 8
 # define KICK 9
 # define INVITE 10
+# define TOPIC 11
+# define NOTICE 12
+# define QUIT 13
+# define SEND 14
 
 # define REALNAME 99
 # define USERNAME 88
@@ -97,13 +106,24 @@ void 	USER_command(std::string Command, int fd, Server *Server_CLS);
 
 /* Commands */
 void 	MODE_command(std::string Command, int fd, Server *Server_CLS);
-void 	PRIVMSG_command(std::string Command, int fd, Server *Server_CLS);
 void 	JOIN_command(std::string Command, int fd, Server *Server_CLS);
 void 	HELP_command(std::string Command, int fd, Server *Server_CLS);
 void    PART_command(std::string command, int fd, Server* Server_CLS);
 void    MODE_command(std::string command, int fd, Server* Server_CLS);
 void 	KICK_command(std::string Command, int fd, Server *Server_Cls);
+void    QUIT_command(std::string command, int fd, Server *Server_CLS);
+void    TOPIC_command(std::string command, int fd, Server *Server_CLS);
 void    INVITE_command(std::string command, int fd, Server* Server_CLS);
+void 	PRIVMSG_command(std::string Command, int fd, Server *Server_CLS);
+void    NOTICE_command(std::string command, int fd, Server *Server_CLS);
+
+/* BONUS */
+
+void handleFileTransfer_command(std::string command, int fd, Server* server);
+
+
+
+
 
 /* Extra Temp Func */
 void    printchannelvectorlist(std::string msg, std::vector<std::string> channels);

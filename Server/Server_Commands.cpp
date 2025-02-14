@@ -1,5 +1,5 @@
 
-#include "Macros.hpp"
+#include "../Header/Macros.hpp"
 
 
 int Command_Lenght(std::string command)
@@ -167,23 +167,6 @@ void PASS_Command(std::string Check, int fd, Server *Server_Cls)
     };
     SENDMESSAGE("ERR_BADPASS\n", fd);
 };
-
-
-void PRIVMSG_command(std::string command, int fd, Server *Server_CLS)
-{
-    cout << " >> " << command << endl;
-    (void) command;
-    (void) fd;
-    (void) Server_CLS;
-
-};
-
-
-
-
-
-
-
 
 
 

@@ -1,7 +1,7 @@
 
 #pragma once
 
-# include "Macros.hpp"
+# include "../Header/Macros.hpp"
 
 class Channel;
 class Client;
@@ -55,10 +55,18 @@ class Server
 
     	//  Create a new channel if it doesn't exist
     	Channel* createChannel(const std::string& channelName);
+
         int getclient()
         {
             return Client_User.fd;
         }
+
+        void removeClient(int fd);
+        void addBot(std::string channelName);
+
+
+        std::vector<std::string> getJoinedChannels(int fd);
+
 
         int getClientByName(const std::string& nickname)
         {
@@ -68,7 +76,7 @@ class Server
                 {
                     cout << "Client founded " << endl;
                     cout << it->second.getNickName() << "  " << nickname << "] fd -> [" << it->first << endl;
-                    return it->first;  // Return pointer to the found client
+                    return it->first;  // Return pointer to the found  fd client .
                 }
             }
             return -1;  // Return -1 for error

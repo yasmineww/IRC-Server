@@ -19,13 +19,23 @@ RESET = \033[0m
 
 NAME = ircserv
 
-SRC = main.cpp function_tools.cpp Server.cpp Client.cpp Server_Commands.cpp Channel.cpp \
-	  Join.cpp \
-	  Part.cpp \
-	  Kick.cpp \
-	  Invite.cpp \
+SRC = main.cpp \
+	  Tools/function_tools.cpp \
+	  Server/Server.cpp \
+	  Client/Client.cpp \
+	  Server/Server_Commands.cpp \
+	  Channel/Channel.cpp \
+	  Commands/Join.cpp \
+	  Commands/Part.cpp \
+	  Commands/Kick.cpp \
+	  Commands/Invite.cpp \
+	  Commands/Topic.cpp \
+	  Commands/Mode.cpp \
+	  Commands/Notice.cpp \
+	  Commands/Quit.cpp \
+	  Commands/Privmsg.cpp \
+	  Bonus/Bonus.cpp \
 	  Temp.cpp \
-	  Mode.cpp \
 
 OBJS = $(SRC:.cpp=.o)
 
@@ -36,7 +46,7 @@ FLAGS = -Wall -Wextra -Werror -std=c++98 -fsanitize=address -g
 
 RM = rm -rf
 
-HEADER = Server.hpp Client.hpp  Macros.hpp
+HEADER = Server/Server.hpp Client/Client.hpp  Header/Macros.hpp
 
 all : credit $(NAME)
 	@echo "$(GREEN)██████████████████████ Compiling is DONE ███████████████████████$(RESET)"

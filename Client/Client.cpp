@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Macros.hpp"
+#include "../Header/Macros.hpp"
 
 
 bool Client::check_Authentication()
@@ -22,7 +22,6 @@ bool Client::check_Authentication()
 
  Client::Client()
 {
-    puts("\n\nHEHEHEHEHEHEHEHEHEHEHASFKJASKJFASF\n\n");
     this->Auth_PASS = false ;
     this->Auth_NICK = false ;
     this->Auth_USER = false ;
@@ -33,7 +32,6 @@ bool Client::check_Authentication()
 
 Client::Client(int fd, std::string user, std::string nickname)
 {
-    puts("BLOOEOEOEOEOEOEOEOEO\n");
     this->fd = fd ;
     this->User_name = user ;
     this->Nick_name = nickname ;

@@ -11,8 +11,22 @@
 /* ************************************************************************** */
 
 
-#include "Macros.hpp"
+#include "../Header/Macros.hpp"
 
+
+
+std::vector<std::string> Server::getJoinedChannels(int fd)
+{
+    std::vector<std::string> Joinedchannels;
+
+    // Iterate through all channels in the server
+    for (std::map<std::string, Channel*>::iterator it = channels.begin(); it != channels.end(); ++it)
+    {
+        if (it->second->hasUser(fd)) // Check if the client is in the channel
+            Joinedchannels.push_back(it->first); // Store the channel name
+    }
+    return Joinedchannels;
+}
 
 
 Channel* Server::getChannel(const std::string& channelName)
@@ -40,6 +54,39 @@ Channel* Server::createChannel(const std::string& channelName)
     return newChannel;
 }
 
+void Server::removeClient(int fd)
+{
+    // Check if the client exists
+    std::map<int, Client>::iterator it = Users.find(fd);
+    if (it == Users.end())
+    {
+        std::cerr << "Error: Client with fd " << fd << " not found.\n";
+        return;
+    }
+
+    Client &client = it->second;
+    std::string nickname = client.getNickName();
+
+    // Notify all channels and remove client from them
+    for (std::map<std::string, Channel*>::iterator chIt = channels.begin(); chIt != channels.end(); ++chIt)
+    {
+        Channel *channel = chIt->second;
+        if (channel->hasUser(it->first))
+        {
+            channel->broadcast(":" + nickname + " QUIT :Client disconnected\r\n");
+            channel->removeUser(fd);
+        }
+    }
+
+    // Remove the client from the server's user list
+    Users.erase(fd);
+    std::cout << "Client " << nickname << " (fd: " << fd << ") removed from server.\n";
+
+    // Close the socket
+    close(fd);
+}
+
+
 
 
 int First_Appearance(std::string Command, Server *Server_CLS,int fd)
@@ -60,6 +107,9 @@ int First_Appearance(std::string Command, Server *Server_CLS,int fd)
     if (Value == HELP_STR) return (HELP);
     if (Value == PART_STR) return (PART);
     if (Value == INVITE_STR) return (INVITE);
+    if (Value == TOPIC_STR) return (TOPIC);
+    if (Value == QUIT_STR) return (QUIT);
+    if (Value == SEND_STR) return (SEND);
 
 // In Check_Commands switch
 
@@ -89,6 +139,9 @@ void Check_Commands(Server *Server_Cls, std::string Command, int fd)
         case MODE :
             MODE_command(Command, fd, Server_Cls);
             break ;
+        case TOPIC :
+            TOPIC_command(Command, fd, Server_Cls);
+            break ;
         case PRIVMSG :
             PRIVMSG_command(Command, fd, Server_Cls);
             break ;
@@ -103,6 +156,15 @@ void Check_Commands(Server *Server_Cls, std::string Command, int fd)
             break ;
         case INVITE:
             INVITE_command(Command, fd, Server_Cls);
+            break;
+        case NOTICE:
+            NOTICE_command(Command, fd, Server_Cls);
+            break;
+        case QUIT:
+            QUIT_command(Command, fd, Server_Cls);
+            break;
+        case SEND:
+            handleFileTransfer_command(Command, fd, Server_Cls);
             break;
         default :
             std::cout << "THE LINE U JUST ENTRED As Client --> :  " << Command << std::endl ;
@@ -119,7 +181,8 @@ int Authenticate_User(int client_Id, Server *server_Cls, int pos)
     memset(Recv_Buffer, 0, sizeof(Recv_Buffer));
     server_Cls->Size_Read = recv(server_Cls->start->fd, Recv_Buffer, sizeof(Recv_Buffer) , 0);
     Check_Commands(server_Cls, Recv_Buffer, server_Cls->start->fd);
-    if (server_Cls->Size_Read == 0){
+    if (server_Cls->Size_Read == 0)
+    {
         std::cout << "Client Disconnected " << pos << std::endl ;
         return (-1);
     };
@@ -131,9 +194,9 @@ void Pint_Array(std::vector<struct pollfd> pollAr)
 {
     std::vector<struct pollfd>::iterator start = pollAr.begin() ;
     std::vector<struct pollfd>::iterator end = pollAr.end()     ;
-    for (;start != end; start++){
+    for (;start != end; start++)
         std::cout << "- : " << start->fd << std::endl;
-    }
+
 };
 
 // check The Acttion Of the Each Client Connected To the Server in the Poll() <Array>
@@ -142,7 +205,8 @@ void Check_client_Request(Server *server_Cls) {
     int Remove_Position = 0;
     server_Cls->start = server_Cls->pollAr.begin();
     server_Cls->end   = server_Cls->pollAr.end();
-    if (server_Cls->pollAr.size() > 1){
+    if (server_Cls->pollAr.size() > 1)
+    {
         Remove_Position++ ;
         server_Cls->start++ ;
         for (;server_Cls->start != server_Cls->end; server_Cls->start++){
