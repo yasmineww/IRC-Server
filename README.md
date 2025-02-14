@@ -11,8 +11,9 @@ Channel Operations : (Finished bu not tested).
 - `PART` Finished ✅
 - `MODE` Finished ✅
 - `KICK` Finished ✅
-- `INVITE` Working on
-- `QUIT` .
+- `INVITE` Finished ✅
+- `QUIT` Finished ✅
+all cmd finished without tests.
 
 
 I added `HELP`Command to make the login operation easy.
