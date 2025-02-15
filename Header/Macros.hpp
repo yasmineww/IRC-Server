@@ -37,6 +37,7 @@
 # include <cstdlib>
 # include <string>
 # include <sstream>
+# include <algorithm>
 
 
 
@@ -119,8 +120,8 @@ void    NOTICE_command(std::string command, int fd, Server *Server_CLS);
 
 /* BONUS */
 
-void handleFileTransfer_command(std::string command, int fd, Server* server);
 
+void handleDCCSend(std::string command, int fd, Server *server_ClS);
 
 
 

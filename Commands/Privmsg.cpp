@@ -26,7 +26,6 @@ std::vector<std::string> parse_PRIVMSG_Command(const std::string &command)
 
 void PRIVMSG_command(std::string command, int fd, Server *Server_CLS)
 {
-    // Retrieve the user who issued the command
     Client user = Server_CLS->Users[fd];
 
     // Parse the command into arguments
@@ -39,7 +38,8 @@ void PRIVMSG_command(std::string command, int fd, Server *Server_CLS)
     std::string target = args[1];
     std::string message = command.substr(command.find(':') + 1); // Extract the message after the first ':'
 
-    // Check if the target is a channel or a user
+    // Check if the target is a channel or a user 
+    // PRIVMSG could send msg to user or channel
     if (target[0] == '#' || target[0] == '&')
     {
         // Channel Message
@@ -58,12 +58,12 @@ void PRIVMSG_command(std::string command, int fd, Server *Server_CLS)
     else
     {
         // Private Message to a User
-        int recipient = Server_CLS->getClientByName(target);
-        if (recipient == -1)
+        int receiver = Server_CLS->getClientByName(target);
+        if (receiver == -1)
             return SENDMESSAGE(":Server 401 " + user.getNickName() + " " + target + " :No such nick\r\n", fd);
 
-        // Send the message to the recipient
+        // Send the message to the receiver
         std::string msgToSend = ":" + user.getNickName() + " PRIVMSG " + target + " :" + message + "\r\n";
-        SENDMESSAGE(msgToSend, recipient);
+        SENDMESSAGE(msgToSend, receiver);
     }
 }

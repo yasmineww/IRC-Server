@@ -163,14 +163,12 @@ void Check_Commands(Server *Server_Cls, std::string Command, int fd)
         case QUIT:
             QUIT_command(Command, fd, Server_Cls);
             break;
-        case SEND:
-            handleFileTransfer_command(Command, fd, Server_Cls);
-            break;
         default :
             std::cout << "THE LINE U JUST ENTRED As Client --> :  " << Command << std::endl ;
             break ;
     }
 };
+
 
 int Authenticate_User(int client_Id, Server *server_Cls, int pos)
 {
