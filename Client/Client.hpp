@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: youmoukh <youmoukh@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/21 17:33:44 by ymakhlou          #+#    #+#             */
-/*   Updated: 2025/02/09 12:14:29 by youmoukh         ###   ########.fr       */
+/*   Updated: 2025/02/19 01:04:24 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,26 +15,25 @@
 #include "../Header/Macros.hpp"
 
 
-
-// The Client Array For each User
-
 class Client
 {
+    private :
+        std::string User_name;
+        std::string Nick_name;
+        std::string SERVER_name;
+        std::string HOST_name;
+        std::string REAL_name;
+        // std::string LOGIN_name;
+        
 
     public :
         int fd ;
-        std::string User_name  ;
-        std::string Nick_name  ;
-        std::string LOGIN_name ;
-        std::string SERVER_name;
-        std::string HOST_name  ;
-        std::string REAL_name  ;
-        int        is_Registered;
-        bool Auth_PASS ;
+        int  is_Registered;
+        bool Auth_PASS;
         bool Auth_NICK;
         bool Auth_USER ;
-        bool AUTH_WELCOM ;
-        int  AuthStep ;
+        bool AUTH_WELCOM;
+        int  AuthStep;
 
 		/* Class const dest */
         Client();
@@ -45,27 +44,27 @@ class Client
 
 
 		/* Func */
-        bool check_Authentication();
+        bool check_Authentication();  
 
         /*             Setters                         */
         void		setUserName(std::string UserName)	;
         void		setNickName( std::string NickName )	;
-        void		setLogName( std::string LOGINName )	;
         void		setServerName( std::string SERVERName);
         void		setHostName( std::string HOSTName );
 		void	    setREALName(std::string REALName);
 		void		setRegistered(int Registred);
+        // void		setLogName( std::string LOGINName )	;
 
 
         /*             Getters                         */
         int			getRegistered()		const ;
         std::string	getUserName()		const ;
         std::string	getNickName()		const ;
-        std::string	getLogName()		const ;
         std::string getServerName()		const ;
         std::string getHostName()		const ;
 		std::string	getREALName()		const ;
         int	        getClientFd()		const;
+        // std::string	getLogName()		const ;
 
 };
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Macros.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: youmoukh <youmoukh@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 10:52:04 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/02/10 11:09:38 by youmoukh         ###   ########.fr       */
+/*   Updated: 2025/02/19 00:28:00 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -184,3 +184,4 @@ void    printchannelvectorlist(std::string msg, std::vector<std::string> channel
 #define ERR_INPUTTOOLONG(nick, hostname)                                  std::string(":") + std::string(hostname) + " 417 " + std::string(nick) + " :Input line was too long !\r\n"
 #define RPL_BOT(hostname, nick, message)                                  std::string(":") + std::string(hostname) + " 001 " + std::string(nick) + " Dad joke: " + std::string(message) + "\r\n"
 
+#define ERR_NOSUCHCHANNELl(nick, hostname)                                  std::string(":") + std::string(hostname) + " 403 " + std::string(nick) + " :No such channel !\r\n"

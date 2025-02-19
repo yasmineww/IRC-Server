@@ -1,7 +1,6 @@
 
 #include "../Header/Macros.hpp"
 
-
 int Command_Lenght(std::string command)
 {
     Tools tool ;
@@ -77,101 +76,73 @@ void USER_command(std::string Command, int fd, Server *Server_CLS){
         SENDMESSAGE("ERR_INVALID_<username>_FORMAT \n", fd);
         return ;
     }
-    it->second.User_name = tool.array[0] ;
-    it->second.HOST_name = tool.array[1] ;
-    it->second.SERVER_name = tool.array[2] ;
-    it->second.REAL_name = tool.array[3] ;
+    it->second.getUserName() = tool.array[0] ;
+    it->second.getHostName() = tool.array[1] ;
+    it->second.getServerName() = tool.array[2] ;
+    it->second.getREALName() = tool.array[3] ;
 
-    if (tool.array[0].size() == 1 && (tool.array[0][0] == '*' || tool.array[0][0] == '0')) it->second.User_name = "" ;
-    if (tool.array[1].size() == 1 && (tool.array[1][0] == '*' || tool.array[1][0] == '0')) it->second.HOST_name = "" ;
-    if (tool.array[2].size() == 1 && (tool.array[2][0] == '*' || tool.array[2][0] == '0')) it->second.SERVER_name = "" ;
-    if (tool.array[3].size() == 1 && (tool.array[3][0] == '*' || tool.array[3][0] == '0')) it->second.REAL_name = "" ;
-    std::cout << "User_name   : " << it->second.User_name << std::endl  ;
-    std::cout << "HOST_name   : " <<  it->second.HOST_name << std::endl  ;
-    std::cout << "SERVER_name : " << it->second.SERVER_name << std::endl  ;
-    std::cout << "SERVER_name : " << it->second.REAL_name << std::endl ;
+    if (tool.array[0].size() == 1 && (tool.array[0][0] == '*' || tool.array[0][0] == '0')) it->second.getUserName() = "" ;
+    if (tool.array[1].size() == 1 && (tool.array[1][0] == '*' || tool.array[1][0] == '0')) it->second.getHostName() = "" ;
+    if (tool.array[2].size() == 1 && (tool.array[2][0] == '*' || tool.array[2][0] == '0')) it->second.getServerName() = "" ;
+    if (tool.array[3].size() == 1 && (tool.array[3][0] == '*' || tool.array[3][0] == '0')) it->second.getREALName() = "" ;
+    std::cout << "User_name   : " << it->second.getUserName() << std::endl  ;
+    std::cout << "HOST_name   : " <<  it->second.getHostName() << std::endl  ;
+    std::cout << "SERVER_name : " << it->second.getServerName() << std::endl  ;
+    std::cout << "SERVER_name : " << it->second.getREALName() << std::endl ;
     it->second.Auth_USER = true ;
     if (it->second.Auth_USER && it->second.Auth_NICK && it->second.Auth_PASS && it->second.AUTH_WELCOM){
-        SENDMESSAGE(RPL_WELCOME(it->second.Nick_name,  "IRC"), fd);
-        SENDMESSAGE(RPL_YOURHOST(it->second.Nick_name, "IRC"), fd);
-        SENDMESSAGE(RPL_CREATED(it->second.Nick_name,  "IRC"), fd);
-        SENDMESSAGE(RPL_MYINFO(it->second.Nick_name,   "IRC"), fd);
+        SENDMESSAGE(RPL_WELCOME(it->second.getNickName(),  "IRC"), fd);
+        SENDMESSAGE(RPL_YOURHOST(it->second.getNickName(), "IRC"), fd);
+        SENDMESSAGE(RPL_CREATED(it->second.getNickName(),  "IRC"), fd);
+        SENDMESSAGE(RPL_MYINFO(it->second.getNickName(),   "IRC"), fd);
         it->second.AUTH_WELCOM = false ;
     }
 };
-
-void NICK_command(std::string Command, int fd, Server *Server_Cls){
+void Server::NICKhandler(const std::vector<std::string> &data, int fd)
+{
     Tools tool ;
-    std::stringstream s(Command) ;
     std::map<int ,Client>::iterator it ;
 
-    it = Server_Cls->Users.find(fd);
-    if (Command_Lenght(Command) > 2){
-        SENDMESSAGE("ERR_NONICKNAMEGIVEN\n", fd);
-        return ;
-    };
-    if (!it->second.Auth_PASS) {
-        SENDMESSAGE("ERR_NOT_AUTHENTICATED\n", fd);
-        return ;
-    };
-    for (;s >> tool.words;){
-        tool.flag++ ;
-        if (tool.flag == 2)
-            break ;
-    };
+    it = Users.find(fd);
+    if (data.size() > 2)
+        return (SENDMESSAGE("ERR_NONICKNAMEGIVEN\n", fd));
+    if (!it->second.Auth_PASS)
+        return (SENDMESSAGE("ERR_NOT_AUTHENTICATED\n", fd));
     if (it->second.Auth_USER && it->second.Auth_NICK && it->second.Auth_PASS && !it->second.AUTH_WELCOM){
-        it->second.Nick_name = tool.words;
-        SENDMESSAGE("NICK_CHANGED \n", fd);
-        return ;
+        it->second.getNickName() = data[1];
+        return (SENDMESSAGE("NICK_CHANGED \n", fd));
     }
-    it->second.Nick_name = tool.words;
+    it->second.getNickName() = data[1];
     it->second.Auth_NICK = true ;
     if (it->second.Auth_USER && it->second.Auth_NICK && it->second.Auth_PASS && it->second.AUTH_WELCOM){
-        SENDMESSAGE(RPL_WELCOME(it->second.Nick_name,  "IRC"), fd);
-        SENDMESSAGE(RPL_YOURHOST(it->second.Nick_name, "IRC"), fd);
-        SENDMESSAGE(RPL_CREATED(it->second.Nick_name,  "IRC"), fd);
-        SENDMESSAGE(RPL_MYINFO(it->second.Nick_name,   "IRC"), fd);
-        it->second.AUTH_WELCOM = false ;
+        SENDMESSAGE(RPL_WELCOME(it->second.getNickName(),  "IRC"), fd);
+        SENDMESSAGE(RPL_YOURHOST(it->second.getNickName(), "IRC"), fd);
+        SENDMESSAGE(RPL_CREATED(it->second.getNickName(),  "IRC"), fd);
+        SENDMESSAGE(RPL_MYINFO(it->second.getNickName(),   "IRC"), fd);
+        it->second.AUTH_WELCOM = false;
     }
+}
 
-};
-
-void PASS_Command(std::string Check, int fd, Server *Server_Cls)
+void Server::PASShandler(const std::vector<std::string> &data, int fd)
 {
-
     Tools tool ;
     std::map<int , Client>::iterator it ;
+    Client user = Users[fd];
 
-    std::stringstream s(Check) ;
-    (void)Server_Cls ;
-    it = Server_Cls->Users.find(fd) ;
-    if (it->second.Auth_PASS == true){
-        SENDMESSAGE("ERR_ALREADYREGISTRED\n", fd);
-        return ;
-    }
-    if (Command_Lenght(Check) > 2 || Command_Lenght(Check) < 2){
-        SENDMESSAGE("ERR_NEEDMOREPARAMS\n", fd);
-        return ;
-    };
-    for (;s >> tool.words;){
-        tool.flag++ ;
-        if (tool.flag > 1) break ;
-    };
-    if (tool.words == Server_Cls->Server_PassCode){
-        std::cout << Server_Cls->Users.size() << std::endl ;
+    it = Users.find(fd) ;
+    if (it->second.Auth_PASS == true)
+        return (SENDMESSAGE(ERR_ALREADYREGISTERED(user.getNickName(),  "IRC"), fd));
+    if (data.size() != 2)
+        return (SENDMESSAGE(ERR_NEEDMOREPARAMS(user.getNickName(),  "IRC"), fd));
+    if (data[1] == Server_PassCode){
+        std::cout << Users.size() << std::endl ;
         it->second.AuthStep += 1;
         it->second.Auth_PASS = true ;
         std::cout << "Password Accepted" << std::endl ;
-
         return ;
     };
     SENDMESSAGE("ERR_BADPASS\n", fd);
 };
-
-
-
-
-
 
 
 void HELP_command(std::string Command, int fd, Server *Server_CLS)

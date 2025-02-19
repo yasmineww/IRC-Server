@@ -8,6 +8,22 @@ class Client;
 
 class Server
 {
+    private:
+        std::map<std::string, void (Server::*)(const std::vector<std::string>&, int)> commandMap;
+        
+        void PASShandler(const std::vector<std::string> &data, int fd);
+        void USERhandler(const std::vector<std::string> &data, int fd);
+        void NICKhandler(const std::vector<std::string> &data, int fd);
+        void QUIThandler(const std::vector<std::string> &data, int fd);
+        void JOINhandler(const std::vector<std::string> &data, int fd);
+        void PARThandler(const std::vector<std::string> &data, int fd);
+        void PRIVMSGhandler(const std::vector<std::string> &data, int fd);
+        void NOTICEhandler(const std::vector<std::string> &data, int fd);
+        void TOPIChandler(const std::vector<std::string> &data, int fd);
+        void INVITEhandler(const std::vector<std::string> &data, int fd);
+        void KICKhandler(const std::vector<std::string> &data, int fd);
+        void MODEhandler(const std::vector<std::string> &data, int fd);
+
     public  :
         // ARRAY'S ----------
         std::map<int, Client> Users ; // the Array of Clients Contains each One
@@ -44,26 +60,42 @@ class Server
 			// Client ServerAuth(0, "Server", "Parent_Server");
             bindSocket_str.sin_family = AF_INET ;
             bindSocket_str.sin_addr.s_addr = INADDR_ANY;
+
+            commandMap["PASS"] = &Server::PASShandler;
+            commandMap["USER"] = &Server::USERhandler;
+            commandMap["NICK"] = &Server::NICKhandler;
+            commandMap["QUIT"] = &Server::QUIThandler;
+            commandMap["JOIN"] = &Server::JOINhandler;
+            commandMap["PART"] = &Server::PARThandler;
+            commandMap["PRIVMSG"] = &Server::PRIVMSGhandler;
+            commandMap["NOTICE"] = &Server::NOTICEhandler;
+            commandMap["TOPIC"] = &Server::TOPIChandler;
+            commandMap["INVITE"] = &Server::INVITEhandler;
+            commandMap["KICK"] = &Server::KICKhandler;
+            commandMap["MODE"] = &Server::MODEhandler;
         };
 
 
         ~Server(){
             std::cout << "Server Destructor is called !"<< std::endl;
         }
-    	// Get a channel by name
-    	Channel* getChannel(const std::string& channelName);
 
-    	//  Create a new channel if it doesn't exist
+        void Check_client_Request();
+        int Authenticate_User(int client_Id, int pos);
+        void Check_Commands(std::string Command);
+        void receiveData(const std::vector<std::string> &data, int fd);
+
+
+        // Channel Operations
+    	Channel* getChannel(const std::string& channelName);
     	Channel* createChannel(const std::string& channelName);
 
-        int getclient()
-        {
-            return Client_User.fd;
-        }
+        // int getclient()
+        // {
+        //     return Client_User.fd;
+        // }
 
         void removeClient(int fd);
-        void addBot(std::string channelName);
-
 
         std::vector<std::string> getJoinedChannels(int fd);
 

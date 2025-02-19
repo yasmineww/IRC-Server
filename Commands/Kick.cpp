@@ -1,56 +1,23 @@
 #include "../Header/Macros.hpp"
 
-
-
-std::vector<std::string> parse_Kick_Command(const std::string& command)
-{
-    std::vector<std::string> tokens;
-    std::istringstream stream(command);
-    std::string token;
-
-    while (stream >> token)
-    {
-        // If the token starts with ':', treat the rest of the command as a single argument (e.g., reason in KICK)
-        if (token[0] == ':')
-        {
-            std::string rest;
-            std::getline(stream, rest);
-            tokens.push_back(token.substr(1) + rest); // Remove ':' and concatenate the rest
-            break;
-        }
-        else
-            tokens.push_back(token);
-    }
-    return tokens;
-}
-
-
-void KICK_command(std::string command, int fd, Server *Server_CLS)
+void Server::KICKhandler(const std::vector<std::string> &data, int fd)
 {
     // Retrieve the client who taped the command
-    Client user = Server_CLS->Users[fd];
-
-    // Parse the command into arguments
-    std::vector<std::string> args = parse_Kick_Command(command);
-
-
-        // Ensure user is authenticated
-    // if (!user.check_Authentication())
-    //     return SENDMESSAGE("LAYMONA * : " + user.getNickName() + " You have not registered\n", fd);
+    Client user = Users[fd];
 
     // Ensure the command has at least 3 arguments: KICK #channel target [:reason]
-    if (args.size() < 3)
+    if (data.size() < 3)
         return SENDMESSAGE(":Server 461 " + user.getNickName() + " KICK :Not enough parameters\r\n", fd);
 
-    std::string channelName = args[1];
-    std::string targetNick = args[2];
-    std::string reason = (args.size() > 3) ? args[3] : "No reason specified";
-
-
+    std::string channelName = data[1];
+    std::string targetNick = data[2];
+    std::string reason = (data.size() > 3) ? data[3] : "No reason specified";
+    if (reason[0] == ':')
+        reason = reason.substr(1);
     cout << channelName << " " << targetNick << " " << reason << endl;
 
     // Retrieve the channel
-    Channel *channel = Server_CLS->getChannel(channelName);
+    Channel *channel = getChannel(channelName);
     if (!channel)
         return SENDMESSAGE(":Server 403 " + user.getNickName() + " " + channelName + " :No such channel\r\n", fd);
 
@@ -58,16 +25,14 @@ void KICK_command(std::string command, int fd, Server *Server_CLS)
     if (!channel->isOperator(fd))
         return SENDMESSAGE(":Server 482 " + user.getNickName() + " " + channelName + " :You're not a channel operator\r\n", fd);
 
-
     // Retrieve the target client
-
-    int target = Server_CLS->getClientByName(targetNick);
+    int target = getClientByName(targetNick);
     if (target == -1)
         return SENDMESSAGE(":Server 401 " + user.getNickName() + " " + targetNick + " :No such nickName\r\n", fd);
-    Client targetClient = Server_CLS->Users[target];
+    Client targetClient = Users[target];
 
     cout << "print target infos [" << target << "]" << endl;
-        // Check if the target user is in the channel
+    // Check if the target user is in the channel
     if (!channel->hasUser(target))
         return SENDMESSAGE(":Server 441 " + user.getNickName() + " " + targetNick + " " + channelName + " :They aren't on that channel\r\n", fd);
 

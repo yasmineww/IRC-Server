@@ -3,16 +3,53 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: youmoukh <youmoukh@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 13:35:59 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/02/10 13:37:06 by youmoukh         ###   ########.fr       */
+/*   Updated: 2025/02/19 02:50:24 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include "../Header/Macros.hpp"
 
+void Server::JOINhandler(const std::vector<std::string> &data, int fd) { 
+    
+    std::cout << "----JOIN Command Received-----" << std::endl;
+    Client user = Users[fd];
+    
+    if (data.size() < 2)
+        return (SENDMESSAGE(ERR_NEEDMOREPARAMS(user.getNickName(),  "IRC"), fd));
+    
+    if (data[1][0] != '#' && data[1][0] != '&')
+        return(SENDMESSAGE(ERR_NOSUCHCHANNELl(user.getNickName(),  "IRC"), fd));
+    Channel *channel = getChannel(data[1]);
+    if (channel == nullptr) {
+    //new channel
+        channel = createChannel(data[1]);
+        channel->addOperator(fd);
+        if (data.size() > 2)
+            channel->setKey(data[2]);
+        channel->addUser(user, fd);
+        return;
+    }
+    //old channel
+    if (channel->isUserInChannel(fd))
+        return;
+    // if ((!channel->getKey().empty() && !data[2]) || (!channel->getKey().empty() && data[2] && data[2] != channel->getKey()))
+    //     SENDMESSAGE(ERR_BADCHANNELKEY(getNick_name(),  "IRC", channel->getName()), fd);
+    // if (channel.inviteOnly && !channel->hasInvite(fd))
+    //     SENDMESSAGE(ERR_INVITEONLYCHAN(getNick_name(),  "IRC", channel->getName()), fd);
+    // if (channel->getMembers().size() >= 10)
+    //     SENDMESSAGE(ERR_CHANNELISFULL(getNick_name(),  "IRC", channel->getName()), fd);
+    channel->addUser(user, fd);
+    //need to add broadcast msg
+}
+
+void Server::USERhandler(const std::vector<std::string> &data, int fd) { (void) fd; (void) data;}
+void Server::PARThandler(const std::vector<std::string> &data, int fd) { (void) fd; (void) data;}
+void Server::TOPIChandler(const std::vector<std::string> &data, int fd) {(void) fd; (void) data;}
+void Server::INVITEhandler(const std::vector<std::string> &data, int fd) {(void) fd; (void) data;}
+void Server::MODEhandler(const std::vector<std::string> &data, int fd) {(void) fd; (void) data;}
 
 
 std::vector<std::string> Server::getJoinedChannels(int fd)
@@ -89,97 +126,133 @@ void Server::removeClient(int fd)
 
 
 
-int First_Appearance(std::string Command, Server *Server_CLS,int fd)
-{
-    std::map<int ,Client>::iterator it ;
-    std::stringstream s(Command);
-    std::string Value ;
+// int First_Appearance(std::string Command, Server *Server_CLS,int fd)
+// {
+//     // std::map<int ,Client>::iterator it ;
+//     std::stringstream s(Command);
+//     std::string Value ;
 
-    it = Server_CLS->Users.find(fd);
-    s >> Value ;
-    if (Value == PASS_STR) return (PASS);
-    if (Value == USER_STR) return (USER);
-    if (Value == NICK_STR) return (NICK);
-    if (Value == KICK_STR) return (KICK);
-    if (Value == JOIN_STR) return (JOIN);
-    if (Value == PRIVMSG_STR) return (PRIVMSG);
-    if (Value == MODE_STR) return (MODE);
-    if (Value == HELP_STR) return (HELP);
-    if (Value == PART_STR) return (PART);
-    if (Value == INVITE_STR) return (INVITE);
-    if (Value == TOPIC_STR) return (TOPIC);
-    if (Value == QUIT_STR) return (QUIT);
-    if (Value == SEND_STR) return (SEND);
+//     // it = Server_CLS->Users.find(fd);
+//     s >> Value ;
+//     if (Value == PASS_STR) return (PASS);
+//     if (Value == USER_STR) return (USER);
+//     if (Value == NICK_STR) return (NICK);
+//     if (Value == QUIT_STR) return (QUIT);
+//     if (Value == KICK_STR) return (KICK);
+//     if (Value == JOIN_STR) return (JOIN);
+//     if (Value == PRIVMSG_STR) return (PRIVMSG);
+//     if (Value == MODE_STR) return (MODE);
+//     if (Value == HELP_STR) return (HELP);
+//     if (Value == PART_STR) return (PART);
+//     if (Value == INVITE_STR) return (INVITE);
+//     if (Value == TOPIC_STR) return (TOPIC);
+//     if (Value == SEND_STR) return (SEND);
 
-// In Check_Commands switch
-
-
-    return (-1);
-};
-
-void Check_Commands(Server *Server_Cls, std::string Command, int fd)
-{
-    int OUT = First_Appearance(Command, Server_Cls, fd);
+// // In Check_Commands switch
 
 
-    switch (OUT)
-    {
-        case PASS :
-            PASS_Command(Command, fd,Server_Cls);
-            break ;
-        case USER :
-            USER_command(Command, fd, Server_Cls);
-            break ;
-        case NICK :
-            NICK_command(Command, fd, Server_Cls);
-            break ;
-        case KICK :
-            KICK_command(Command, fd, Server_Cls);
-            break ;
-        case MODE :
-            MODE_command(Command, fd, Server_Cls);
-            break ;
-        case TOPIC :
-            TOPIC_command(Command, fd, Server_Cls);
-            break ;
-        case PRIVMSG :
-            PRIVMSG_command(Command, fd, Server_Cls);
-            break ;
-        case JOIN :
-            JOIN_command(Command, fd, Server_Cls);
-            break ;
-        case HELP :
-            HELP_command(Command, fd, Server_Cls);
-            break ;
-        case PART :
-            PART_command(Command, fd, Server_Cls);
-            break ;
-        case INVITE:
-            INVITE_command(Command, fd, Server_Cls);
-            break;
-        case NOTICE:
-            NOTICE_command(Command, fd, Server_Cls);
-            break;
-        case QUIT:
-            QUIT_command(Command, fd, Server_Cls);
-            break;
-        default :
-            std::cout << "THE LINE U JUST ENTRED As Client --> :  " << Command << std::endl ;
-            break ;
+//     return (-1);
+// };
+
+void Server::receiveData(const std::vector<std::string> &data, int fd){
+    if (data.empty())
+        throw std::logic_error("No command !");
+
+    const std::string &command = data[0];
+    
+    if (commandMap.find(command) != commandMap.end()) {
+        (this->*commandMap[command])(data, fd);// calls the function (value) stored in the map at the key command
+    } else {
+        throw std::logic_error("Invalid command: " + command);
     }
+}
+
+// PRIVMSG younes : hello younes how are you
+// PRIVMSG younes hello younes how are you
+
+void Server::Check_Commands(std::string Command)
+{   
+    int fd = this->start->fd;
+    std::vector<std::string> data;
+    
+    size_t found = Command.find(":");
+    std::string store;
+
+    if (found != std::string::npos){
+        std::string first = Command.substr(0, found); //PRIVMSG younes 
+        Command.erase(0, found); //: hello younes how are you
+        std::stringstream s(first);
+        while (s >> store){
+            data.push_back(store);
+        };
+        data.push_back(Command);
+    }
+    else {
+        std::stringstream s(Command);
+        while (s >> store){
+            data.push_back(store);
+        }
+    }
+
+    receiveData(data, fd);
+    // switch (OUT)
+    // {
+    //     case PASS :
+    //         PASS_Command(Command, fd,Server_Cls);
+    //         break ;
+    //     case USER :
+    //         USER_command(Command, fd, Server_Cls);
+    //         break ;
+    //     case NICK :
+    //         NICK_command(Command, fd, Server_Cls);
+    //         break ;
+    //     case KICK :
+    //         KICK_command(Command, fd, Server_Cls);
+    //         break ;
+    //     case MODE :
+    //         MODE_command(Command, fd, Server_Cls);
+    //         break ;
+    //     case TOPIC :
+    //         TOPIC_command(Command, fd, Server_Cls);
+    //         break ;
+    //     case PRIVMSG :
+    //         PRIVMSG_command(Command, fd, Server_Cls);
+    //         break ;
+    //     case JOIN :
+    //         JOIN_command(Command, fd, Server_Cls);
+    //         break ;
+    //     case HELP :
+    //         HELP_command(Command, fd, Server_Cls);
+    //         break ;
+    //     case PART :   
+    //         PART_command(Command, fd, Server_Cls);
+    //         break ;
+    //     case INVITE:
+    //         INVITE_command(Command, fd, Server_Cls);
+    //         break;
+    //     case NOTICE:
+    //         NOTICE_command(Command, fd, Server_Cls);
+    //         break;
+    //     case QUIT:
+    //         QUIT_command(Command, fd, Server_Cls);
+    //         break;
+    //     default :
+    //         std::cout << "THE LINE U JUST ENTRED As Client --> :  " << Command << std::endl ;
+    //         break ;
+    // }
 };
 
 
-int Authenticate_User(int client_Id, Server *server_Cls, int pos)
+int Server::Authenticate_User(int client_Id, int pos)
 {
     (void)client_Id ;
-    server_Cls->Size_Read = 0;
+    this->Size_Read = 0;
     char Recv_Buffer[1024];
 
     memset(Recv_Buffer, 0, sizeof(Recv_Buffer));
-    server_Cls->Size_Read = recv(server_Cls->start->fd, Recv_Buffer, sizeof(Recv_Buffer) , 0);
-    Check_Commands(server_Cls, Recv_Buffer, server_Cls->start->fd);
-    if (server_Cls->Size_Read == 0)
+    this->Size_Read = recv(this->start->fd, Recv_Buffer, sizeof(Recv_Buffer) , 0);
+    Check_Commands(Recv_Buffer);
+    if (this->Size_Read == 0)
     {
         std::cout << "Client Disconnected " << pos << std::endl ;
         return (-1);
@@ -188,33 +261,33 @@ int Authenticate_User(int client_Id, Server *server_Cls, int pos)
 };
 
 
-void Pint_Array(std::vector<struct pollfd> pollAr)
-{
-    std::vector<struct pollfd>::iterator start = pollAr.begin() ;
-    std::vector<struct pollfd>::iterator end = pollAr.end()     ;
-    for (;start != end; start++)
-        std::cout << "- : " << start->fd << std::endl;
+// void Pint_Array(std::vector<struct pollfd> pollAr)
+// {
+//     std::vector<struct pollfd>::iterator start = pollAr.begin() ;
+//     std::vector<struct pollfd>::iterator end = pollAr.end()     ;
+//     for (;start != end; start++)
+//         std::cout << "- : " << start->fd << std::endl;
 
-};
+// };
 
 // check The Acttion Of the Each Client Connected To the Server in the Poll() <Array>
-void Check_client_Request(Server *server_Cls) {
+void Server::Check_client_Request() {
     int Auth_Flag = 0;
     int Remove_Position = 0;
-    server_Cls->start = server_Cls->pollAr.begin();
-    server_Cls->end   = server_Cls->pollAr.end();
-    if (server_Cls->pollAr.size() > 1)
+    this->start = this->pollAr.begin();
+    this->end   = this->pollAr.end();
+    if (this->pollAr.size() > 1)
     {
         Remove_Position++ ;
-        server_Cls->start++ ;
-        for (;server_Cls->start != server_Cls->end; server_Cls->start++){
-            if (server_Cls->start->revents & POLLIN){
-                Auth_Flag = Authenticate_User(server_Cls->start->fd, server_Cls, Remove_Position);
+        this->start++ ;
+        for (;this->start != this->end; this->start++){
+            if (this->start->revents & POLLIN){
+                Auth_Flag = Authenticate_User(this->start->fd, Remove_Position);
                 if (Auth_Flag == -1){
-                    close(server_Cls->start->fd);
+                    close(this->start->fd);
                     std::cout << "Remove _> " << Remove_Position << std::endl ;
-                    server_Cls->Users.erase(server_Cls->Users.find(server_Cls->start->fd));
-                    server_Cls->pollAr.erase(server_Cls->pollAr.begin() + Remove_Position);
+                    this->Users.erase(this->Users.find(this->start->fd));
+                    this->pollAr.erase(this->pollAr.begin() + Remove_Position);
                     return ;
                 }
             }
@@ -222,9 +295,9 @@ void Check_client_Request(Server *server_Cls) {
     }
 };
 
-void Accept_Client_Connection(Server *server_Cls){
-    (void)server_Cls ;
-};
+// void Accept_Client_Connection(Server *server_Cls){
+//     (void)server_Cls ;
+// };
 
 std::string	Welcome_mssg(void)
 {
@@ -297,12 +370,13 @@ void Server_Socket_Creation(std::string Port, std::string Pass_Code)
                         server_Cls.poll_strc.events = POLLIN ;
                         server_Cls.pollAr.push_back(server_Cls.poll_strc);
                         TOADD.first = server_Cls.acceptSocket_id ;
-                        TOADD.second.Auth_PASS = false ;
+                        // TOADD.second.Auth_PASS = false ; // Already set in default constructor
+                        TOADD.second.fd = server_Cls.acceptSocket_id ; // Adding User Socker ID to the USER Struct
                         server_Cls.Users.insert(TOADD);
                     }
                 }
             }
-            Check_client_Request(&server_Cls);
+            server_Cls.Check_client_Request();
         }
 };
 

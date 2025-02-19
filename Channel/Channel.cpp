@@ -3,16 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: youmoukh <youmoukh@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 11:04:43 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/02/10 11:13:56 by youmoukh         ###   ########.fr       */
+/*   Updated: 2025/02/19 01:15:21 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
-
 #include "Channel.hpp"
+
+Channel::Channel(std::string _name, std::string key) : name(_name), _key(key)
+{
+    ClientsAmount = 0;
+    userLimit = -1;
+}
 
 Channel::~Channel() {}
 
@@ -25,7 +29,6 @@ void Channel::addUser(Client user, int fd)
         return SENDMESSAGE(":Server 471 " + user.getNickName() + " " + name + " :Cannot join channel (+l)\n", fd);
     users[fd] = user;
 }
-
 
 // Check if a user is in the channel
 bool Channel::isUserInChannel(int fd)
@@ -123,4 +126,93 @@ void Channel::removeUser(int fd)
     std::map<int, Client>::iterator it = users.find(fd);
     if (it != users.end())
         users.erase(it);
+}
+
+bool Channel::hasUser(int fd)
+{
+    cout <<  "ddddd _> " <<  fd  << endl;
+    if (users.find(fd) != users.end())
+    {
+        cout << "the user is in the channel "<< endl;
+        return (true);
+    }
+    return false;
+}
+
+// Set the channel to invite-only mode (+i)
+void Channel::setInviteOnly(bool state)
+{
+    inviteOnly = state;
+}
+
+// Check if the channel is invite-only
+bool Channel::isInviteOnly() const
+{
+    return inviteOnly;
+}
+
+// Set the channel topic restriction mode (+t)
+void Channel::setTopicRestricted(bool state)
+{
+    topicRestricted = state;
+}
+
+// Check if topic is restricted to operators
+bool Channel::isTopicRestricted() const
+{
+    return topicRestricted;
+}
+
+int Channel::getOperatorsSize()
+{
+    return operators.size();
+}
+
+// Remove the channel key (-k)
+void Channel::removeKey()
+{
+    _key.clear();
+}
+
+// Check if the channel has a key set
+bool Channel::hasKey() const
+{
+    return !_key.empty();
+}
+
+
+// Set a user limit for the channel (+l)
+void Channel::setUserLimit(int limit)
+{
+    userLimit = limit;
+}
+
+// Remove the user limit (-l)
+void Channel::removeUserLimit()
+{
+    userLimit = -1;
+}
+
+// Get the user limit (-1 means no limit)
+int Channel::getUserLimit() const {
+    return userLimit;
+}
+
+// Get the number of users in the channel
+int Channel::getUserCount() const
+{
+    return users.size();
+}
+
+
+// printf op
+void Channel::print_operators(){
+
+    // cout << " OPERATORSSSS   >>> " << endl;
+    std::cout << "Number of operators: " << operators.size() << std::endl;
+
+    for (std::vector<int>::iterator it = operators.begin(); it != operators.end(); ++it) {
+        std::cout << "->>>>>>> " << *it << std::endl;
+    }
+
 }
