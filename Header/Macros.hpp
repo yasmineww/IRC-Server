@@ -6,7 +6,7 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 10:52:04 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/02/19 16:46:33 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/02/19 17:18:31 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -187,3 +187,4 @@ void    printchannelvectorlist(std::string msg, std::vector<std::string> channel
 #define ERR_NOSUCHCHANNELl(nick, hostname)                                std::string(":") + std::string(hostname) + " 403 " + std::string(nick) + " :No such channel !\r\n"
 
 #define ERR_CHANOPRIVSNEEDED(nick, hostname)                              std::string(":") + std::string(hostname) + " 482 " + std::string(nick) + " :You're not channel operator !\r\n"
+#define RPL_NOTOPIC(nick, hostname, channel)                              std::string(":") + std::string(hostname) + " 331 " + std::string(nick) + " " + std::string(channel) + " :No topic is set !\r\n"

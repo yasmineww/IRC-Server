@@ -6,7 +6,7 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 13:35:59 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/02/19 17:00:10 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/02/19 17:05:33 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,9 +46,8 @@ void Server::JOINhandler(const std::vector<std::string> &data, int fd) {
 }
 void Server::USERhandler(const std::vector<std::string> &data, int fd) { (void) fd; (void) data;}
 void Server::PARThandler(const std::vector<std::string> &data, int fd) { (void) fd; (void) data;}
-void Server::TOPIChandler(const std::vector<std::string> &data, int fd) {(void) fd; (void) data;}
+// void Server::TOPIChandler(const std::vector<std::string> &data, int fd) {(void) fd; (void) data;}
 void Server::MODEhandler(const std::vector<std::string> &data, int fd) {(void) fd; (void) data;}
-
 
 std::vector<std::string> Server::getJoinedChannels(int fd)
 {
