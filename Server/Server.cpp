@@ -6,7 +6,7 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 13:35:59 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/02/19 17:05:33 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/02/19 17:48:52 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,10 @@ void Server::JOINhandler(const std::vector<std::string> &data, int fd) {
     Client user = Users[fd];
     
     if (data.size() < 2)
-        return (SENDMESSAGE(ERR_NEEDMOREPARAMS(user.getNickName(),  "IRC"), fd));
+        return (SENDMESSAGE(ERR_NEEDMOREPARAMS(user.getNickName(),  user.getHostName()), fd));
     
     if (data[1][0] != '#' && data[1][0] != '&')
-        return(SENDMESSAGE(ERR_NOSUCHCHANNELl(user.getNickName(),  "IRC"), fd));
+        return(SENDMESSAGE(ERR_NOSUCHCHANNELl(user.getNickName(),  user.getHostName()), fd));
     Channel *channel = getChannel(data[1]);
     if (channel == nullptr) {
     //new channel
@@ -36,17 +36,15 @@ void Server::JOINhandler(const std::vector<std::string> &data, int fd) {
     if (channel->isUserInChannel(fd))
         return;
     // if ((!channel->getKey().empty() && !data[2]) || (!channel->getKey().empty() && data[2] && data[2] != channel->getKey()))
-    //     SENDMESSAGE(ERR_BADCHANNELKEY(getNick_name(),  "IRC", channel->getName()), fd);
+    //     SENDMESSAGE(ERR_BADCHANNELKEY(getNick_name(),  user.getHostName(), channel->getName()), fd);
     // if (channel.inviteOnly && !channel->hasInvite(fd))
-    //     SENDMESSAGE(ERR_INVITEONLYCHAN(getNick_name(),  "IRC", channel->getName()), fd);
+    //     SENDMESSAGE(ERR_INVITEONLYCHAN(getNick_name(),  user.getHostName(), channel->getName()), fd);
     // if (channel->getMembers().size() >= 10)
-    //     SENDMESSAGE(ERR_CHANNELISFULL(getNick_name(),  "IRC", channel->getName()), fd);
+    //     SENDMESSAGE(ERR_CHANNELISFULL(getNick_name(),  user.getHostName(), channel->getName()), fd);
     channel->addUser(user, fd);
     //need to add broadcast msg
 }
 void Server::USERhandler(const std::vector<std::string> &data, int fd) { (void) fd; (void) data;}
-void Server::PARThandler(const std::vector<std::string> &data, int fd) { (void) fd; (void) data;}
-// void Server::TOPIChandler(const std::vector<std::string> &data, int fd) {(void) fd; (void) data;}
 void Server::MODEhandler(const std::vector<std::string> &data, int fd) {(void) fd; (void) data;}
 
 std::vector<std::string> Server::getJoinedChannels(int fd)

@@ -39,14 +39,12 @@ void Server::TOPIChandler(const std::vector<std::string> &data, int fd)
     if (data[2][0] == ':')
         newTopic = data[2].substr(2);
 
-    for (size_t i = 3; i < data.size(); i++)
-        newTopic += " " + data[i]; //cannot understand
-
     channel->setTopic(newTopic);
 
-   // still need to handle if there is no : , and a long message, only the first word is taken
 
     // Broadcast the topic change to all users in the channel
+    //   channel->broadcast(RPL_TOPIC( user.getHostName(), channel->getTopic(), user.getNickName(), channelName));
+
     std::string topicMessage = ":" + user.getNickName() + " TOPIC " + channelName + " :" + newTopic + "\r\n";
     channel->broadcast(topicMessage);
 }

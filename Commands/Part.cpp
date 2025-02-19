@@ -6,28 +6,24 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 10:51:45 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/02/19 02:33:43 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/02/19 17:48:57 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../Header/Macros.hpp"
 
-void    PART_command(std::string command, int fd, Server* Server_CLS)
+void Server::PARThandler(const std::vector<std::string> &data, int fd)
+// void    PART_command(std::string command, int fd, Server* Server_CLS)
 {
-    Client user = Server_CLS->Users[fd];
+    Client user = Users[fd];
 
+    // if (!user.check_Authentication())
+    //     return SENDMESSAGE("ERROR : You are not registred\n", fd);
 
-    if (!user.check_Authentication())
-        return SENDMESSAGE("ERROR : You are not registred\n", fd);
+    if (data.size() < 2)
+        return (SENDMESSAGE(ERR_NEEDMOREPARAMS(user.getNickName(),  user.getHostName()), fd));
 
-    std::stringstream ss(command);
-    std::string cmd, channelnames;
-
-    ss >> cmd >> channelnames;
-
-    if (channelnames.empty())
-        return SENDMESSAGE(":server 461 PART :Not enough parameters\r\n", fd);
-
+    std::string channelnames;
     std::stringstream ss1(channelnames);
 
     std::vector<std::string> channels;
@@ -47,9 +43,9 @@ void    PART_command(std::string command, int fd, Server* Server_CLS)
         chanName = channels[i];
 
         if (chanName.empty() || (chanName[0] != '#' && chanName[0] != '&'))
-            return SENDMESSAGE("ERROR : Invalid channel name\r\n", fd);
+            return(SENDMESSAGE(ERR_NOSUCHCHANNELl(user.getNickName(),  user.getHostName()), fd));
 
-        Channel *channnel = Server_CLS->getChannel(chanName);
+        Channel *channnel = getChannel(chanName);
         if (!channnel)
         {
             // SENDMESSAGE("ERR_NOSUCHCHANNEL", fd);
@@ -67,9 +63,6 @@ void    PART_command(std::string command, int fd, Server* Server_CLS)
         std::string partMessage = ":" + user.getNickName() + " PART " + chanName + "\r\n";
         channnel->broadcast(partMessage);
     }
-
-
-
 
     // SENDMESSAGE(PART_RPL(user.getNickName(), channelname), fd);
 }
