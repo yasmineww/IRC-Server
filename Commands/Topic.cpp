@@ -45,6 +45,6 @@ void Server::TOPIChandler(const std::vector<std::string> &data, int fd)
     // Broadcast the topic change to all users in the channel
     //   channel->broadcast(RPL_TOPIC( user.getHostName(), channel->getTopic(), user.getNickName(), channelName));
 
-    std::string topicMessage = ":" + user.getNickName() + " TOPIC " + channelName + " :" + newTopic + "\r\n";
+    std::string topicMessage = ":" + user.getNickName() + " TOPIC " + channelName + " :" + newTopic + "\r";
     channel->broadcast(topicMessage);
 }

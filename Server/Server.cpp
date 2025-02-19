@@ -6,7 +6,7 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 13:35:59 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/02/19 17:48:52 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/02/19 22:08:18 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,8 @@ void Server::JOINhandler(const std::vector<std::string> &data, int fd) {
         if (data.size() > 2)
             channel->setKey(data[2]);
         channel->addUser(user, fd);
+        std::string joinMessage = ":" + user.getNickName() + " JOIN " + data[1] + "\r\n";
+        channel->broadcast(joinMessage);
         return;
     }
     //old channel
@@ -44,7 +46,7 @@ void Server::JOINhandler(const std::vector<std::string> &data, int fd) {
     channel->addUser(user, fd);
     //need to add broadcast msg
 }
-void Server::USERhandler(const std::vector<std::string> &data, int fd) { (void) fd; (void) data;}
+// void Server::USERhandler(const std::vector<std::string> &data, int fd) { (void) fd; (void) data;}
 void Server::MODEhandler(const std::vector<std::string> &data, int fd) {(void) fd; (void) data;}
 
 std::vector<std::string> Server::getJoinedChannels(int fd)

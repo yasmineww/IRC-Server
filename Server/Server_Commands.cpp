@@ -33,58 +33,47 @@ int REGEX_STRING(std::string COMMAND, int TYPE){
     return (0);
 };
 
-void USER_command(std::string Command, int fd, Server *Server_CLS){
-    std::cout << Command << std::endl ;
+void Server::USERhandler(const std::vector<std::string> &data, int fd)
+// void USER_command(std::string Command, int fd, Server *Server_CLS)
+{
     Tools tool ;
-    bool FOR_NICKCHECK = false;
-    std::stringstream s(Command) ;
+
     std::map<int ,Client>::iterator it ;
 
-    it = Server_CLS->Users.find(fd);
+    it = Users.find(fd);
 
-    if (it->second.Auth_USER) {
-        SENDMESSAGE("ERR_ALREADYREGISTRED \n", fd);
-        return ;
-    }
-    if (!it->second.Auth_PASS) {
-        SENDMESSAGE("ERR_NOT_AUTHENTICATED\n", fd);
-        return ;
-    };
-    if (Command_Lenght(Command) < 4){
-        SENDMESSAGE("ERR_NEEDMOREPARAMS\n", fd);
-        return ;
-    };
+    if (it->second.Auth_USER)
+        return (SENDMESSAGE("ERR_ALREADYREGISTRED \n", fd));
+    if (!it->second.Auth_PASS)
+        return (SENDMESSAGE("ERR_NOT_AUTHENTICATED\n", fd));
+    if (data.size() < 5)
+        return (SENDMESSAGE("ERR_NEEDMOREPARAMS\n", fd));
+    if (data.size() > 5)
+        return (SENDMESSAGE("ERR_NEEDMOREPARAMS\n", fd));
+    // if (Command_Lenght(Command) < 4)
+    //     return (SENDMESSAGE("ERR_NEEDMOREPARAMS\n", fd));
 
-    for (;s >> tool.words;){
-        if (FOR_NICKCHECK) tool.array[3] += " " + tool.words ;
-        if (tool.flag > 0 && FOR_NICKCHECK != true) tool.array[tool.flag - 1] = tool.words ;
-        if (tool.words[0] == ':' && FOR_NICKCHECK != true) FOR_NICKCHECK = true ;
-        if (tool.flag == 4 && tool.words[0] == ':' && tool.words.size() < 2) {
-            SENDMESSAGE("ERR_PARAMS \n", fd);
-            return ;
-        }
-        tool.flag++ ;
-        if (tool.flag == 5 && FOR_NICKCHECK != true) break ;
-    };
-    if (Command_Lenght(Command) > 5 && FOR_NICKCHECK != true){
-        SENDMESSAGE("ERR_TOMANY_ARG \n", fd);
-        return ;
-    }
-    if (FOR_NICKCHECK) tool.array[3] = tool.array[3].substr(1, tool.array[3].size());
-    if (FOR_NICKCHECK) tool.array[3] = tool.array[3].substr(1, tool.array[3].size());
-    if (REGEX_STRING(tool.array[0], USERNAME) == USERNAME) {
-        SENDMESSAGE("ERR_INVALID_<username>_FORMAT \n", fd);
-        return ;
-    }
-    it->second.getUserName() = tool.array[0] ;
-    it->second.getHostName() = tool.array[1] ;
-    it->second.getServerName() = tool.array[2] ;
-    it->second.getREALName() = tool.array[3] ;
+    std::string username = data[1];
+    std::string hostname = data[2];
+    std::string servername = data[3];
+    std::string realname = data[4];
 
-    if (tool.array[0].size() == 1 && (tool.array[0][0] == '*' || tool.array[0][0] == '0')) it->second.getUserName() = "" ;
-    if (tool.array[1].size() == 1 && (tool.array[1][0] == '*' || tool.array[1][0] == '0')) it->second.getHostName() = "" ;
-    if (tool.array[2].size() == 1 && (tool.array[2][0] == '*' || tool.array[2][0] == '0')) it->second.getServerName() = "" ;
-    if (tool.array[3].size() == 1 && (tool.array[3][0] == '*' || tool.array[3][0] == '0')) it->second.getREALName() = "" ;
+    if (data[4][0] == ':')
+        realname = data[4].substr(2);
+
+    if (REGEX_STRING(username, USERNAME) == USERNAME) {
+        return (SENDMESSAGE("ERR_INVALID_<username>_FORMAT \n", fd));
+    }
+
+    it->second.setUserName(username);
+    it->second.setHostName(hostname);
+    it->second.setServerName(servername);
+    it->second.setREALName(realname);
+
+    // if (tool.array[0].size() == 1 && (tool.array[0][0] == '*' || tool.array[0][0] == '0')) it->second.getUserName() = "" ;
+    // if (tool.array[1].size() == 1 && (tool.array[1][0] == '*' || tool.array[1][0] == '0')) it->second.getHostName() = "" ;
+    // if (tool.array[2].size() == 1 && (tool.array[2][0] == '*' || tool.array[2][0] == '0')) it->second.getServerName() = "" ;
+    // if (tool.array[3].size() == 1 && (tool.array[3][0] == '*' || tool.array[3][0] == '0')) it->second.getREALName() = "" ;
     std::cout << "User_name   : " << it->second.getUserName() << std::endl  ;
     std::cout << "HOST_name   : " <<  it->second.getHostName() << std::endl  ;
     std::cout << "SERVER_name : " << it->second.getServerName() << std::endl  ;
@@ -101,7 +90,6 @@ void USER_command(std::string Command, int fd, Server *Server_CLS){
 
 void Server::NICKhandler(const std::vector<std::string> &data, int fd)
 {
-    Tools tool ;
     std::map<int ,Client>::iterator it ;
 
     it = Users.find(fd);
@@ -126,7 +114,6 @@ void Server::NICKhandler(const std::vector<std::string> &data, int fd)
 
 void Server::PASShandler(const std::vector<std::string> &data, int fd)
 {
-    Tools tool ;
     std::map<int , Client>::iterator it ;
     Client user = Users[fd];
 
