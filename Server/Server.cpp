@@ -6,7 +6,7 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 13:35:59 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/02/19 02:50:24 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/02/19 15:54:06 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,6 @@ void Server::JOINhandler(const std::vector<std::string> &data, int fd) {
     channel->addUser(user, fd);
     //need to add broadcast msg
 }
-
 void Server::USERhandler(const std::vector<std::string> &data, int fd) { (void) fd; (void) data;}
 void Server::PARThandler(const std::vector<std::string> &data, int fd) { (void) fd; (void) data;}
 void Server::TOPIChandler(const std::vector<std::string> &data, int fd) {(void) fd; (void) data;}
@@ -124,36 +123,6 @@ void Server::removeClient(int fd)
 }
 
 
-
-
-// int First_Appearance(std::string Command, Server *Server_CLS,int fd)
-// {
-//     // std::map<int ,Client>::iterator it ;
-//     std::stringstream s(Command);
-//     std::string Value ;
-
-//     // it = Server_CLS->Users.find(fd);
-//     s >> Value ;
-//     if (Value == PASS_STR) return (PASS);
-//     if (Value == USER_STR) return (USER);
-//     if (Value == NICK_STR) return (NICK);
-//     if (Value == QUIT_STR) return (QUIT);
-//     if (Value == KICK_STR) return (KICK);
-//     if (Value == JOIN_STR) return (JOIN);
-//     if (Value == PRIVMSG_STR) return (PRIVMSG);
-//     if (Value == MODE_STR) return (MODE);
-//     if (Value == HELP_STR) return (HELP);
-//     if (Value == PART_STR) return (PART);
-//     if (Value == INVITE_STR) return (INVITE);
-//     if (Value == TOPIC_STR) return (TOPIC);
-//     if (Value == SEND_STR) return (SEND);
-
-// // In Check_Commands switch
-
-
-//     return (-1);
-// };
-
 void Server::receiveData(const std::vector<std::string> &data, int fd){
     if (data.empty())
         throw std::logic_error("No command !");
@@ -195,51 +164,6 @@ void Server::Check_Commands(std::string Command)
     }
 
     receiveData(data, fd);
-    // switch (OUT)
-    // {
-    //     case PASS :
-    //         PASS_Command(Command, fd,Server_Cls);
-    //         break ;
-    //     case USER :
-    //         USER_command(Command, fd, Server_Cls);
-    //         break ;
-    //     case NICK :
-    //         NICK_command(Command, fd, Server_Cls);
-    //         break ;
-    //     case KICK :
-    //         KICK_command(Command, fd, Server_Cls);
-    //         break ;
-    //     case MODE :
-    //         MODE_command(Command, fd, Server_Cls);
-    //         break ;
-    //     case TOPIC :
-    //         TOPIC_command(Command, fd, Server_Cls);
-    //         break ;
-    //     case PRIVMSG :
-    //         PRIVMSG_command(Command, fd, Server_Cls);
-    //         break ;
-    //     case JOIN :
-    //         JOIN_command(Command, fd, Server_Cls);
-    //         break ;
-    //     case HELP :
-    //         HELP_command(Command, fd, Server_Cls);
-    //         break ;
-    //     case PART :   
-    //         PART_command(Command, fd, Server_Cls);
-    //         break ;
-    //     case INVITE:
-    //         INVITE_command(Command, fd, Server_Cls);
-    //         break;
-    //     case NOTICE:
-    //         NOTICE_command(Command, fd, Server_Cls);
-    //         break;
-    //     case QUIT:
-    //         QUIT_command(Command, fd, Server_Cls);
-    //         break;
-    //     default :
-    //         std::cout << "THE LINE U JUST ENTRED As Client --> :  " << Command << std::endl ;
-    //         break ;
-    // }
 };
 
 
@@ -260,17 +184,6 @@ int Server::Authenticate_User(int client_Id, int pos)
     return (0);
 };
 
-
-// void Pint_Array(std::vector<struct pollfd> pollAr)
-// {
-//     std::vector<struct pollfd>::iterator start = pollAr.begin() ;
-//     std::vector<struct pollfd>::iterator end = pollAr.end()     ;
-//     for (;start != end; start++)
-//         std::cout << "- : " << start->fd << std::endl;
-
-// };
-
-// check The Acttion Of the Each Client Connected To the Server in the Poll() <Array>
 void Server::Check_client_Request() {
     int Auth_Flag = 0;
     int Remove_Position = 0;
@@ -370,7 +283,6 @@ void Server_Socket_Creation(std::string Port, std::string Pass_Code)
                         server_Cls.poll_strc.events = POLLIN ;
                         server_Cls.pollAr.push_back(server_Cls.poll_strc);
                         TOADD.first = server_Cls.acceptSocket_id ;
-                        // TOADD.second.Auth_PASS = false ; // Already set in default constructor
                         TOADD.second.fd = server_Cls.acceptSocket_id ; // Adding User Socker ID to the USER Struct
                         server_Cls.Users.insert(TOADD);
                     }

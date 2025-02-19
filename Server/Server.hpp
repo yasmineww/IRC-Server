@@ -90,11 +90,6 @@ class Server
     	Channel* getChannel(const std::string& channelName);
     	Channel* createChannel(const std::string& channelName);
 
-        // int getclient()
-        // {
-        //     return Client_User.fd;
-        // }
-
         void removeClient(int fd);
 
         std::vector<std::string> getJoinedChannels(int fd);

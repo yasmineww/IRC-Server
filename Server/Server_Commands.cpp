@@ -98,6 +98,7 @@ void USER_command(std::string Command, int fd, Server *Server_CLS){
         it->second.AUTH_WELCOM = false ;
     }
 };
+
 void Server::NICKhandler(const std::vector<std::string> &data, int fd)
 {
     Tools tool ;
