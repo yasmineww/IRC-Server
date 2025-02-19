@@ -6,7 +6,7 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 13:35:59 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/02/19 15:54:06 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/02/19 17:00:10 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,6 @@ void Server::JOINhandler(const std::vector<std::string> &data, int fd) {
 void Server::USERhandler(const std::vector<std::string> &data, int fd) { (void) fd; (void) data;}
 void Server::PARThandler(const std::vector<std::string> &data, int fd) { (void) fd; (void) data;}
 void Server::TOPIChandler(const std::vector<std::string> &data, int fd) {(void) fd; (void) data;}
-void Server::INVITEhandler(const std::vector<std::string> &data, int fd) {(void) fd; (void) data;}
 void Server::MODEhandler(const std::vector<std::string> &data, int fd) {(void) fd; (void) data;}
 
 
@@ -166,25 +165,22 @@ void Server::Check_Commands(std::string Command)
     receiveData(data, fd);
 };
 
-
-int Server::Authenticate_User(int client_Id, int pos)
+int Server::getClientByName(const std::string& nickname)
 {
-    (void)client_Id ;
-    this->Size_Read = 0;
-    char Recv_Buffer[1024];
-
-    memset(Recv_Buffer, 0, sizeof(Recv_Buffer));
-    this->Size_Read = recv(this->start->fd, Recv_Buffer, sizeof(Recv_Buffer) , 0);
-    Check_Commands(Recv_Buffer);
-    if (this->Size_Read == 0)
+    for (std::map<int, Client>::iterator it = Users.begin(); it != Users.end(); ++it)
     {
-        std::cout << "Client Disconnected " << pos << std::endl ;
-        return (-1);
-    };
-    return (0);
-};
+        if (it->second.getNickName() == nickname)
+        {
+            cout << "Client founded " << endl;
+            cout << it->second.getNickName() << "  " << nickname << "] fd -> [" << it->first << endl;
+            return it->first; // Return the found  fd client .
+        }
+    }
+    return -1;// Return -1 for error
+}
 
-void Server::Check_client_Request() {
+void Server::Check_client_Request() 
+{
     int Auth_Flag = 0;
     int Remove_Position = 0;
     this->start = this->pollAr.begin();
@@ -206,11 +202,24 @@ void Server::Check_client_Request() {
             }
         }
     }
-};
+}
 
-// void Accept_Client_Connection(Server *server_Cls){
-//     (void)server_Cls ;
-// };
+int Server::Authenticate_User(int client_Id, int pos)
+{
+    (void)client_Id ;
+    this->Size_Read = 0;
+    char Recv_Buffer[1024];
+
+    memset(Recv_Buffer, 0, sizeof(Recv_Buffer));
+    this->Size_Read = recv(this->start->fd, Recv_Buffer, sizeof(Recv_Buffer) , 0);
+    Check_Commands(Recv_Buffer);
+    if (this->Size_Read == 0)
+    {
+        std::cout << "Client Disconnected " << pos << std::endl ;
+        return (-1);
+    };
+    return (0);
+};
 
 std::string	Welcome_mssg(void)
 {

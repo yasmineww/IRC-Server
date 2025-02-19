@@ -95,19 +95,7 @@ class Server
         std::vector<std::string> getJoinedChannels(int fd);
 
 
-        int getClientByName(const std::string& nickname)
-        {
-            for (std::map<int, Client>::iterator it = Users.begin(); it != Users.end(); ++it)
-            {
-                if (it->second.getNickName() == nickname)
-                {
-                    cout << "Client founded " << endl;
-                    cout << it->second.getNickName() << "  " << nickname << "] fd -> [" << it->first << endl;
-                    return it->first;  // Return pointer to the found  fd client .
-                }
-            }
-            return -1;  // Return -1 for error
-        }
+        int getClientByName(const std::string& nickname);
 
 
 };

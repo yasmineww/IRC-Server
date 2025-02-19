@@ -1,8 +1,6 @@
 #include "../Header/Macros.hpp"
 
-
 void Server::PRIVMSGhandler(const std::vector<std::string> &data, int fd)
-// void PRIVMSG_command(std::string command, int fd, Server *Server_CLS)
 {
     Client user = Users[fd];
 
@@ -20,7 +18,7 @@ void Server::PRIVMSGhandler(const std::vector<std::string> &data, int fd)
         // Message to Channel
         Channel *channel = getChannel(target);
         if (!channel)
-            return(SENDMESSAGE(ERR_NOSUCHCHANNELl(user.getNickName(),  "IRC"), fd));
+            return(SENDMESSAGE(ERR_NOSUCHCHANNELl(user.getNickName(),  "IRC"), fd));//ERR_NOSUCHCHANNELl or ERR_NOSUCHCHANNEL
 
         // Check if the user is in the channel
         if (!channel->hasUser(fd))
