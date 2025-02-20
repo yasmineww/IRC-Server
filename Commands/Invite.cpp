@@ -26,7 +26,7 @@
 //         return SENDMESSAGE(ERR_NOTONCHANNEL(inviter.getHostName, channelName), fd);
 
 //     // Check channel modes and privileges
-//     if (channel->isInviteOnly() && !channel->isOperator(fd))
+//     if (channel->getInviteOnly() && !channel->isOperator(fd))
 //         return SENDMESSAGE("asdasd", fd);
 
 //         // return SENDMESSAGE(ERR_CHANOPRIVSNEEDED(), fd);
@@ -73,7 +73,7 @@ void Server::INVITEhandler(const std::vector<std::string> &data, int fd)
         return SENDMESSAGE(ERR_NOTONCHANNEL(user.getHostName(), channelName), fd);
 
     // Check channel modes and privileges
-    if (channel->isInviteOnly() && !channel->isOperator(fd))
+    if (channel->getInviteOnly() && !channel->isOperator(fd))
         return SENDMESSAGE(ERR_CHANOPRIVSNEEDED(user.getNickName(), user.getHostName()), fd);
 
     // Find target client
@@ -86,4 +86,5 @@ void Server::INVITEhandler(const std::vector<std::string> &data, int fd)
     if (channel->isUserInChannel(targetFd))
         return SENDMESSAGE(ERR_USERONCHANNEL(user.getHostName(), channelName, user.getNickName()), fd);
 
+    
 }

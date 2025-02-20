@@ -6,7 +6,7 @@
 #    By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/10 10:52:26 by youmoukh          #+#    #+#              #
-#    Updated: 2025/02/20 17:16:57 by ymakhlou         ###   ########.fr        #
+#    Updated: 2025/02/20 22:24:10 by ymakhlou         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,8 +22,9 @@ NAME = ircserv
 SRC = ./main.cpp \
 	  ./Utils/Utils.cpp \
 	  ./Server/Server.cpp \
-	  ./Client/Client.cpp \
 	  ./Server/Server_Commands.cpp \
+	  ./Server/Server_Utils.cpp \
+	  ./Client/Client.cpp \
 	  ./Commands/Join.cpp \
 	  ./Commands/Part.cpp \
 	  ./Commands/Kick.cpp \

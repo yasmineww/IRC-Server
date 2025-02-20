@@ -6,7 +6,7 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 10:52:04 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/02/20 17:11:24 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/02/20 18:24:24 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,25 +98,6 @@ using namespace std;
 # define HOSTNAME 66
 
 
-/* Authentication */
-
-void	PASS_Command(std::string Check, int fd, Server *Server_Cls);
-void 	NICK_command(std::string Command, int fd, Server *Server_Cls);
-void 	USER_command(std::string Command, int fd, Server *Server_CLS);
-
-/* Commands */
-void 	MODE_command(std::string Command, int fd, Server *Server_CLS);
-void 	JOIN_command(std::string Command, int fd, Server *Server_CLS);
-void 	HELP_command(std::string Command, int fd, Server *Server_CLS);
-void    PART_command(std::string command, int fd, Server* Server_CLS);
-void    MODE_command(std::string command, int fd, Server* Server_CLS);
-void 	KICK_command(std::string Command, int fd, Server *Server_Cls);
-void    QUIT_command(std::string command, int fd, Server *Server_CLS);
-void    TOPIC_command(std::string command, int fd, Server *Server_CLS);
-void    INVITE_command(std::string command, int fd, Server* Server_CLS);
-void 	PRIVMSG_command(std::string Command, int fd, Server *Server_CLS);
-void    NOTICE_command(std::string command, int fd, Server *Server_CLS);
-
 /* BONUS */
 
 
@@ -186,4 +167,6 @@ void    printchannelvectorlist(std::string msg, std::vector<std::string> channel
 #define ERR_NOSUCHCHANNELl(nick, hostname)                                std::string(":") + std::string(hostname) + " 403 " + std::string(nick) + " :No such channel !\r\n"
 
 #define ERR_CHANOPRIVSNEEDED(nick, hostname)                              std::string(":") + std::string(hostname) + " 482 " + std::string(nick) + " :You're not channel operator !\r\n"
-#define RPL_NOTOPIC(nick, hostname, channel)                              std::string(":") + std::string(hostname) + " 331 " + std::string(nick) + " " + std::string(channel) + " :No topic is set !\r\n"
+#define RPL_NOTOPIC(nick, hostname, channel)                              std::string(":") + std::string(hostname) + " 331 " + std::string(nick) + " " + std::string(channel) + " :No topic is set\r\n"
+
+#define ERR_INVITEONLYCHAN(nick, hostname, channel)                       std::string(":") + std::string(hostname) + " 473 " + std::string(nick) + " " + std::string(channel) + " :Cannot join channel (+i)\r\n"

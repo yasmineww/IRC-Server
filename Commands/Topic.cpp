@@ -30,7 +30,7 @@ void Server::TOPIChandler(const std::vector<std::string> &data, int fd)
     }
 
     // Ensure the user has permission to change the topic
-    if (channel->isTopicRestricted() && !channel->isOperator(fd))
+    if (channel->getTopicRestricted() && !channel->isOperator(fd))
         return SENDMESSAGE(ERR_CHANOPRIVSNEEDED(user.getNickName(), user.getHostName()), fd);
     
     // Set the new topic

@@ -6,11 +6,20 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 11:04:43 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/02/19 19:03:01 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/02/20 18:46:13 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Channel.hpp"
+
+Channel::Channel(){
+    name = "";
+    _key = "";
+    topic = "";
+    inviteOnly = false;
+    topicRestricted = false;
+    userLimit = -1;
+}
 
 Channel::Channel(std::string _name, std::string key) : name(_name), _key(key)
 {
@@ -69,14 +78,12 @@ bool Channel::isOperator(int fd)
 }
 
 // Set the channel topic
-void Channel::setTopic(std::string newTopic)
-{
+void Channel::setTopic(std::string newTopic){
     topic = newTopic;
 }
 
 // Get the channel topic
-std::string Channel::getTopic() const
-{
+std::string Channel::getTopic() const{
     return topic;
 }
 
@@ -91,26 +98,18 @@ void Channel::broadcast(const std::string& message)
     }
 }
 
-// Get the channel name
-std::string Channel::getName() const
-{
+std::string Channel::getName() const{
     return name;
 }
 
-
-// Get a list of all users in the channel
-std::string Channel::getUserList()
-{
+std::string Channel::getUserList(){
     std::stringstream ss;
     for (std::map<int, Client>::iterator it = users.begin(); it != users.end(); ++it)
         ss << it->second.getNickName() << " ";
     return ss.str();
 }
 
-
-// Function to get the key of the channel
-std::string Channel::getKey() const
-{
+std::string Channel::getKey() const{
     return _key;
 }
 
@@ -130,7 +129,7 @@ void Channel::removeUser(int fd)
 
 bool Channel::hasUser(int fd)
 {
-    cout <<  "ddddd _> " <<  fd  << endl;
+    cout <<  "debugging : file descp " <<  fd  << endl;
     if (users.find(fd) != users.end())
     {
         cout << "the user is in the channel "<< endl;
@@ -146,7 +145,7 @@ void Channel::setInviteOnly(bool state)
 }
 
 // Check if the channel is invite-only
-bool Channel::isInviteOnly() const
+bool Channel::getInviteOnly() const
 {
     return inviteOnly;
 }
@@ -158,12 +157,12 @@ void Channel::setTopicRestricted(bool state)
 }
 
 // Check if topic is restricted to operators
-bool Channel::isTopicRestricted() const
+bool Channel::getTopicRestricted() const
 {
     return topicRestricted;
 }
 
-int Channel::getOperatorsSize()
+int Channel::getOperatorsSize() const
 {
     return operators.size();
 }
