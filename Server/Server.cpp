@@ -6,11 +6,11 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 13:35:59 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/02/20 01:47:18 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/02/20 17:11:24 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../Header/Macros.hpp"
+#include "../Utils/Macros.hpp"
 
 void Server::JOINhandler(const std::vector<std::string> &data, int fd) { 
     
@@ -210,7 +210,6 @@ int Server::Authenticate_User(int client_Id, int pos)
 
     memset(Recv_Buffer, 0, sizeof(Recv_Buffer));
     this->Size_Read = recv(this->start->fd, Recv_Buffer, sizeof(Recv_Buffer) , 0);
-        std::cout << "here" << std::endl;
     if (this->Size_Read == 0)
     {
         std::cout << "Client Disconnected " << pos << std::endl ;

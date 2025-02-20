@@ -6,7 +6,7 @@
 #    By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/10 10:52:26 by youmoukh          #+#    #+#              #
-#    Updated: 2025/02/19 00:06:10 by ymakhlou         ###   ########.fr        #
+#    Updated: 2025/02/20 17:16:57 by ymakhlou         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,7 +20,7 @@ RESET = \033[0m
 NAME = ircserv
 
 SRC = ./main.cpp \
-	  ./Tools/function_tools.cpp \
+	  ./Utils/Utils.cpp \
 	  ./Server/Server.cpp \
 	  ./Client/Client.cpp \
 	  ./Server/Server_Commands.cpp \
@@ -46,7 +46,7 @@ FLAGS = -Wall -Wextra -Werror -std=c++98 -fsanitize=address -g
 
 RM = rm -rf
 
-HEADER = Server/Server.hpp Client/Client.hpp  Header/Macros.hpp
+Utils = Server/Server.hpp Client/Client.hpp  Utils/Macros.hpp
 
 all : credit $(NAME)
 	@echo "$(GREEN)██████████████████████ Compiling is DONE ███████████████████████$(RESET)"
@@ -59,7 +59,7 @@ top:
 $(NAME) : top $(OBJS)
 	@$(CC) $(FLAGS) $(OBJS) -o $(NAME)
 
-%.o : %.cpp $(HEADER)
+%.o : %.cpp $(Utils)
 	@printf "$(RED)█ $(YELLOW)Compiling$(RESET) $<.\r\t\t\t\t\t\t\t..."
 	@$(CC) $(FLAGS) -c $< -o $@
 	@echo "\r\t\t\t\t\t\t\t$(GREEN){DONE}$(RED) █$(RESET)"

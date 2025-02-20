@@ -1,14 +1,14 @@
 
-#include "../Header/Macros.hpp"
+#include "../Utils/Macros.hpp"
 
-int Command_Lenght(std::string command)
-{
-    Tools tool ;
-    std::stringstream s(command);
-    while (s >> tool.words)
-        tool.flag++ ;
-    return (tool.flag);
-};
+// int Command_Lenght(std::string command)
+// {
+//     // Tools tool ;
+//     std::stringstream s(command);
+//     while (s >> tool.words)
+//         tool.flag++ ;
+//     return (tool.flag);
+// };
 
 int STRING_WITH_CHAR(std::string RGX, char ALP){
     for (size_t index = 0; index < RGX.size(); index++){
@@ -36,8 +36,6 @@ int REGEX_STRING(std::string COMMAND, int TYPE){
 void Server::USERhandler(const std::vector<std::string> &data, int fd)
 // void USER_command(std::string Command, int fd, Server *Server_CLS)
 {
-    Tools tool ;
-
     std::map<int ,Client>::iterator it ;
 
     it = Users.find(fd);
