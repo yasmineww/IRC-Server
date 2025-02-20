@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Mode.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: youmoukh <youmoukh@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 10:51:36 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/02/10 16:02:27 by youmoukh         ###   ########.fr       */
+/*   Updated: 2025/02/20 01:33:17 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,9 +55,9 @@ MODE #chan +ioktl -o -i -t +l 100 Bob secret123
 
 */
 
-void	store_options(std::vector<std::string> &splited, std::vector<std::string> &permittedOPTIONS, std::vector<std::string> &NONpermittedOPTIONS, std::vector<std::string> &Values, std::string &chanName)
+void	store_options(const std::vector<std::string> &data, std::vector<std::string> &permittedOPTIONS, std::vector<std::string> &NONpermittedOPTIONS, std::vector<std::string> &Values)
 {
-	for(std::vector<std::string>::iterator it = splited.begin(); it < splited.end(); ++it)
+for(std::vector<std::string>::const_iterator it = data.begin(); it < data.end(); ++it)
 	{
 		/*
 			- THE first part is to handle options only - and +
@@ -108,11 +108,9 @@ void	store_options(std::vector<std::string> &splited, std::vector<std::string> &
 				- THE second part conserns handling the option's values
 				- UND getting user name
 			*/
-			if (!((*it) == chanName || (*it) == splited[0]))
-            {
-                it->erase(std::remove(it->begin(), it->end(), '\n'), it->end());
-                Values.push_back(*it);
-            }
+			std::string modifiable_str = *it; // Create a modifiable copy of the string
+            modifiable_str.erase(std::remove(modifiable_str.begin(), modifiable_str.end(), '\n'), modifiable_str.end());
+            Values.push_back(modifiable_str); // Use the modified string
 		}
 	}
     /*
@@ -123,35 +121,37 @@ void	store_options(std::vector<std::string> &splited, std::vector<std::string> &
 	i_t_verification(permittedOPTIONS, NONpermittedOPTIONS);
 }
 
-void    MODE_command(std::string command, int fd, Server* Server_CLS)
+
+void Server::MODEhandler(const std::vector<std::string> &data, int fd)
 {
-    Client user = Server_CLS->Users[fd];
+    Client user = Users[fd];
 
     // if (!user.check_Authentication())
 	// 	return SENDMESSAGE("LAYMONA * : You are not registred\n", fd);
 
 
-	std::stringstream ss(command);
+	// std::stringstream ss(command);
 	std::string minicmd;
 	std::string chanName;
-	std::vector<std::string> splited; // split command into words
+	// std::vector<std::string> splited; // split command into words
 	std::vector<std::string> Values; //to store values
 	std::vector<std::string> permittedOPTIONS;  // to store options with (+)
 	std::vector<std::string> NONpermittedOPTIONS; // to store options with (-)
 
-	while (std::getline(ss, minicmd, ' '))
-		splited.push_back(minicmd);
+	// while (std::getline(ss, minicmd, ' '))
+	// 	splited.push_back(minicmd);
 
-	chanName = splited[1];
+	// chanName = splited[1];
+    chanName = data[1];
 
-	// FULL FILL Parametres : OPTIONS values
-	store_options(splited, permittedOPTIONS, NONpermittedOPTIONS, Values, chanName);
+    // FULL FILL Parametres : OPTIONS values
+    store_options(data, permittedOPTIONS, NONpermittedOPTIONS, Values);
 
 
     printchannelvectorlist("values", Values);
 
     // Check if the channel exists
-    Channel *channel = Server_CLS->getChannel(chanName);
+    Channel *channel = getChannel(chanName);
     if (!channel)
         return SENDMESSAGE(":Server 403 " + user.getNickName() + " " + chanName + " :No such channel\n", fd);
 
@@ -181,7 +181,7 @@ void    MODE_command(std::string command, int fd, Server* Server_CLS)
         {
             if (valIndex < Values.size())
             {
-                int target = Server_CLS->getClientByName(Values[valIndex++]);\
+                int target = getClientByName(Values[valIndex++]);\
                 if (target != -1 && channel->hasUser(target))
                     channel->addOperator(target);
                 else
@@ -217,7 +217,7 @@ void    MODE_command(std::string command, int fd, Server* Server_CLS)
         {
             if (valIndex < Values.size())
             {
-                int target = Server_CLS->getClientByName(Values[valIndex++]);
+                int target = getClientByName(Values[valIndex++]);
                 if (target != -1 && channel->hasUser(target))
                     channel->removeOperator(target);
                 else

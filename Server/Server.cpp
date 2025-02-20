@@ -6,7 +6,7 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 13:35:59 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/02/19 22:27:38 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/02/20 01:47:18 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,6 @@ void Server::JOINhandler(const std::vector<std::string> &data, int fd) {
     //need to add broadcast msg
 }
 
-void Server::MODEhandler(const std::vector<std::string> &data, int fd) {(void) fd; (void) data;}
 
 std::vector<std::string> Server::getJoinedChannels(int fd)
 {
@@ -130,7 +129,8 @@ void Server::receiveData(const std::vector<std::string> &data, int fd){
     if (commandMap.find(command) != commandMap.end()) {
         (this->*commandMap[command])(data, fd);// calls the function (value) stored in the map at the key command
     } else {
-        throw std::logic_error("Invalid command: " + command);
+        
+        std::cout << ": Invalid COMMAND " << command << std::endl ;
     }
 }
 
@@ -160,7 +160,6 @@ void Server::Check_Commands(std::string Command)
             data.push_back(store);
         }
     }
-
     receiveData(data, fd);
 };
 
@@ -211,12 +210,13 @@ int Server::Authenticate_User(int client_Id, int pos)
 
     memset(Recv_Buffer, 0, sizeof(Recv_Buffer));
     this->Size_Read = recv(this->start->fd, Recv_Buffer, sizeof(Recv_Buffer) , 0);
-    Check_Commands(Recv_Buffer);
+        std::cout << "here" << std::endl;
     if (this->Size_Read == 0)
     {
         std::cout << "Client Disconnected " << pos << std::endl ;
         return (-1);
     };
+    Check_Commands(Recv_Buffer);
     return (0);
 };
 
