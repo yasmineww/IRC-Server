@@ -26,9 +26,9 @@ void Server::JOINhandler(const std::vector<std::string> &data, int fd) {
     if (channel->isUserInChannel(fd))
         return;
     if ((!channel->getKey().empty() && data.size() < 3) || (!channel->getKey().empty() && data.size() >= 3 && data[2] != channel->getKey()))  
-        SENDMESSAGE(ERR_BADCHANNELKEY(user.getNickName(), user.getHostName(), channel->getName()), fd);
+        return (SENDMESSAGE(ERR_BADCHANNELKEY(user.getNickName(), user.getHostName(), channel->getName()), fd));
     if (channel->getInviteOnly() && !channel->isInvited(fd))
-        SENDMESSAGE(ERR_INVITEONLYCHAN(user.getNickName(), user.getHostName(), channel->getName()), fd);
+        return (SENDMESSAGE(ERR_INVITEONLYCHAN(user.getNickName(), user.getHostName(), channel->getName()), fd));
     // if (channel->getMembers().size() >= 10)
     //     SENDMESSAGE(ERR_CHANNELISFULL(getNick_name(),  user.getHostName(), channel->getName()), fd);
     channel->addUser(user, fd);
