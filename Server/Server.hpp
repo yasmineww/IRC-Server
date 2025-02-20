@@ -80,6 +80,15 @@ class Server
             std::cout << "Server Destructor is called !"<< std::endl;
         }
 
+
+        void printUsersByNickname() const
+        {
+             for (std::map<int, Client>::const_iterator it = Users.begin(); it != Users.end(); ++it)
+            {
+                std::cout << "Nickname: " << it->second.getNickName() << std::endl;
+            }
+        }
+
         void Check_client_Request();
         int Authenticate_User(int client_Id, int pos);
         void Check_Commands(std::string Command);

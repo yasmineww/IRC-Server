@@ -6,7 +6,7 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 10:51:48 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/02/20 18:46:54 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/02/20 22:34:56 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ class Channel
     	std::string topic;                 
     	std::map<int, Client> users;        // Users in the channel (key: fd, value: pointer to User)
     	std::vector<int> operators;        // List of operator FDs (can be optimized)
+    	std::vector<int> invited;        // List of invited clients 
         bool    inviteOnly;
         bool    topicRestricted;
         int     userLimit;
@@ -84,4 +85,9 @@ class Channel
         // printf op
         void print_operators();
 
+        // add user to list of invited clients
+        void sendInvite(int fd);
+
+        // check if user is invited
+        bool isInvited(int fd);
 };

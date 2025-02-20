@@ -11,7 +11,7 @@ void Server::PRIVMSGhandler(const std::vector<std::string> &data, int fd)
     std::string target = data[1];
     std::string message = data[2];
     if (data[2][0] == ':')
-        message = data[2].substr(1);
+        message = data[2].substr(2);
 
     if (target[0] == '#' || target[0] == '&')
     {
@@ -31,9 +31,14 @@ void Server::PRIVMSGhandler(const std::vector<std::string> &data, int fd)
     else
     {
         // Message to User
+        printUsersByNickname();
+        std::cout << "MY TARRR IS target: " << target << std::endl;
         int receiver = getClientByName(target);
         if (receiver == -1)
+        {
+            std::cout << "i got here ------" << std::endl;
             return SENDMESSAGE(":Server 401 " + user.getNickName() + " " + target + " :No such nick\r\n", fd);
+        }
 
         // Send the message to the receiver
         std::string msgToSend = ":" + user.getNickName() + " PRIVMSG " + target + " :" + message + "\r\n";

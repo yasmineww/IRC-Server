@@ -96,10 +96,10 @@ void Server::NICKhandler(const std::vector<std::string> &data, int fd)
     if (!it->second.Auth_PASS)
         return (SENDMESSAGE("ERR_NOT_AUTHENTICATED\n", fd));
     if (it->second.Auth_USER && it->second.Auth_NICK && it->second.Auth_PASS && !it->second.AUTH_WELCOM){
-        it->second.getNickName() = data[1];
+        it->second.setNickName(data[1]);
         return (SENDMESSAGE("NICK_CHANGED \n", fd));
     }
-    it->second.getNickName() = data[1];
+    it->second.setNickName(data[1]);
     it->second.Auth_NICK = true ;
     if (it->second.Auth_USER && it->second.Auth_NICK && it->second.Auth_PASS && it->second.AUTH_WELCOM){
         SENDMESSAGE(RPL_WELCOME(it->second.getNickName(),  "IRC"), fd);

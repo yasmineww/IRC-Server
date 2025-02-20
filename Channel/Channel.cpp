@@ -6,7 +6,7 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 11:04:43 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/02/20 18:46:13 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/02/20 22:34:31 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,11 @@ void Channel::addOperator(int fd)
         operators.push_back(fd);
 }
 
+void Channel::sendInvite(int fd)
+{
+    invited.push_back(fd);
+}
+
 // Remove operator
 void Channel::removeOperator(int fd)
 {
@@ -72,6 +77,15 @@ void Channel::removeOperator(int fd)
 bool Channel::isOperator(int fd)
 {
     if (std::find(operators.begin(), operators.end(), fd) != operators.end())
+		return true;
+    return false;
+
+}
+
+// Check if a user is invited
+bool Channel::isInvited(int fd)
+{
+    if (std::find(invited.begin(), invited.end(), fd) != invited.end())
 		return true;
     return false;
 
