@@ -6,7 +6,7 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 13:35:59 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/02/20 22:23:07 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/02/22 15:48:28 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,32 @@ int Server::Authenticate_User(int client_Id, int pos)
     Check_Commands(Recv_Buffer);
     return (0);
 }
+
+void Server::Check_client_Request()
+{
+    int Auth_Flag = 0;
+    int Remove_Position = 0;
+    this->start = this->pollAr.begin();
+    this->end   = this->pollAr.end();
+    if (this->pollAr.size() > 1)
+    {
+        Remove_Position++ ;
+        this->start++ ;
+        for (;this->start != this->end; this->start++){
+            if (this->start->revents & POLLIN){
+                Auth_Flag = Authenticate_User(this->start->fd, Remove_Position);
+                if (Auth_Flag == -1){
+                    close(this->start->fd);
+                    std::cout << "Remove _> " << Remove_Position << std::endl ;
+                    this->Users.erase(this->Users.find(this->start->fd));
+                    this->pollAr.erase(this->pollAr.begin() + Remove_Position);
+                    return ;
+                }
+            }
+        }
+    }
+}
+
 
 std::string	Welcome_mssg(void)
 {

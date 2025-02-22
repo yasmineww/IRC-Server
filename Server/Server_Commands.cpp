@@ -1,21 +1,13 @@
 
 #include "../Utils/Macros.hpp"
 
-// int Command_Lenght(std::string command)
-// {
-//     // Tools tool ;
-//     std::stringstream s(command);
-//     while (s >> tool.words)
-//         tool.flag++ ;
-//     return (tool.flag);
-// };
-
 int STRING_WITH_CHAR(std::string RGX, char ALP){
     for (size_t index = 0; index < RGX.size(); index++){
         if (ALP == RGX.at(index)) return (-1);
     };
     return (0);
 }
+
 int REGEX_STRING(std::string COMMAND, int TYPE){
     std::string REGX = "!@#$%^&*()+=,.<>?/[]{}|;:\"\'";
     if (TYPE == USERNAME){
@@ -34,7 +26,6 @@ int REGEX_STRING(std::string COMMAND, int TYPE){
 };
 
 void Server::USERhandler(const std::vector<std::string> &data, int fd)
-// void USER_command(std::string Command, int fd, Server *Server_CLS)
 {
     std::map<int ,Client>::iterator it ;
 
@@ -48,8 +39,6 @@ void Server::USERhandler(const std::vector<std::string> &data, int fd)
         return (SENDMESSAGE("ERR_NEEDMOREPARAMS\n", fd));
     if (data.size() > 5)
         return (SENDMESSAGE("ERR_NEEDMOREPARAMS\n", fd));
-    // if (Command_Lenght(Command) < 4)
-    //     return (SENDMESSAGE("ERR_NEEDMOREPARAMS\n", fd));
 
     std::string username = data[1];
     std::string hostname = data[2];

@@ -6,13 +6,12 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 10:52:17 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/02/20 17:11:24 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/02/22 15:40:45 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 #include "../Utils/Macros.hpp"
-
 
 void JOIN_command(std::string command, int fd, Server *Server_CLS)
 {
@@ -30,7 +29,6 @@ void JOIN_command(std::string command, int fd, Server *Server_CLS)
 
 
     // Check MODE
-
 
     std::vector<std::string> channels;
     std::vector<std::string> keys;

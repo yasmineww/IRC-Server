@@ -8,31 +8,60 @@ void Server::JOINhandler(const std::vector<std::string> &data, int fd) {
     if (data.size() < 2)
         return (SENDMESSAGE(ERR_NEEDMOREPARAMS(user.getNickName(),  user.getHostName()), fd));
     
-    if (data[1][0] != '#' && data[1][0] != '&')
-        return(SENDMESSAGE(ERR_NOSUCHCHANNELl(user.getNickName(),  user.getHostName()), fd));
-    Channel *channel = getChannel(data[1]);
-    if (channel == nullptr) {
-    //new channel
-        channel = createChannel(data[1]);
-        channel->addOperator(fd);
-        if (data.size() > 2)
-            channel->setKey(data[2]);
-        channel->addUser(user, fd);
-        std::string joinMessage = ":" + user.getNickName() + " JOIN " + data[1] + "\r\n";
-        channel->broadcast(joinMessage);
-        return;
+    std::vector<std::string> channels;
+    std::vector<std::string> keys;
+    std::string store;
+
+    size_t found_channels = data[1].find(",");
+    if (found_channels != std::string::npos){
+        std::stringstream s(data[1]);
+        while (s >> store)
+            channels.push_back(store);
+    } else 
+        channels.push_back(data[1]);
+
+    if ((data.size() > 2)){
+        size_t found_keys = data[2].find(",");
+        if (found_keys != std::string::npos){
+            std::stringstream s(data[2]);
+            while (s >> store)
+                channels.push_back(store);
+        }
+        else 
+            keys.push_back(data[2]);
     }
-    //old channel
-    if (channel->isUserInChannel(fd))
-        return;
-    if ((!channel->getKey().empty() && data.size() < 3) || (!channel->getKey().empty() && data.size() >= 3 && data[2] != channel->getKey()))  
-        return (SENDMESSAGE(ERR_BADCHANNELKEY(user.getNickName(), user.getHostName(), channel->getName()), fd));
-    if (channel->getInviteOnly() && !channel->isInvited(fd))
-        return (SENDMESSAGE(ERR_INVITEONLYCHAN(user.getNickName(), user.getHostName(), channel->getName()), fd));
-    // if (channel->getMembers().size() >= 10)
-    //     SENDMESSAGE(ERR_CHANNELISFULL(getNick_name(),  user.getHostName(), channel->getName()), fd);
-    channel->addUser(user, fd);
-    //need to add broadcast msg
+
+    for (size_t i = 0; i < channels.size(); i++){
+        if (channels[i][0] != '#' && (channels[i][0] != '&'))
+            return(SENDMESSAGE(ERR_NOSUCHCHANNELl(user.getNickName(),  user.getHostName()), fd));
+        Channel *channel = getChannel(channels[i]);
+        if (channel == nullptr) {
+        //new 
+            channel = createChannel(channels[i]);
+            channel->addOperator(fd);
+            if (i < keys.size() && !keys[i].empty())
+                channel->setKey(keys[i]);
+            channel->addUser(user, fd);
+            std::string joinMessage = ":" + user.getNickName() + " JOIN " + data[1] + "\r\n";
+            channel->broadcast(joinMessage);
+        }
+
+        else{
+            //old channel
+            if (channel->isUserInChannel(fd))
+                return;
+            if ((!channel->getKey().empty() && (i >= keys.size() || keys[i].empty())) || (!channel->getKey().empty() && i < keys.size() && keys[i] != channel->getKey())) 
+                return (SENDMESSAGE(ERR_BADCHANNELKEY(user.getNickName(), user.getHostName(), channel->getName()), fd));
+            if (channel->getInviteOnly() && !channel->isInvited(fd))
+                return (SENDMESSAGE(ERR_INVITEONLYCHAN(user.getNickName(), user.getHostName(), channel->getName()), fd));
+            // if (channel->getMembers().size() >= 10)
+            //     SENDMESSAGE(ERR_CHANNELISFULL(getNick_name(),  user.getHostName(), channel->getName()), fd);
+            channel->addUser(user, fd);
+            std::string joinMessage = ":" + user.getNickName() + " JOIN " + data[1] + "\r\n";
+            channel->broadcast(joinMessage);
+        }
+    }
+    //RPL_TOPIC
 }
 
 
@@ -125,31 +154,6 @@ void Server::receiveData(const std::vector<std::string> &data, int fd){
 // PRIVMSG younes : hello younes how are you
 // PRIVMSG younes hello younes how are you
 
-void Server::Check_Commands(std::string Command)
-{   
-    int fd = this->start->fd;
-    std::vector<std::string> data;
-    
-    size_t found = Command.find(":");
-    std::string store;
-
-    if (found != std::string::npos){
-        std::string first = Command.substr(0, found); //PRIVMSG younes 
-        Command.erase(0, found); //: hello younes how are you
-        std::stringstream s(first);
-        while (s >> store){
-            data.push_back(store);
-        };
-        data.push_back(Command);
-    }
-    else {
-        std::stringstream s(Command);
-        while (s >> store){
-            data.push_back(store);
-        }
-    }
-    receiveData(data, fd);
-};
 
 int Server::getClientByName(const std::string& nickname)
 {
@@ -165,27 +169,29 @@ int Server::getClientByName(const std::string& nickname)
     return -1;// Return -1 for error
 }
 
-void Server::Check_client_Request() 
-{
-    int Auth_Flag = 0;
-    int Remove_Position = 0;
-    this->start = this->pollAr.begin();
-    this->end   = this->pollAr.end();
-    if (this->pollAr.size() > 1)
-    {
-        Remove_Position++ ;
-        this->start++ ;
-        for (;this->start != this->end; this->start++){
-            if (this->start->revents & POLLIN){
-                Auth_Flag = Authenticate_User(this->start->fd, Remove_Position);
-                if (Auth_Flag == -1){
-                    close(this->start->fd);
-                    std::cout << "Remove _> " << Remove_Position << std::endl ;
-                    this->Users.erase(this->Users.find(this->start->fd));
-                    this->pollAr.erase(this->pollAr.begin() + Remove_Position);
-                    return ;
-                }
-            }
+void Server::Check_Commands(std::string Command)
+{   
+    int fd = this->start->fd;
+    std::vector<std::string> data;
+    
+    size_t found = Command.find(":");
+    std::string store;
+
+    if (found != std::string::npos){
+        std::string first = Command.substr(0, found); //PRIVMSG younes 
+        Command.erase(0, found); //: hello younes how are you
+        std::stringstream s(first);
+        while (s >> store){
+            data.push_back(store);
+        }
+        data.push_back(Command);
+    }
+    else {
+        std::stringstream s(Command);
+        while (s >> store){
+            data.push_back(store);
         }
     }
+    receiveData(data, fd);
 }
+
