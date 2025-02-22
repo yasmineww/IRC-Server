@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Mode.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: youmoukh <youmoukh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 10:51:36 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/02/20 17:11:24 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/02/22 15:22:20 by youmoukh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -238,15 +238,3 @@ void Server::MODEhandler(const std::vector<std::string> &data, int fd)
 
     channel->broadcast(modeChangeMessage + "\n");
 }
-
-/*
-	- working on the worst case :
-
-MODE #chan +ioktl -o -i -t +l 100 Bob secret123
-
-*/
-
-// MODE #channel +k secret123   # Sets channel key to "secret123"
-// MODE #channel +l 50          # Limits channel to 50 users
-// MODE #channel +o Alice       # Gives operator rights to Alice
-// MODE #channel -o Bob         # Removes operator rights from Bob

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: youmoukh <youmoukh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 11:04:43 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/02/20 22:34:31 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/02/22 16:43:37 by youmoukh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,10 @@ Channel::Channel(std::string _name, std::string key) : name(_name), _key(key)
     userLimit = -1;
 }
 
-Channel::~Channel() {}
+Channel::~Channel()
+{
+	
+}
 
 // Add user to channel
 void Channel::addUser(Client user, int fd)
@@ -101,7 +104,7 @@ std::string Channel::getTopic() const{
     return topic;
 }
 
-// Broadcast message to all users in the channel
+// Broadcast message to all users in the channel4
 void Channel::broadcast(const std::string& message)
 {
     for (std::map<int, Client>::iterator it = users.begin(); it != users.end(); ++it)
@@ -136,6 +139,9 @@ void Channel::setKey(const std::string &key)
 
 void Channel::removeUser(int fd)
 {
+	if (isOperator(fd))
+		removeOperator(fd);
+
     std::map<int, Client>::iterator it = users.find(fd);
     if (it != users.end())
         users.erase(it);
