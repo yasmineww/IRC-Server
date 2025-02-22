@@ -6,15 +6,15 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 10:52:17 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/02/22 23:34:37 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/02/23 00:13:45 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../Utils/Macros.hpp"
 
 void Server::JOINhandler(const std::vector<std::string> &data, int fd){
-    Client user = Users[fd];
     
+    Client user = Users[fd];
     if (data.size() < 2)
         return (SENDMESSAGE(ERR_NEEDMOREPARAMS(user.getNickName(),  "IRC"), fd));
     
@@ -70,7 +70,3 @@ void Server::JOINhandler(const std::vector<std::string> &data, int fd){
         // Once a user has joined a channel, they receive notice about all
         // commands their server receives which affect the channel.  This
         // includes MODE, KICK, PART, QUIT and of course PRIVMSG/NOTICE.
-
-        //segfault in PRIVMSG #unrecognized channel hey
-        // JOIN #chan +k 
-        // :mama 403 +k a :No such channel
