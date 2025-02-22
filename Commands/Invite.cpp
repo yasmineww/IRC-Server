@@ -66,15 +66,15 @@ void Server::INVITEhandler(const std::vector<std::string> &data, int fd)
     std::string channelName = data[2];
     Channel* channel = getChannel(channelName);
     if (!channel)
-        return SENDMESSAGE(ERR_NOSUCHCHANNEL(user.getHostName(), channelName, user.getNickName()), fd);
+        return SENDMESSAGE(ERR_NOSUCHCHANNEL("IRC", channelName, user.getNickName()), fd);
 
     // Check if user is in channel
     if (!channel->isUserInChannel(fd))
-        return SENDMESSAGE(ERR_NOTONCHANNEL(user.getHostName(), channelName), fd);
+        return SENDMESSAGE(ERR_NOTONCHANNEL("IRC", channelName), fd);
 
     // Check channel modes and privileges
     if (channel->getInviteOnly() && !channel->isOperator(fd))
-        return SENDMESSAGE(ERR_CHANOPRIVSNEEDED(user.getNickName(), user.getHostName()), fd);
+        return SENDMESSAGE(ERR_CHANOPRIVSNEEDED(user.getNickName(), "IRC"), fd);
 
     // Find target client
     std::string targetNick = data[1];
@@ -82,12 +82,12 @@ void Server::INVITEhandler(const std::vector<std::string> &data, int fd)
     if (targetFd == -1)
     {
         std::cout << "here i am " << std::endl;
-        return SENDMESSAGE(ERR_NOSUCHNICK(user.getHostName(), channelName, targetNick), fd);
+        return SENDMESSAGE(ERR_NOSUCHNICK("IRC", channelName, targetNick), fd);
     }
 
     // Check if target is already in channel
     if (channel->isUserInChannel(targetFd))
-        return SENDMESSAGE(ERR_USERONCHANNEL(user.getHostName(), channelName, user.getNickName()), fd);
+        return SENDMESSAGE(ERR_USERONCHANNEL("IRC", channelName, user.getNickName()), fd);
 
     //Invite User to channel
     channel->sendInvite(targetFd);

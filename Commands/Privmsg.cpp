@@ -6,7 +6,7 @@ void Server::PRIVMSGhandler(const std::vector<std::string> &data, int fd)
 
     // Ensure the command has at least 3 parameters: PRIVMSG <target> :<message>
     if (data.size() < 3)
-        return (SENDMESSAGE(ERR_NEEDMOREPARAMS(user.getNickName(),  user.getHostName()), fd));
+        return (SENDMESSAGE(ERR_NEEDMOREPARAMS(user.getNickName(),  "IRC"), fd));
 
     std::string target = data[1];
     std::string message = data[2];
@@ -18,11 +18,11 @@ void Server::PRIVMSGhandler(const std::vector<std::string> &data, int fd)
         // Message to Channel
         Channel *channel = getChannel(target);
         if (!channel)
-            return(SENDMESSAGE(ERR_NOSUCHCHANNEL(user.getNickName(),  user.getHostName(), channel->getName()), fd));
+            return(SENDMESSAGE(ERR_NOSUCHCHANNEL("IRC", channel->getName(), user.getNickName()), fd));
 
         // Check if the user is in the channel
         if (!channel->hasUser(fd))
-            return (SENDMESSAGE(ERR_NOTONCHANNEL(user.getHostName(), channel->getName()), fd));
+            return (SENDMESSAGE(ERR_NOTONCHANNEL("IRC", channel->getName()), fd));
 
         // Broadcast message to all users in the channel (except sender)
         std::string msgToSend = ":" + user.getNickName() + " PRIVMSG " + target + " :" + message + "\r\n";

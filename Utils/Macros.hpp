@@ -6,7 +6,7 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 10:52:04 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/02/20 18:24:24 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/02/22 21:50:38 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,7 +133,7 @@ void    printchannelvectorlist(std::string msg, std::vector<std::string> channel
 
 #define ERR_BADCHANNELMASK(nick, hostname, mask, correction)               std::string(":") + std::string(hostname) + " 476 " + std::string(nick) + " " + std::string(mask) + " :Invalid channel mask." + std::string(correction) + "\r\n"
 #define ERR_CHANNELISFULL(nick, hostname, channelName)                     std::string(":") + std::string(hostname) + " 471 " + std::string(channelName) + " :Cannot join channel (+l)\r\n"
-#define ERR_BADCHANNELKEY(nick, hostname, channelName)                     std::string(":") + std::string(hostname) + " 475 " + std::string(nick) + " " + std::string(channelName) + " :Cannot join channel (+K) - bad key\r\n"
+#define ERR_BADCHANNELKEY(nick, hostname, channelName)                     std::string(":") + std::string(hostname) + " 475 " + std::string(nick) + " " + std::string(channelName) + " :Cannot join channel (+k) - bad key\r\n"
 #define ERR_INVITEONLY(nick, hostname, channelName)                        std::string(":") + std::string(hostname) + " 473 " + std::string(channelName) + " :Cannot join channel (+i)\r\n"
 
 
@@ -164,7 +164,6 @@ void    printchannelvectorlist(std::string msg, std::vector<std::string> channel
 #define ERR_INPUTTOOLONG(nick, hostname)                                  std::string(":") + std::string(hostname) + " 417 " + std::string(nick) + " :Input line was too long !\r\n"
 #define RPL_BOT(hostname, nick, message)                                  std::string(":") + std::string(hostname) + " 001 " + std::string(nick) + " Dad joke: " + std::string(message) + "\r\n"
 
-#define ERR_NOSUCHCHANNELl(nick, hostname)                                std::string(":") + std::string(hostname) + " 403 " + std::string(nick) + " :No such channel !\r\n"
 
 #define ERR_CHANOPRIVSNEEDED(nick, hostname)                              std::string(":") + std::string(hostname) + " 482 " + std::string(nick) + " :You're not channel operator !\r\n"
 #define RPL_NOTOPIC(nick, hostname, channel)                              std::string(":") + std::string(hostname) + " 331 " + std::string(nick) + " " + std::string(channel) + " :No topic is set\r\n"
