@@ -22,27 +22,16 @@ void Server::PARThandler(const std::vector<std::string> &data, int fd)
     if (data.size() < 2)
         return (SENDMESSAGE(ERR_NEEDMOREPARAMS(user.getNickName(),  user.getHostName()), fd));
 
-	// PART channels(channel)
-	// data[0] data[1] channe1,chan2,chan3
-    std::string channelnames;
-	 std::stringstream ss1(data[1]);
-
+	std::stringstream ss1(data[1]);
     std::vector<std::string> channels1;
 
 
-    ss1 >> channelnames;
-
-    for (;int pos = channelnames.find(',') != std::string::npos;)
-    {
-        channels1.push_back(channelnames.substr(0, pos));
-        channelnames.erase(0, pos + 1);
-    }
-    channels1.push_back(channelnames);
-
-
-
-
     std::string chanName;
+
+    while (std::getline(ss1, chanName, ','))
+        channels1.push_back(chanName);
+
+
     for (size_t i = 0; i < channels1.size(); i++)
     {
         chanName = channels1[i];
@@ -51,7 +40,7 @@ void Server::PARThandler(const std::vector<std::string> &data, int fd)
             return(SENDMESSAGE(ERR_NOSUCHCHANNEL(user.getNickName(),  user.getHostName(), chanName), fd));
 
         Channel *channnel = getChannel(chanName);
-		
+
 
         if (!channnel)
         {
@@ -64,7 +53,7 @@ void Server::PARThandler(const std::vector<std::string> &data, int fd)
             continue;
         }
         channnel->removeUser(fd);
-		
+
 
         // Send PART message to all users in the channel
         std::string partMessage = ":" + user.getNickName() + " PART " + chanName + "\r\n";

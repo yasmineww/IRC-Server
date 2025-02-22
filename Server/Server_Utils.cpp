@@ -16,7 +16,7 @@ std::vector<std::string> Server::getJoinedChannels(int fd)
 
 Channel* Server::getChannel(const std::string& channelName)
 {
-	std::cout << "Getting Channel" << endl;
+
 
     // Check if the channel exists in the map
     if (channels.find(channelName) != channels.end())
@@ -27,7 +27,7 @@ Channel* Server::getChannel(const std::string& channelName)
 // Create a new channel if it doesn't exist
 Channel* Server::createChannel(const std::string& channelName)
 {
-	std::cout << "Creating Channel" << endl;
+
     // Check if the channel already exists
     if (channels.find(channelName) != channels.end())
         return channels[channelName]; // Return the existing channell
@@ -77,11 +77,11 @@ void Server::receiveData(const std::vector<std::string> &data, int fd){
         throw std::logic_error("No command !");
 
     const std::string &command = data[0];
-    
+
     if (commandMap.find(command) != commandMap.end()) {
         (this->*commandMap[command])(data, fd);// calls the function (value) stored in the map at the key command
     } else {
-        
+
         std::cout << ": Invalid COMMAND " << command << std::endl ;
     }
 }
@@ -105,15 +105,15 @@ int Server::getClientByName(const std::string& nickname)
 }
 
 void Server::Check_Commands(std::string Command)
-{   
+{
     int fd = this->start->fd;
     std::vector<std::string> data;
-    
+
     size_t found = Command.find(":");
     std::string store;
 
     if (found != std::string::npos){
-        std::string first = Command.substr(0, found); //PRIVMSG younes 
+        std::string first = Command.substr(0, found); //PRIVMSG younes
         Command.erase(0, found); //: hello younes how are you
         std::stringstream s(first);
         while (s >> store){
