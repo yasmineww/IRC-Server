@@ -6,7 +6,7 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 10:52:17 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/02/22 22:53:31 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/02/22 23:34:37 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,18 +47,17 @@ void Server::JOINhandler(const std::vector<std::string> &data, int fd){
                 continue;
             if ((!channel->getKey().empty() && (i >= keys.size() || keys[i] != channel->getKey()))) 
             {
-                if (keys.size() != 0)
-                    cout << "key entered [" << keys[i] << "]" << endl;
-                if (keys.size() == 0)
-                    std::cout << "no keyysyss ----" << endl;
-                cout << "channels key [" << channel->getKey() << "]" << "]" << endl;
                 SENDMESSAGE(ERR_BADCHANNELKEY(user.getNickName(), "IRC", channel->getName()), fd);
                 continue;
             }
-            if (channel->getInviteOnly() && !channel->isInvited(fd))
+            if (channel->getInviteOnly() && !channel->isInvited(fd)){
                 SENDMESSAGE(ERR_INVITEONLYCHAN(user.getNickName(), "IRC", channel->getName()), fd);
-            // if (channel->getMembers().size() >= 10)
-            //     SENDMESSAGE(ERR_CHANNELISFULL(getNick_name(),  "IRC", channel->getName()), fd);
+                continue;   
+            }
+            if (channel->getUserLimit() != -1 && channel->getUserCount() >= channel->getUserLimit()){
+                SENDMESSAGE(ERR_CHANNELISFULL(getNick_name(),  "IRC", channel->getName()), fd);
+                continue;
+            }
         }
         channel->addUser(user, fd);
         std::string joinMessage = ":" + user.getNickName() + " JOIN " + channels[i] + "\r\n";

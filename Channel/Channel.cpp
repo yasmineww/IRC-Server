@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: youmoukh <youmoukh@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 11:04:43 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/02/22 16:43:37 by youmoukh         ###   ########.fr       */
+/*   Updated: 2025/02/22 23:27:37 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,6 @@ void Channel::addUser(Client user, int fd)
 {
     // cout << "actual user AMount " << getUserCount() << endl;
     // cout << "actual user Limit " << userLimit << endl;
-    if (userLimit != -1 && getUserCount() >= userLimit && !isOperator(fd))
-        return SENDMESSAGE(":Server 471 " + user.getNickName() + " " + name + " :Cannot join channel (+l)\n", fd);
     users[fd] = user;
 }
 
