@@ -17,12 +17,12 @@ void Server::PRIVMSGhandler(const std::vector<std::string> &data, int fd)
     {
         // Message to Channel
         Channel *channel = getChannel(target);
-        if (!channel)
-            return(SENDMESSAGE(ERR_NOSUCHCHANNEL("IRC", channel->getName(), user.getNickName()), fd));
+        if (channel == nullptr)
+            return(SENDMESSAGE(ERR_NOSUCHCHANNEL("IRC", target, user.getNickName()), fd));
 
         // Check if the user is in the channel
         if (!channel->hasUser(fd))
-            return (SENDMESSAGE(ERR_NOTONCHANNEL("IRC", channel->getName()), fd));
+            return (SENDMESSAGE(ERR_NOTONCHANNEL("IRC", target), fd));
 
         // Broadcast message to all users in the channel (except sender)
         std::string msgToSend = ":" + user.getNickName() + " PRIVMSG " + target + " :" + message + "\r\n";
