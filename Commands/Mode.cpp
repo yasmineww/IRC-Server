@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Mode.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: youmoukh <youmoukh@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 10:51:36 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/02/22 15:22:20 by youmoukh         ###   ########.fr       */
+/*   Updated: 2025/02/22 20:35:52 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,9 +55,9 @@ MODE #chan +ioktl -o -i -t +l 100 Bob secret123
 
 */
 
-void	store_options(const std::vector<std::string> &data, std::vector<std::string> &permittedOPTIONS, std::vector<std::string> &NONpermittedOPTIONS, std::vector<std::string> &Values)
+void	store_options(std::vector<std::string> &data, std::vector<std::string> &permittedOPTIONS, std::vector<std::string> &NONpermittedOPTIONS, std::vector<std::string> &Values)
 {
-for(std::vector<std::string>::const_iterator it = data.begin(); it < data.end(); ++it)
+for(std::vector<std::string>::iterator it = data.begin(); it < data.end(); ++it)
 	{
 		/*
 			- THE first part is to handle options only - and +
@@ -108,11 +108,16 @@ for(std::vector<std::string>::const_iterator it = data.begin(); it < data.end();
 				- THE second part conserns handling the option's values
 				- UND getting user name
 			*/
-			std::string modifiable_str = *it; // Create a modifiable copy of the string
-            modifiable_str.erase(std::remove(modifiable_str.begin(), modifiable_str.end(), '\n'), modifiable_str.end());
-            Values.push_back(modifiable_str); // Use the modified string
+
+            
+			if (!((*it) == data[1] || (*it) == data[0]))
+            {
+                it->erase(std::remove(it->begin(), it->end(), '\n'), it->end());
+                Values.push_back(*it);
+            }
 		}
 	}
+
     /*
 	    --- > Verify for repeated options like : MODE #chan -i +i -t +t
         --- > this verification is only for i and t
@@ -142,10 +147,12 @@ void Server::MODEhandler(const std::vector<std::string> &data, int fd)
 	// 	splited.push_back(minicmd);
 
 	// chanName = splited[1];
+
     chanName = data[1];
 
+    std::vector<std::string>data_copy = data;
     // FULL FILL Parametres : OPTIONS values
-    store_options(data, permittedOPTIONS, NONpermittedOPTIONS, Values);
+    store_options(data_copy, permittedOPTIONS, NONpermittedOPTIONS, Values);
 
 
     printchannelvectorlist("values", Values);
@@ -173,7 +180,10 @@ void Server::MODEhandler(const std::vector<std::string> &data, int fd)
         else if (mode == "k")
         {
             if (valIndex < Values.size())
+            {
+                std::cout << "index is --> " << valIndex << std::endl;
                 channel->setKey(Values[valIndex++]);  // Assign password
+            }
             else
                 SENDMESSAGE(":Server 461 " + user.getNickName() + " MODE +k :Not enough parameters\n", user.getClientFd());
         }

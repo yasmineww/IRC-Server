@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Part.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: youmoukh <youmoukh@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 10:51:45 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/02/22 17:34:07 by youmoukh         ###   ########.fr       */
+/*   Updated: 2025/02/22 18:58:41 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ void Server::PARThandler(const std::vector<std::string> &data, int fd)
         chanName = channels1[i];
 
         if (chanName.empty() || (chanName[0] != '#' && chanName[0] != '&'))
-            return(SENDMESSAGE(ERR_NOSUCHCHANNELl(user.getNickName(),  user.getHostName()), fd));
+            return(SENDMESSAGE(ERR_NOSUCHCHANNEL(user.getNickName(),  user.getHostName(), chanName), fd));
 
         Channel *channnel = getChannel(chanName);
 		

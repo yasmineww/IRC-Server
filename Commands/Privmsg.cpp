@@ -18,7 +18,7 @@ void Server::PRIVMSGhandler(const std::vector<std::string> &data, int fd)
         // Message to Channel
         Channel *channel = getChannel(target);
         if (!channel)
-            return(SENDMESSAGE(ERR_NOSUCHCHANNELl(user.getNickName(),  user.getHostName()), fd));//ERR_NOSUCHCHANNELl or ERR_NOSUCHCHANNEL
+            return(SENDMESSAGE(ERR_NOSUCHCHANNEL(user.getNickName(),  user.getHostName(), channel->getName()), fd));
 
         // Check if the user is in the channel
         if (!channel->hasUser(fd))
