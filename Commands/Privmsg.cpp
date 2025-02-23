@@ -4,7 +4,7 @@ void Server::PRIVMSGhandler(const std::vector<std::string> &data, int fd){
    
     Client user = Users[fd];
     if (data.size() < 3)
-        return (SENDMESSAGE(ERR_NEEDMOREPARAMS(user.getNickName(),  "IRC"), fd));
+        return (SENDMESSAGE(ERR_NEEDMOREPARAMS(user.getNickName(),  Server_Name, data[0]), fd));
 
     std::vector<std::string> receivers;
     std::string store;
@@ -22,11 +22,11 @@ void Server::PRIVMSGhandler(const std::vector<std::string> &data, int fd){
         {
             Channel *channel = getChannel(receivers[i]);
             if (channel == nullptr){
-                SENDMESSAGE(ERR_NOSUCHCHANNEL("IRC", receivers[i], user.getNickName()), fd);
+                SENDMESSAGE(ERR_NOSUCHCHANNEL(Server_Name, receivers[i], user.getNickName()), fd);
                 continue;
             }
             if (!channel->hasUser(fd)){
-                SENDMESSAGE(ERR_NOTONCHANNEL("IRC", receivers[i]), fd);
+                SENDMESSAGE(ERR_NOTONCHANNEL(Server_Name, receivers[i]), fd);
                 continue;
             }
             std::string msgToSend = ":" + user.getNickName() + " PRIVMSG " + receivers[i] + " :" + message + "\r\n";

@@ -6,7 +6,7 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/21 17:33:44 by ymakhlou          #+#    #+#             */
-/*   Updated: 2025/02/23 15:32:20 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/02/23 17:12:45 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@ class Client
         std::string SERVER_name;
         std::string HOST_name;
         std::string REAL_name;
-        // std::string LOGIN_name;
         
 
     public :

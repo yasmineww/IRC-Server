@@ -6,7 +6,7 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 10:52:04 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/02/22 23:35:08 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/02/23 22:05:06 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,29 +121,29 @@ void    printchannelvectorlist(std::string msg, std::vector<std::string> channel
 
 
 
-#define ERR_NEEDMOREPARAMS(nick, hostname)                              std::string(":") + std::string(hostname) + " 461 " + std::string(nick) + " :Not enough parameters\r\n"
+#define ERR_NEEDMOREPARAMS(nick, hostname, command)                       std::string(":") + std::string(hostname) + " 461 " + std::string(nick) + " " + std::string(command) + " :Not enough parameters\r\n"
 #define ERR_PASSWDMISMATCH(nick, hostname)                                std::string(":") + std::string(hostname) + " 464 " + std::string(nick) + " :Password incorrect !\r\n"
 #define ERR_ALREADYREGISTERED(nick, hostname)                             std::string(":") + std::string(hostname) + " 462 " + std::string(nick) + " :You may not reregister !\r\n"
 
-#define ERR_ERRONEUSNICKNAME(nick, hostname)                            std::string(":") + std::string(hostname) + " 432 " + std::string(nick) + " :Erroneus nickname !\r\n"
+#define ERR_ERRONEUSNICKNAME(nick, hostname)                              std::string(":") + std::string(hostname) + " 432 " + std::string(nick) + " :Erroneus nickname !\r\n"
 #define ERR_NONICKNAMEGIVEN(nick, hostname)                               std::string(":") + std::string(hostname) + " 431 " + std::string(nick) + " :No nickname given !\r\n"
 #define ERR_NICKNAMEINUSE(nick, hostname)                                  std::string(":") + std::string(hostname) + " 433 " + std::string(nick) + " :Nickname is already in use !\r\n"
 #define RPL_NICKCHANGE(oldNick, nick, hostname)                            std::string(":") + std::string(oldNick) + " NICK "  + std::string(nick) + "\r\n"
 
 
 #define ERR_BADCHANNELMASK(nick, hostname, mask, correction)               std::string(":") + std::string(hostname) + " 476 " + std::string(nick) + " " + std::string(mask) + " :Invalid channel mask." + std::string(correction) + "\r\n"
-#define ERR_CHANNELISFULL(nick, hostname, channelName)                     std::string(":") + std::string(hostname) + " 471 " + std::string(channelName) + " :Cannot join channel (+l) - channel is full\r\n"
+#define ERR_CHANNELISFULL(nick, hostname, channelName)                     std::string(":") + std::string(hostname) + " 471 " + std::string(nick) + " " + std::string(channelName) + " :Cannot join channel (+l) - channel is full\r\n"
 #define ERR_BADCHANNELKEY(nick, hostname, channelName)                     std::string(":") + std::string(hostname) + " 475 " + std::string(nick) + " " + std::string(channelName) + " :Cannot join channel (+k) - bad key\r\n"
-#define ERR_INVITEONLY(nick, hostname, channelName)                        std::string(":") + std::string(hostname) + " 473 " + std::string(channelName) + " :Cannot join channel (+i)\r\n"
+#define ERR_INVITEONLYCHAN(nick, hostname, channel)                        std::string(":") + std::string(hostname) + " 473 " + std::string(nick) + " " + std::string(channel) + " :Cannot join channel (+i)\r\n"
 
 
 #define RPL_UMODEIS(hostname, channelname)                                 std::string(":") + std::string(hostname) + " MODE " + std::string(channelname) + " +nt\r\n"
 #define RPL_JOIN(nick, username, channelname, ipaddress)                   std::string(":") + std::string(nick) + "!~" + std::string(username) + "@" + std::string(ipaddress) + " JOIN " + std::string(channelname) + "\r\n"
-#define RPL_TOPIC(hostname, topic, nick, channelName)                      std::string(":") + std::string(hostname) + " 332 " + std::string(nick) + " " + std::string(channelName) + " " + std::string(topic) + "\r\n"
+#define RPL_TOPIC(hostname, topic, nick, channelName)                      std::string(":") + std::string(hostname) + " 332 " + std::string(nick) + " " + std::string(channelName) + " :" + std::string(topic) + "\r\n"
 #define RPL_TOPICWHOTIME(topicsetter, time, nick, hostname, channelName)   std::string(":") + std::string(hostname) + " 333 " + std::string(nick) + " " + std::string(channelName) + " " + std::string(topicsetter) + "!~" + std::string(topicsetter) + "@" + std::string(hostname) + " " + std::string(time) + "\r\n"
 
 
-#define RPL_NAMREPLY(hostname, clients, channelname, nick)                std::string(":") + std::string(hostname) + " 353 " + std::string(nick) + " = " + std::string(channelname) + " :" + std::string(clients) + "\r\n"
+#define RPL_NAMREPLY(hostname, clients, channelname, nick)                std::string(":") + std::string(hostname) + " 353 " + std::string(nick) + " @ " + std::string(channelname) + " :" + std::string(clients) + "\r\n"
 #define RPL_ENDOFNAMES(hostname, nick, channelname)                       std::string(":") + std::string(hostname) + " 366 " + std::string(nick) + " " + std::string(channelname) + " :END of /NAMES list\r\n"
 
 
@@ -168,4 +168,4 @@ void    printchannelvectorlist(std::string msg, std::vector<std::string> channel
 #define ERR_CHANOPRIVSNEEDED(nick, hostname)                              std::string(":") + std::string(hostname) + " 482 " + std::string(nick) + " :You're not channel operator !\r\n"
 #define RPL_NOTOPIC(nick, hostname, channel)                              std::string(":") + std::string(hostname) + " 331 " + std::string(nick) + " " + std::string(channel) + " :No topic is set\r\n"
 
-#define ERR_INVITEONLYCHAN(nick, hostname, channel)                       std::string(":") + std::string(hostname) + " 473 " + std::string(nick) + " " + std::string(channel) + " :Cannot join channel (+i)\r\n"
+

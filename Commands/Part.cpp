@@ -6,7 +6,7 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 10:51:45 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/02/22 21:44:40 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/02/23 20:56:58 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void Server::PARThandler(const std::vector<std::string> &data, int fd)
         return SENDMESSAGE("ERROR : You are not registred\n", fd);
 
     if (data.size() < 2)
-        return (SENDMESSAGE(ERR_NEEDMOREPARAMS(user.getNickName(),  "IRC"), fd));
+        return (SENDMESSAGE(ERR_NEEDMOREPARAMS(user.getNickName(),  Server_Name, data[0]), fd));
 
 	std::stringstream ss1(data[1]);
     std::vector<std::string> channels1;
@@ -37,19 +37,19 @@ void Server::PARThandler(const std::vector<std::string> &data, int fd)
         chanName = channels1[i];
 
         if (chanName.empty() || (chanName[0] != '#' && chanName[0] != '&'))
-            return(SENDMESSAGE(ERR_NOSUCHCHANNEL("IRC", chanName, user.getNickName()), fd));
+            return(SENDMESSAGE(ERR_NOSUCHCHANNEL(Server_Name, chanName, user.getNickName()), fd));
 
         Channel *channnel = getChannel(chanName);
 
 
         if (!channnel)
         {
-            SENDMESSAGE(ERR_NOSUCHCHANNEL("IRC", chanName, user.getNickName()), fd);
+            SENDMESSAGE(ERR_NOSUCHCHANNEL(Server_Name, chanName, user.getNickName()), fd);
             continue;
         }
         if (!channnel->isUserInChannel(fd))
         {
-            SENDMESSAGE(ERR_NOTONCHANNEL("IRC", chanName), fd);
+            SENDMESSAGE(ERR_NOTONCHANNEL(Server_Name, chanName), fd);
             continue;
         }
         channnel->removeUser(fd);

@@ -6,7 +6,7 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 11:04:43 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/02/22 23:27:37 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/02/23 21:40:18 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 Channel::Channel(){
     name = "";
     _key = "";
-    topic = "";
+    topic = "TOPIC Not set";
     inviteOnly = false;
     topicRestricted = false;
     userLimit = -1;
@@ -23,6 +23,7 @@ Channel::Channel(){
 
 Channel::Channel(std::string _name, std::string key) : name(_name), _key(key)
 {
+    topic = "TOPIC Not set";
     ClientsAmount = 0;
     userLimit = -1;
 }
@@ -117,10 +118,27 @@ std::string Channel::getName() const{
     return name;
 }
 
-std::string Channel::getUserList(){
+// printf op
+void Channel::print_operators(){
+
+    // cout << " OPERATORSSSS   >>> " << endl;
+    std::cout << "Number of operators: " << operators.size() << std::endl;
+
+    for (std::vector<int>::iterator it = operators.begin(); it != operators.end(); ++it) {
+        std::cout << "->>>>>>> " << *it << std::endl;
+    }
+
+}
+
+std::string Channel::getUserList() {
     std::stringstream ss;
-    for (std::map<int, Client>::iterator it = users.begin(); it != users.end(); ++it)
-        ss << it->second.getNickName() << " ";
+    for (std::map<int, Client>::iterator it = users.begin(); it != users.end(); ++it) {
+        if (std::find(operators.begin(), operators.end(), it->first) != operators.end()) {
+            ss << "@" << it->second.getNickName() << " "; // this is for appending a @ to the operator (needed by limechat)
+        } else {
+            ss << it->second.getNickName() << " ";
+        }
+    }
     return ss.str();
 }
 
@@ -221,15 +239,3 @@ int Channel::getUserCount() const
     return users.size();
 }
 
-
-// printf op
-void Channel::print_operators(){
-
-    // cout << " OPERATORSSSS   >>> " << endl;
-    std::cout << "Number of operators: " << operators.size() << std::endl;
-
-    for (std::vector<int>::iterator it = operators.begin(); it != operators.end(); ++it) {
-        std::cout << "->>>>>>> " << *it << std::endl;
-    }
-
-}

@@ -68,10 +68,10 @@ void Server::USERhandler(const std::vector<std::string> &data, int fd)
     std::cout << "SERVER_name : " << it->second.getREALName() << std::endl ;
     it->second.Auth_USER = true ;
     if (it->second.Auth_USER && it->second.Auth_NICK && it->second.Auth_PASS && it->second.AUTH_WELCOM){
-        SENDMESSAGE(RPL_WELCOME(it->second.getNickName(),  "IRC"), fd);
-        SENDMESSAGE(RPL_YOURHOST(it->second.getNickName(), "IRC"), fd);
-        SENDMESSAGE(RPL_CREATED(it->second.getNickName(),  "IRC"), fd);
-        SENDMESSAGE(RPL_MYINFO(it->second.getNickName(),   "IRC"), fd);
+        SENDMESSAGE(RPL_WELCOME(it->second.getNickName(),  Server_Name), fd);
+        SENDMESSAGE(RPL_YOURHOST(it->second.getNickName(), Server_Name), fd);
+        SENDMESSAGE(RPL_CREATED(it->second.getNickName(),  Server_Name), fd);
+        SENDMESSAGE(RPL_MYINFO(it->second.getNickName(),   Server_Name), fd);
         it->second.AUTH_WELCOM = false ;
     }
 };
@@ -109,10 +109,10 @@ void Server::NICKhandler(const std::vector<std::string> &data, int fd)
     it->second.setNickName(data[1]);
     it->second.Auth_NICK = true ;
     if (it->second.Auth_USER && it->second.Auth_NICK && it->second.Auth_PASS && it->second.AUTH_WELCOM){
-        SENDMESSAGE(RPL_WELCOME(it->second.getNickName(),  "IRC"), fd);
-        SENDMESSAGE(RPL_YOURHOST(it->second.getNickName(), "IRC"), fd);
-        SENDMESSAGE(RPL_CREATED(it->second.getNickName(),  "IRC"), fd);
-        SENDMESSAGE(RPL_MYINFO(it->second.getNickName(),   "IRC"), fd);
+        SENDMESSAGE(RPL_WELCOME(it->second.getNickName(),  Server_Name), fd);
+        SENDMESSAGE(RPL_YOURHOST(it->second.getNickName(), Server_Name), fd);
+        SENDMESSAGE(RPL_CREATED(it->second.getNickName(),  Server_Name), fd);
+        SENDMESSAGE(RPL_MYINFO(it->second.getNickName(),   Server_Name), fd);
         it->second.AUTH_WELCOM = false;
     }
 }
@@ -124,9 +124,9 @@ void Server::PASShandler(const std::vector<std::string> &data, int fd)
 
     it = Users.find(fd) ;
     if (it->second.Auth_PASS == true)
-        return (SENDMESSAGE(ERR_ALREADYREGISTERED(user.getNickName(),  "IRC"), fd));
+        return (SENDMESSAGE(ERR_ALREADYREGISTERED(user.getNickName(),  Server_Name), fd));
     if (data.size() != 2)
-        return (SENDMESSAGE(ERR_NEEDMOREPARAMS(user.getNickName(),  "IRC"), fd));
+        return (SENDMESSAGE(ERR_NEEDMOREPARAMS(user.getNickName(),  Server_Name, data[0]), fd));
     if (data[1] == Server_PassCode){
         std::cout << Users.size() << std::endl ;
         it->second.AuthStep += 1;

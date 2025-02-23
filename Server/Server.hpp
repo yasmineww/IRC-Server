@@ -9,6 +9,7 @@ class Client;
 class Server
 {
     private:
+        std::string Server_Name;
         std::map<std::string, void (Server::*)(const std::vector<std::string>&, int)> commandMap;
         
         void PASShandler(const std::vector<std::string> &data, int fd);
@@ -60,6 +61,7 @@ class Server
 			// Client ServerAuth(0, "Server", "Parent_Server");
             bindSocket_str.sin_family = AF_INET ;
             bindSocket_str.sin_addr.s_addr = INADDR_ANY;
+            Server_Name = "Laymouna.chat";
 
             commandMap["PASS"] = &Server::PASShandler;
             commandMap["USER"] = &Server::USERhandler;
