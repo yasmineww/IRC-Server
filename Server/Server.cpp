@@ -6,18 +6,39 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 13:35:59 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/02/22 15:48:28 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/02/23 16:15:08 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../Utils/Macros.hpp"
+
+
+int lenth(char *lenth){
+    int i = 0;
+    while (lenth[i])
+        i++;
+    return (i);
+}
+
+void Server::ctrlD(char *Recv_Buffer, int fd){
+    std::map<int, Client>::iterator it ;
+        if (Recv_Buffer[lenth(Recv_Buffer) - 1] != '\n'){
+        this->Users.find(fd)->second.Buffering = 1;
+        this->Users.find(fd)->second.bufferHold += Recv_Buffer ;
+    } else {
+        std::string command = this->Users.find(fd)->second.bufferHold + Recv_Buffer ;
+        Check_Commands(command);
+        this->Users.find(fd)->second.bufferHold = "" ;
+    }
+};
+
 
 int Server::Authenticate_User(int client_Id, int pos)
 {
     (void)client_Id ;
     this->Size_Read = 0;
     char Recv_Buffer[1024];
-
+    
     memset(Recv_Buffer, 0, sizeof(Recv_Buffer));
     this->Size_Read = recv(this->start->fd, Recv_Buffer, sizeof(Recv_Buffer) , 0);
     if (this->Size_Read == 0)
@@ -25,7 +46,7 @@ int Server::Authenticate_User(int client_Id, int pos)
         std::cout << "Client Disconnected " << pos << std::endl ;
         return (-1);
     }
-    Check_Commands(Recv_Buffer);
+    ctrlD(Recv_Buffer, this->start->fd);
     return (0);
 }
 

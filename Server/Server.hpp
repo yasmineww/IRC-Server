@@ -88,7 +88,8 @@ class Server
                 std::cout << "Nickname: " << it->second.getNickName() << std::endl;
             }
         }
-
+        void ctrlD(char *Recv_Buffer, int flag);
+        int functioncheck(std::string Nick, int fd);
         void Check_client_Request();
         int Authenticate_User(int client_Id, int pos);
         void Check_Commands(std::string Command);

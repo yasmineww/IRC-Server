@@ -57,10 +57,11 @@ void Server::USERhandler(const std::vector<std::string> &data, int fd)
     it->second.setServerName(servername);
     it->second.setREALName(realname);
 
-    // if (tool.array[0].size() == 1 && (tool.array[0][0] == '*' || tool.array[0][0] == '0')) it->second.getUserName() = "" ;
-    // if (tool.array[1].size() == 1 && (tool.array[1][0] == '*' || tool.array[1][0] == '0')) it->second.getHostName() = "" ;
-    // if (tool.array[2].size() == 1 && (tool.array[2][0] == '*' || tool.array[2][0] == '0')) it->second.getServerName() = "" ;
-    // if (tool.array[3].size() == 1 && (tool.array[3][0] == '*' || tool.array[3][0] == '0')) it->second.getREALName() = "" ;
+    // if (data[1].size() == 1 && (data[1][0] == '*' || data[1][0] == '0')) it->second.getUserName() = "" ;
+    // if (data[2].size() == 1 && (data[2][0] == '*' || data[2][0] == '0')) it->second.getHostName() = "" ;
+    // if (data[3].size() == 1 && (data[3][0] == '*' || data[3][0] == '0')) it->second.getServerName() = "" ;
+    // if (data[4].size() == 1 && (data[4][0] == '*' || data[4][0] == '0')) it->second.getREALName() = "" ;
+
     std::cout << "User_name   : " << it->second.getUserName() << std::endl  ;
     std::cout << "HOST_name   : " <<  it->second.getHostName() << std::endl  ;
     std::cout << "SERVER_name : " << it->second.getServerName() << std::endl  ;
@@ -75,10 +76,27 @@ void Server::USERhandler(const std::vector<std::string> &data, int fd)
     }
 };
 
+int Server::functioncheck(std::string Nick, int fd){
+    std::map<int, Client>::iterator it = this->Users.begin();
+    std::map<int, Client>::iterator end = this->Users.end();
+
+    for (;it != end; it++){
+        if (Nick == it->second.getNickName()){
+            SENDMESSAGE("ERR_NICKNAMEINUSE\n", fd);
+            return (-1);
+        }
+   }
+   return (0);
+}
+
 void Server::NICKhandler(const std::vector<std::string> &data, int fd)
 {
     std::map<int ,Client>::iterator it ;
 
+    if (data.size() < 2 || data[1].size() == 0)
+        return (SENDMESSAGE("431  :No nickname given\n", fd));
+    if (this->functioncheck(data[1], fd) == -1)
+        return ;
     it = Users.find(fd);
     if (data.size() > 2)
         return (SENDMESSAGE("ERR_NONICKNAMEGIVEN\n", fd));
