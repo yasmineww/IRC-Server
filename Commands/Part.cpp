@@ -17,11 +17,14 @@ void Server::PARThandler(const std::vector<std::string> &data, int fd)
     Client user = Users[fd];
 
     if (!user.check_Authentication())
+    {
         return SENDMESSAGE("ERROR : You are not registred\n", fd);
+    }
 
     if (data.size() < 2)
+    {
         return (SENDMESSAGE(ERR_NEEDMOREPARAMS(user.getNickName(),  Server_Name, data[0]), fd));
-
+    }
 	std::stringstream ss1(data[1]);
     std::vector<std::string> channels1;
 
@@ -52,6 +55,19 @@ void Server::PARThandler(const std::vector<std::string> &data, int fd)
             SENDMESSAGE(ERR_NOTONCHANNEL(Server_Name, chanName), fd);
             continue;
         }
+           // if the operator wants to leave and there is another client on the channel, he must be the new governor.
+        if (channnel->isOperator(fd) && channnel->getUserCount())
+        {
+            int newfd = channnel->getRandomClient(fd);
+            cout << "there you go -> " << newfd << endl;
+            if (newfd != -1)
+            {
+                cout << "BINGO" << endl;
+                channnel->addOperator(newfd);
+            }
+
+          
+        }
         channnel->removeUser(fd);
 
 
@@ -62,7 +78,7 @@ void Server::PARThandler(const std::vector<std::string> &data, int fd)
 		if (!channnel->getUserCount())
 		{
 			channels.erase(channels.find(chanName));
-			delete channnel;
+			// delete channnel;
 		}
     }
     // SENDMESSAGE(PART_RPL(user.getNickName(), channelname), fd);

@@ -33,7 +33,7 @@ Channel* Server::createChannel(const std::string& channelName)
         return channels[channelName]; // Return the existing channell
 
     // Create a new channel
-    Channel* newChannel = new Channel(channelName);
+    static Channel* newChannel = new Channel(channelName);
 
     channels[channelName] = newChannel; // Store the new channel in the channel's    map
     return newChannel;
@@ -72,10 +72,10 @@ void Server::removeClient(int fd)
 }
 
 
-void Server::receiveData(const std::vector<std::string> &data, int fd){
-    if (data.empty())
-        throw std::logic_error("No command !");
-
+void Server::receiveData(const std::vector<std::string> &data, int fd)
+{
+    if (!data.empty())
+    {
     const std::string &command = data[0];
 
     if (commandMap.find(command) != commandMap.end()) {
@@ -83,6 +83,7 @@ void Server::receiveData(const std::vector<std::string> &data, int fd){
     } else {
 
         std::cout << ": Invalid COMMAND " << command << std::endl ;
+    }
     }
 }
 

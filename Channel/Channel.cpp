@@ -239,3 +239,15 @@ int Channel::getUserCount() const
     return users.size();
 }
 
+
+
+int Channel::getRandomClient(int fd)
+{
+    for (std::map<int, Client>::iterator it = users.begin(); it != users.end(); ++it)
+    {
+        cout << "*it === " << it->first << endl;
+        if (it->first != fd)
+            return (it->first);
+    }
+    return -1;
+}

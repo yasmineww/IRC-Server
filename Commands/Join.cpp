@@ -38,7 +38,7 @@ void Server::JOINhandler(const std::vector<std::string> &data, int fd){
             continue;   
         }
         Channel *channel = getChannel(channels[i]);
-        if (channel == nullptr) {
+        if (!channel) {
             channel = createChannel(channels[i]);
             channel->addOperator(fd);
             
@@ -51,7 +51,7 @@ void Server::JOINhandler(const std::vector<std::string> &data, int fd){
                 SENDMESSAGE(ERR_BADCHANNELKEY(user.getNickName(), Server_Name, channel->getName()), fd);
                 continue;
             }
-            if (channel->getInviteOnly() && !channel->isInvited(fd)){
+            if (channel->getInviteOnly() == true && !channel->isInvited(fd)){
                 SENDMESSAGE(ERR_INVITEONLYCHAN(user.getNickName(), Server_Name, channel->getName()), fd);
                 continue;   
             }

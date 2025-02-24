@@ -21,7 +21,7 @@ void Server::PRIVMSGhandler(const std::vector<std::string> &data, int fd){
         if (receivers[i][0] == '#' || receivers[i][0] == '&')
         {
             Channel *channel = getChannel(receivers[i]);
-            if (channel == nullptr){
+            if (!channel){
                 SENDMESSAGE(ERR_NOSUCHCHANNEL(Server_Name, receivers[i], user.getNickName()), fd);
                 continue;
             }

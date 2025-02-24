@@ -90,4 +90,7 @@ class Channel
 
         // check if user is invited
         bool isInvited(int fd);
+
+        int getRandomClient(int fd);
+
 };
