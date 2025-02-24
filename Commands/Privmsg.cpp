@@ -3,6 +3,7 @@
 void Server::PRIVMSGhandler(const std::vector<std::string> &data, int fd){
    
     Client user = Users[fd];
+    
     if (data.size() < 3)
         return (SENDMESSAGE(ERR_NEEDMOREPARAMS(user.getNickName(),  Server_Name, data[0]), fd));
 
@@ -17,7 +18,8 @@ void Server::PRIVMSGhandler(const std::vector<std::string> &data, int fd){
     if (data[2][0] == ':')
         message = data[2].substr(2);
     
-    for (size_t i = 0; i < receivers.size(); i++){
+    for (size_t i = 0; i < receivers.size(); i++)
+    {
         if (receivers[i][0] == '#' || receivers[i][0] == '&')
         {
             Channel *channel = getChannel(receivers[i]);
@@ -47,3 +49,23 @@ void Server::PRIVMSGhandler(const std::vector<std::string> &data, int fd){
         }
     }
 }
+
+
+
+
+/*
+
+
+--- HANDLING this :
+
+
+
+
+           ERR_NORECIPIENT                 ERR_NOTEXTTOSEND
+           ERR_CANNOTSENDTOCHAN            ERR_NOTOPLEVEL
+           ERR_WILDTOPLEVEL                ERR_TOOMANYTARGETS
+           ERR_NOSUCHNICK
+           RPL_AWAY
+
+
+*/

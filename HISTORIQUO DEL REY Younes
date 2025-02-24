@@ -12,7 +12,62 @@ ERRORS :
 
 
 
+------------ JOIn #ERRORS
 
+✅✅✅✅ fixed ✅✅✅✅
+- 2 clients on channel
+- when the OPerator Parts from the channel the otherone should be the new gorvernor.
+✅✅✅✅✅✅✅✅✅✅✅
+
+
+✅✅✅✅ fixed ✅✅✅✅
+
+- when a client joined a new channel
+- the channel created but its by default INVITE only.
+
+✅✅✅✅✅✅✅✅✅✅✅
+
+
+
+
+----------- MODE #ERRORS
+
+✅✅✅✅ fixed ✅✅✅✅
+
+missing You are not on that channel msg
+✅✅✅✅✅✅✅✅✅✅✅
+
+
+
+
+
+✅✅✅✅ fixed ✅✅✅✅
+
+--------- Verify the authentication 
+
+
+i puted this verification in server utils 
+
+void Server::receiveData(const std::vector<std::string> &data, int fd)
+{
+    if (!data.empty())
+    {
+        const std::string &command = data[0];
+
+        if (commandMap.find(command) != commandMap.end())
+        {
+            Client user = Users[fd];
+
+            if (command != "PASS"  && command != "USER" && command != "NICK" && !user.check_Authentication())  <-------II-
+                        return SENDMESSAGE("ERROR : You are not registred\n", fd);
+            (this->*commandMap[command])(data, fd);// calls the function (value) stored in the map at the key command
+        }
+        else
+            std::cout << ": Invalid COMMAND " << command << std::endl ;
+    }
+}
+
+✅✅✅✅ fixed ✅✅✅✅
 
 
 

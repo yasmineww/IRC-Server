@@ -131,8 +131,8 @@ void Server::MODEhandler(const std::vector<std::string> &data, int fd)
 {
     Client user = Users[fd];
 
-    // if (!user.check_Authentication())
-	// 	return SENDMESSAGE("LAYMONA * : You are not registred\n", fd);
+    if (!user.check_Authentication())
+		return SENDMESSAGE("LAYMONA * : You are not registred\n", fd);
 
 
 	// std::stringstream ss(command);

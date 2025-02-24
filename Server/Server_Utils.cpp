@@ -76,14 +76,18 @@ void Server::receiveData(const std::vector<std::string> &data, int fd)
 {
     if (!data.empty())
     {
-    const std::string &command = data[0];
+        const std::string &command = data[0];
 
-    if (commandMap.find(command) != commandMap.end()) {
-        (this->*commandMap[command])(data, fd);// calls the function (value) stored in the map at the key command
-    } else {
+        if (commandMap.find(command) != commandMap.end())
+        {
+            Client user = Users[fd];
 
-        std::cout << ": Invalid COMMAND " << command << std::endl ;
-    }
+            if (command != "PASS"  && command != "USER" && command != "NICK" && !user.check_Authentication())
+                return SENDMESSAGE("ERROR : You are not registred\n", fd);
+            (this->*commandMap[command])(data, fd);// calls the function (value) stored in the map at the key command
+        }
+        else
+            std::cout << ": Invalid COMMAND " << command << std::endl ;
     }
 }
 
