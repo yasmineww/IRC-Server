@@ -3,9 +3,17 @@
 void Server::PRIVMSGhandler(const std::vector<std::string> &data, int fd){
    
     Client user = Users[fd];
-    
-    if (data.size() < 3)
-        return (SENDMESSAGE(ERR_NEEDMOREPARAMS(user.getNickName(),  Server_Name, data[0]), fd));
+
+    int sizee = data.size();
+    if (sizee < 3)
+    {
+        if (sizee == 1)
+            return SENDMESSAGE(ERR_NORECIPIENT(user.getNickName(), user.getHostName(), ""), fd);
+        if (sizee == 2)
+            return SENDMESSAGE(ERR_NOTEXTTOSEND(user.getNickName(), user.getHostName()), fd);
+
+        // return (SENDMESSAGE(ERR_NEEDMOREPARAMS(user.getNickName(),  Server_Name, data[0]), fd));
+    }
 
     std::vector<std::string> receivers;
     std::string store;
@@ -17,6 +25,7 @@ void Server::PRIVMSGhandler(const std::vector<std::string> &data, int fd){
     std::string message = data[2];
     if (data[2][0] == ':')
         message = data[2].substr(2);
+
     
     for (size_t i = 0; i < receivers.size(); i++)
     {
@@ -32,7 +41,7 @@ void Server::PRIVMSGhandler(const std::vector<std::string> &data, int fd){
                 continue;
             }
             std::string msgToSend = ":" + user.getNickName() + " PRIVMSG " + receivers[i] + " :" + message + "\r\n";
-            channel->broadcast(msgToSend);
+            channel->broadcast(RPL_AWAY(user.getNickName(), user.getHostName(), receivers[i], msgToSend));
         }
         else
         {
@@ -41,11 +50,12 @@ void Server::PRIVMSGhandler(const std::vector<std::string> &data, int fd){
             int receiver = getClientByName(receivers[i]);
             if (receiver == -1)
             {
-                SENDMESSAGE(":Server 401 " + user.getNickName() + " " + receivers[i] + " :No such nick\r\n", fd);
+                SENDMESSAGE(ERR_NORECIPIENT(user.getNickName(), user.getHostName(), receivers[i]), fd);
                 continue;
             }
             std::string msgToSend = ":" + user.getNickName() + " PRIVMSG " + receivers[i] + " :" + message + "\r\n";
-            SENDMESSAGE(msgToSend, receiver);
+            SENDMESSAGE(RPL_AWAY(user.getNickName(), user.getHostName(), receivers[i], msgToSend), receiver);
+
         }
     }
 }
@@ -61,7 +71,10 @@ void Server::PRIVMSGhandler(const std::vector<std::string> &data, int fd){
 
 
 
-           ERR_NORECIPIENT                 ERR_NOTEXTTOSEND
+           ERR_NORECIPIENT
+
+            
+        ERR_NOTEXTTOSEND
            ERR_CANNOTSENDTOCHAN            ERR_NOTOPLEVEL
            ERR_WILDTOPLEVEL                ERR_TOOMANYTARGETS
            ERR_NOSUCHNICK

@@ -169,3 +169,24 @@ void    printchannelvectorlist(std::string msg, std::vector<std::string> channel
 #define RPL_NOTOPIC(nick, hostname, channel)                              std::string(":") + std::string(hostname) + " 331 " + std::string(nick) + " " + std::string(channel) + " :No topic is set\r\n"
 
 
+
+
+// PRIVMSG 
+
+#define ERR_NORECIPIENT(nick, hostname, command)                          std::string(":") + std::string(hostname) + " 411 " + std::string(nick) + " :No recipient given (" + std::string(command) + ")\r\n"
+
+#define ERR_NOTEXTTOSEND(nick, hostname)                                  std::string(":") + std::string(hostname) + " 412 " + std::string(nick) + " :No text to send\r\n"
+
+#define ERR_CANNOTSENDTOCHAN(nick, hostname, channel)                     std::string(":") + std::string(hostname) + " 404 " + std::string(nick) + " " + std::string(channel) + " :Cannot send to channel\r\n"
+
+#define ERR_NOTOPLEVEL(nick, hostname, mask)                              std::string(":") + std::string(hostname) + " 413 " + std::string(nick) + " " + std::string(mask) + " :No toplevel domain specified\r\n"
+
+#define ERR_WILDTOPLEVEL(nick, hostname, mask)                            std::string(":") + std::string(hostname) + " 414 " + std::string(nick) + " " + std::string(mask) + " :Wildcard in toplevel domain\r\n"
+
+#define ERR_TOOMANYTARGETS(nick, hostname, target)                        std::string(":") + std::string(hostname) + " 407 " + std::string(nick) + " " + std::string(target) + " :Too many recipients\r\n"
+
+// #define ERR_NOSUCHNICK(nick, hostname, targetNick)                        std::string(":") + std::string(hostname) + " 401 " + std::string(nick) + " " + std::string(targetNick) + " :No such nick/channel\r\n"
+
+#define RPL_AWAY(nick, hostname, targetNick, awayMessage)                 std::string(":") + std::string(hostname) + " 301 " + std::string(nick) + " " + std::string(targetNick) + " :" + std::string(awayMessage) + "\r\n"
+
+
