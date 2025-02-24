@@ -190,3 +190,6 @@ void    printchannelvectorlist(std::string msg, std::vector<std::string> channel
 #define RPL_AWAY(nick, hostname, targetNick, awayMessage)                 std::string(":") + std::string(hostname) + " 301 " + std::string(nick) + " " + std::string(targetNick) + " :" + std::string(awayMessage) + "\r\n"
 
 
+
+
+#define ERR_NOTAUTHENTICATED(nick, hostname)                               std::string(":") + std::string(hostname) + " 451 " + std::string(nick) + " :You have not registered\r\n"

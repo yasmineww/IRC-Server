@@ -32,13 +32,14 @@ void Server::USERhandler(const std::vector<std::string> &data, int fd)
     it = Users.find(fd);
 
     if (it->second.Auth_USER)
-        return (SENDMESSAGE("ERR_ALREADYREGISTRED \n", fd));
+        return (SENDMESSAGE(ERR_ALREADYREGISTERED(it->second.getNickName(), it->second.getHostName()), fd));
     if (!it->second.Auth_PASS)
-        return (SENDMESSAGE("ERR_NOT_AUTHENTICATED\n", fd));
+        return (SENDMESSAGE(ERR_NOTAUTHENTICATED(it->second.getNickName(), it->second.getHostName()), fd));
     if (data.size() < 5)
-        return (SENDMESSAGE("ERR_NEEDMOREPARAMS\n", fd));
+        return (SENDMESSAGE(ERR_NEEDMOREPARAMS(it->second.getNickName(), it->second.getHostName(), ""), fd));
     if (data.size() > 5)
-        return (SENDMESSAGE("ERR_NEEDMOREPARAMS\n", fd));
+        return (SENDMESSAGE(ERR_NEEDMOREPARAMS(it->second.getNickName(), it->second.getHostName(), ""), fd));
+
 
     std::string username = data[1];
     std::string hostname = data[2];
@@ -82,7 +83,7 @@ int Server::functioncheck(std::string Nick, int fd){
 
     for (;it != end; it++){
         if (Nick == it->second.getNickName()){
-            SENDMESSAGE("ERR_NICKNAMEINUSE\n", fd);
+            SENDMESSAGE(ERR_NICKNAMEINUSE(it->second.getNickName(),it->second.getHostName()), fd);
             return (-1);
         }
    }
@@ -94,17 +95,19 @@ void Server::NICKhandler(const std::vector<std::string> &data, int fd)
     std::map<int ,Client>::iterator it ;
 
     if (data.size() < 2 || data[1].size() == 0)
-        return (SENDMESSAGE("431  :No nickname given\n", fd));
+        return (SENDMESSAGE(ERR_NONICKNAMEGIVEN(it->second.getNickName(), it->second.getHostName()), fd));
     if (this->functioncheck(data[1], fd) == -1)
         return ;
     it = Users.find(fd);
     if (data.size() > 2)
-        return (SENDMESSAGE("ERR_NONICKNAMEGIVEN\n", fd));
+        return (SENDMESSAGE(ERR_NONICKNAMEGIVEN(it->second.getNickName(),it->second.getHostName()), fd));
     if (!it->second.Auth_PASS)
-        return (SENDMESSAGE("ERR_NOT_AUTHENTICATED\n", fd));
-    if (it->second.Auth_USER && it->second.Auth_NICK && it->second.Auth_PASS && !it->second.AUTH_WELCOM){
+        return (SENDMESSAGE(ERR_NOTAUTHENTICATED(it->second.getNickName(), it->second.getHostName()), fd));
+    if (it->second.Auth_USER && it->second.Auth_NICK && it->second.Auth_PASS && !it->second.AUTH_WELCOM)
+    {
+        std::string tempNICK = it->second.getNickName();
         it->second.setNickName(data[1]);
-        return (SENDMESSAGE("NICK_CHANGED \n", fd));
+        return (SENDMESSAGE(RPL_NICKCHANGE(tempNICK ,it->second.getNickName(),it->second.getHostName()), fd));
     }
     it->second.setNickName(data[1]);
     it->second.Auth_NICK = true ;

@@ -131,28 +131,32 @@ void Server::MODEhandler(const std::vector<std::string> &data, int fd)
 {
     Client user = Users[fd];
 
-    if (!user.check_Authentication())
-		return SENDMESSAGE("LAYMONA * : You are not registred\n", fd);
 
-
-	// std::stringstream ss(command);
 	std::string minicmd;
 	std::string chanName;
-	// std::vector<std::string> splited; // split command into words
+
+
 	std::vector<std::string> Values; //to store values
 	std::vector<std::string> permittedOPTIONS;  // to store options with (+)
 	std::vector<std::string> NONpermittedOPTIONS; // to store options with (-)
 
-	// while (std::getline(ss, minicmd, ' '))
-	// 	splited.push_back(minicmd);
 
-	// chanName = splited[1];
+    int sizee = data.size();
+    if (sizee < 3)
+    {
+
+
+        return (SENDMESSAGE(ERR_NEEDMOREPARAMS(user.getNickName(),  Server_Name, data[0]), fd));
+    }
+
 
     chanName = data[1];
 
     
     std::vector<std::string>data_copy = data;
     // FULL FILL Parametres : OPTIONS values
+
+
     store_options(data_copy, permittedOPTIONS, NONpermittedOPTIONS, Values);
 
 

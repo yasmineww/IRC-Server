@@ -82,5 +82,24 @@ PRIVMSG sone replies
 
 
 
+----> take a look
+
+
+
+MODE #chan14 +itl 2
+:i!~Pentagone.chat MODE #chan14 +i
+:i!~Pentagone.chat MODE #chan14 +t
+:i!~i@127.0.0.1 MODE #chan14 +l 2
+MODE #chan14
+:Pentagone.chat 324 i #chan14 +itl  2 
+
+
+
+if u entred MODE #chan14
+
+
+it must show the actual settings
+
+
 
 
