@@ -9,7 +9,7 @@ void Server::QUIThandler(const std::vector<std::string> &data, int fd)
 
     std::string quitMessage = "Client Quit"; // Default quit message
     if (data.size() > 1)
-        quitMessage = data[1].substr(2); // Remove ':' from the message
+        quitMessage = data[1].substr(1); // Remove ':' from the message
 
     std::string quitNotice = ":" + user.getNickName() + " QUIT :" +  + "\r\n";
 

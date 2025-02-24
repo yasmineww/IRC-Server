@@ -4,15 +4,12 @@ void Server::PRIVMSGhandler(const std::vector<std::string> &data, int fd){
    
     Client user = Users[fd];
 
-    int sizee = data.size();
-    if (sizee < 3)
+    if (data.size() < 3)
     {
-        if (sizee == 1)
-            return SENDMESSAGE(ERR_NORECIPIENT(user.getNickName(), user.getHostName(), ""), fd);
-        if (sizee == 2)
-            return SENDMESSAGE(ERR_NOTEXTTOSEND(user.getNickName(), user.getHostName()), fd);
-
-        // return (SENDMESSAGE(ERR_NEEDMOREPARAMS(user.getNickName(),  Server_Name, data[0]), fd));
+        if (data.size() == 1)
+            return SENDMESSAGE(ERR_NORECIPIENT(user.getNickName(), Server_Name), fd);
+        if (data.size() == 2)
+            return SENDMESSAGE(ERR_NOTEXTTOSEND(user.getNickName(), Server_Name), fd);
     }
 
     std::vector<std::string> receivers;
@@ -26,6 +23,7 @@ void Server::PRIVMSGhandler(const std::vector<std::string> &data, int fd){
     if (data[2][0] == ':')
         message = data[2].substr(2);
 
+    std::cout << "The message is " << message << std::endl;
     
     for (size_t i = 0; i < receivers.size(); i++)
     {
@@ -40,28 +38,25 @@ void Server::PRIVMSGhandler(const std::vector<std::string> &data, int fd){
                 SENDMESSAGE(ERR_NOTONCHANNEL(Server_Name, receivers[i]), fd);
                 continue;
             }
-            std::string msgToSend = ":" + user.getNickName() + " PRIVMSG " + receivers[i] + " :" + message + "\r\n";
-            channel->broadcast(RPL_AWAY(user.getNickName(), user.getHostName(), receivers[i], msgToSend));
+            std::string msgToSend = ":" + user.getNickName() + "!~" + Server_Name + " PRIVMSG " + receivers[i] + " :" + message + "\r\n";
+            channel->broadcast_priv(msgToSend, fd);
+            //:yasmine!~127.0.0.1 PRIVMSG salma :hey
+            //when sending message in channel, the sender should be excluded from the receivers. Otherwise, he gets the message
         }
         else
         {
-            printUsersByNickname();
-            std::cout << "MY TARRR IS receivers: " << receivers[i] << std::endl;
             int receiver = getClientByName(receivers[i]);
             if (receiver == -1)
             {
-                SENDMESSAGE(ERR_NORECIPIENT(user.getNickName(), user.getHostName(), receivers[i]), fd);
+                SENDMESSAGE(ERR_NORECIPIENT(user.getNickName(), Server_Name), fd);
                 continue;
             }
-            std::string msgToSend = ":" + user.getNickName() + " PRIVMSG " + receivers[i] + " :" + message + "\r\n";
-            SENDMESSAGE(RPL_AWAY(user.getNickName(), user.getHostName(), receivers[i], msgToSend), receiver);
+            std::string msgToSend = ":" + user.getNickName() + "!~" + Server_Name + " PRIVMSG " + receivers[i] + " :" + message + "\r\n";
+            SENDMESSAGE(msgToSend, receiver);
 
         }
     }
 }
-
-
-
 
 /*
 

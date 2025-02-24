@@ -47,7 +47,7 @@ void Server::USERhandler(const std::vector<std::string> &data, int fd)
     std::string realname = data[4];
 
     if (data[4][0] == ':')
-        realname = data[4].substr(2);
+        realname = data[4].substr(1);
 
     if (REGEX_STRING(username, USERNAME) == USERNAME) {
         return (SENDMESSAGE("ERR_INVALID_<username>_FORMAT \n", fd));

@@ -35,7 +35,7 @@ void Server::TOPIChandler(const std::vector<std::string> &data, int fd)
 
     std::string newTopic = data[2];
     if (data[2][0] == ':')
-        newTopic = data[2].substr(2);
+        newTopic = data[2].substr(1);
 
     channel->setTopic(newTopic);
 

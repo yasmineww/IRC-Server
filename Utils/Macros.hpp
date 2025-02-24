@@ -6,7 +6,7 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 10:52:04 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/02/23 22:05:06 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/02/24 23:39:34 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,13 +15,11 @@
 
 
 
-// temp Utilss
-
-
 #include "stdio.h"
 
 // --------
-
+#include <fcntl.h>
+# include <csignal>
 # include <sys/socket.h>
 # include <netinet/in.h>
 # include <arpa/inet.h>
@@ -157,7 +155,7 @@ void    printchannelvectorlist(std::string msg, std::vector<std::string> channel
 
 #define ERR_NOTONCHANNEL(hostname, channel)                               std::string(":") + std::string(hostname) + " 442 " + std::string(channel) + " :You're not on that channel\r\n"
 #define ERR_NOSUCHCHANNEL(hostname, channel, nick)                        std::string(":") + std::string(hostname) + " 403 " + std::string(nick) + " " + std::string(channel) + " :No such channel\r\n"
-#define ERR_NOSUCHNICK(hostname, channel, argument)                       std::string(":") + std::string(hostname) + " 401 " + std::string(channel) + " " + std::string(argument) + " :No such nick/channel\r\n"
+#define ERR_NOSUCHNICK(hostname, channel, targetNick)                     std::string(":") + std::string(hostname) + " 401 " + std::string(channel) + " " + std::string(targetNick) + " :No such nick/channel\r\n"
 #define ERR_USERONCHANNEL(hostname, channel, nick)                        std::string(":") + std::string(hostname) + " 443 " + std::string(nick) + " " + std::string(channel) + " :is already on channel\r\n"
 
 
@@ -173,7 +171,7 @@ void    printchannelvectorlist(std::string msg, std::vector<std::string> channel
 
 // PRIVMSG 
 
-#define ERR_NORECIPIENT(nick, hostname, command)                          std::string(":") + std::string(hostname) + " 411 " + std::string(nick) + " :No recipient given (" + std::string(command) + ")\r\n"
+#define ERR_NORECIPIENT(nick, hostname)                                   std::string(":") + std::string(hostname) + " 411 " + std::string(nick) + " :No recipient given (PRIVMSG)\r\n"
 
 #define ERR_NOTEXTTOSEND(nick, hostname)                                  std::string(":") + std::string(hostname) + " 412 " + std::string(nick) + " :No text to send\r\n"
 
@@ -185,11 +183,7 @@ void    printchannelvectorlist(std::string msg, std::vector<std::string> channel
 
 #define ERR_TOOMANYTARGETS(nick, hostname, target)                        std::string(":") + std::string(hostname) + " 407 " + std::string(nick) + " " + std::string(target) + " :Too many recipients\r\n"
 
-// #define ERR_NOSUCHNICK(nick, hostname, targetNick)                        std::string(":") + std::string(hostname) + " 401 " + std::string(nick) + " " + std::string(targetNick) + " :No such nick/channel\r\n"
-
 #define RPL_AWAY(nick, hostname, targetNick, awayMessage)                 std::string(":") + std::string(hostname) + " 301 " + std::string(nick) + " " + std::string(targetNick) + " :" + std::string(awayMessage) + "\r\n"
-
-
 
 
 #define ERR_NOTAUTHENTICATED(nick, hostname)                               std::string(":") + std::string(hostname) + " 451 " + std::string(nick) + " :You have not registered\r\n"

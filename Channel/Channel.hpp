@@ -6,7 +6,7 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 10:51:48 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/02/20 22:34:56 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/02/24 21:07:55 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,8 @@ class Channel
         bool isOperator(int fd) ;
 
         // Message Broadcasting
+        void broadcast_priv(const std::string& message, int sender_fd);
+        
         void broadcast(const std::string& message);
 
         // Check if a user is in the channel
