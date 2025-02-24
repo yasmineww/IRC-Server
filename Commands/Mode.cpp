@@ -150,6 +150,7 @@ void Server::MODEhandler(const std::vector<std::string> &data, int fd)
 
     chanName = data[1];
 
+    
     std::vector<std::string>data_copy = data;
     // FULL FILL Parametres : OPTIONS values
     store_options(data_copy, permittedOPTIONS, NONpermittedOPTIONS, Values);
@@ -161,6 +162,10 @@ void Server::MODEhandler(const std::vector<std::string> &data, int fd)
     Channel *channel = getChannel(chanName);
     if (!channel)
         return SENDMESSAGE(":Server 403 " + user.getNickName() + " " + chanName + " :No such channel\n", fd);
+
+    if (!channel->isUserInChannel(fd))
+        return SENDMESSAGE(ERR_NOTONCHANNEL(user.getHostName(), chanName), fd);
+
 
     // Verify that the user has operator privileges to modify modes
     if (channel->isOperator(fd) == false)
