@@ -22,6 +22,7 @@
 
 // --------
 
+static int socket_connection ;
 # include <sys/socket.h>
 # include <netinet/in.h>
 # include <arpa/inet.h>
@@ -38,7 +39,7 @@
 # include <string>
 # include <sstream>
 # include <algorithm>
-
+# include <csignal>
 
 
 using namespace std;

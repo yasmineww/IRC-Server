@@ -2,7 +2,6 @@
 #pragma once
 
 # include "../Header/Macros.hpp"
-
 class Channel;
 class Client;
 
