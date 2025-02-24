@@ -75,6 +75,9 @@ void Server::receiveData(const std::vector<std::string> &data, int fd)
 
 
 
+PRIVMSG sone replies
+
+
 
 
 
