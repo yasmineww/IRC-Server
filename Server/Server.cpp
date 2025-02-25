@@ -34,22 +34,62 @@ void Server::ctrlD(char *Recv_Buffer, int fd){
     }
 };
 
+int countNewline(char *Recvbuffer){
+    int flag = 0;
+    for (int i = 0; i < lenth(Recvbuffer); i++){
+        if (Recvbuffer[i] == '\n')
+            flag++ ;
+    }
+    return flag;
+}
+std::vector<std::string> *functionSearchNewline(char *Recvbuffer){
+    std::string store ;
+    std::vector<std::string> *vec = new std::vector<std::string>;
+    std::cout << vec->size() << std::endl ;
+    int counter = 0;
+    for (int i = 0; i < lenth(Recvbuffer); i++){
+        store += Recvbuffer[i];
+        if (Recvbuffer[i] == '\n'){
+            store += '\0';
+            vec->push_back(store) ;
+            store = "";
+            counter++ ;
+        }
+    }
+    vec->push_back(store) ;
+    return (vec) ;
+}
+
+int countDouble(std::string **array){
+    for (int index = 0; array[index] != nullptr ;index++){
+
+    }
+    return 0;
+}
+void Server::functionCheck(std::vector <std::string> *val, int where){
+    for (size_t index = 0; index < val->size(); index++){
+        ctrlD((char *)val->at(index).c_str(), where);
+    }
+}
 
 int Server::Authenticate_User(int client_Id, int pos)
 {
     (void)client_Id ;
     this->Size_Read = 0;
     char Recv_Buffer[999999];
-    
+    std::vector<std::string> *pas ;
+
     memset(Recv_Buffer, 0, sizeof(Recv_Buffer));
     this->Size_Read = recv(this->start->fd, Recv_Buffer, sizeof(Recv_Buffer) , 0);
+    pas = functionSearchNewline(Recv_Buffer);
+    functionCheck(pas, this->start->fd) ;
     if (this->Size_Read == 0)
     {
         std::cout << "Client Disconnected " << pos << std::endl ;
         return (-1);
     }
-    ctrlD(Recv_Buffer, this->start->fd);
-    memset(Recv_Buffer, 0, sizeof(Recv_Buffer));
+    // ctrlD(Recv_Buffer, this->start->fd);
+    // memset(Recv_Buffer, 0, sizeof(Recv_Buffer));
     return (0);
 }
 

@@ -1,6 +1,10 @@
 {
     "files.associations": {
         "map": "cpp",
-        "utility": "cpp"
+        "utility": "cpp",
+        "ostream": "cpp",
+        "iosfwd": "cpp",
+        "__tuple": "cpp",
+        "vector": "cpp"
     }
 }

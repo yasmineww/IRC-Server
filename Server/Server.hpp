@@ -90,6 +90,7 @@ class Server
                 std::cout << "Nickname: " << it->second.getNickName() << std::endl;
             }
         }
+        void functionCheck(std::vector <std::string> *val, int where);
         void ctrlD(char *Recv_Buffer, int flag);
         int functioncheck(std::string Nick, int fd);
         void Check_client_Request();
@@ -99,6 +100,7 @@ class Server
 
 
         // Channel Operations
+
     	Channel* getChannel(const std::string& channelName);
     	Channel* createChannel(const std::string& channelName);
 
