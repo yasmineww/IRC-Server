@@ -166,17 +166,12 @@ void Server::MODEhandler(const std::vector<std::string> &data, int fd)
     if (!channel)
         return SENDMESSAGE(":Laymouna.chat 403 " + user.getNickName() + " " + chanName + " :No such channel\n", fd);
 
-        if (sizee == 2 && !data[1].empty()) // MODE #chan
-        {
-
-
-
-            // Get current mode settings
-            std::string modes = channel->getModeString(); // You should have a function like this in Channel class
-
-            // Send mode response
-            return SENDMESSAGE(":Laymouna.chat 324 " + user.getNickName() + " " + chanName + " " + modes + "\r\n", fd);
-        }
+    if (sizee == 2 && !data[1].empty()) // MODE #chan only if you are not in the channel
+    {
+        // Get current mode settings
+        std::string modes = channel->getModeString(); //  take a look on this function
+        return SENDMESSAGE(":Laymouna.chat 324 " + user.getNickName() + " " + chanName + " " + modes + "\r\n", fd);
+    }
 
 
     if (!channel->isUserInChannel(fd))
@@ -232,7 +227,7 @@ void Server::MODEhandler(const std::vector<std::string> &data, int fd)
             }
             else
             {
-                return SENDMESSAGE(":Laymouna.chat 461 " + user.getNickName() + " MODE +l :Not enough parameters\n", user.getClientFd());
+                SENDMESSAGE(":Laymouna.chat 461 " + user.getNickName() + " MODE +l :Not enough parameters\n", user.getClientFd());
             }
         }
     }
