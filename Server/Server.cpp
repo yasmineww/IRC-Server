@@ -216,6 +216,11 @@ void Server_Socket_Creation(std::string Port, std::string Pass_Code)
             std::cout << " +Value+  1" << std::endl ;
             server_Cls.Check_client_Request();
             server_Cls.poll_returnV = poll(&server_Cls.pollAr[0], server_Cls.pollAr.size(), -1);
+            if (server_Cls.poll_returnV < 0)
+            {
+                close(socket_connection);
+                check_status(server_Cls.poll_returnV, "Poll Faild !");
+            }
             // std::cout << " +Value+  2" << std::endl ;
             if (server_Cls.poll_returnV > 0){
                 if (server_Cls.pollAr[0].revents & POLLIN)
