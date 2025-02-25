@@ -127,6 +127,7 @@ for(std::vector<std::string>::iterator it = data.begin(); it < data.end(); ++it)
 }
 
 
+
 void Server::MODEhandler(const std::vector<std::string> &data, int fd)
 {
     Client user = Users[fd];
@@ -142,17 +143,15 @@ void Server::MODEhandler(const std::vector<std::string> &data, int fd)
 
 
     int sizee = data.size();
-    if (sizee < 3)
+    if (sizee == 1)
     {
-
-
         return (SENDMESSAGE(ERR_NEEDMOREPARAMS(user.getNickName(),  Server_Name, data[0]), fd));
     }
 
 
     chanName = data[1];
 
-    
+
     std::vector<std::string>data_copy = data;
     // FULL FILL Parametres : OPTIONS values
 
@@ -165,7 +164,20 @@ void Server::MODEhandler(const std::vector<std::string> &data, int fd)
     // Check if the channel exists
     Channel *channel = getChannel(chanName);
     if (!channel)
-        return SENDMESSAGE(":Server 403 " + user.getNickName() + " " + chanName + " :No such channel\n", fd);
+        return SENDMESSAGE(":Laymouna.chat 403 " + user.getNickName() + " " + chanName + " :No such channel\n", fd);
+
+        if (sizee == 2 && !data[1].empty()) // MODE #chan
+        {
+
+
+
+            // Get current mode settings
+            std::string modes = channel->getModeString(); // You should have a function like this in Channel class
+
+            // Send mode response
+            return SENDMESSAGE(":Laymouna.chat 324 " + user.getNickName() + " " + chanName + " " + modes + "\r\n", fd);
+        }
+
 
     if (!channel->isUserInChannel(fd))
         return SENDMESSAGE(ERR_NOTONCHANNEL(user.getHostName(), chanName), fd);
@@ -173,7 +185,7 @@ void Server::MODEhandler(const std::vector<std::string> &data, int fd)
 
     // Verify that the user has operator privileges to modify modes
     if (channel->isOperator(fd) == false)
-        return SENDMESSAGE(":Server 482 " + user.getNickName() + " " + chanName + " :You're not a channel operator\n", fd);
+        return SENDMESSAGE(":Laymouna.chat 482 " + user.getNickName() + " " + chanName + " :You're not a channel operator\n", fd);
 
     // Apply permitted modes (+)
     for (size_t i = 0, valIndex = 0; i < permittedOPTIONS.size(); i++)
@@ -192,7 +204,7 @@ void Server::MODEhandler(const std::vector<std::string> &data, int fd)
                 channel->setKey(Values[valIndex++]);  // Assign password
             }
             else
-                SENDMESSAGE(":Server 461 " + user.getNickName() + " MODE +k :Not enough parameters\n", user.getClientFd());
+                return SENDMESSAGE(":Laymouna.chat 461 " + user.getNickName() + " MODE +k :Not enough parameters\n", user.getClientFd());
         }
         else if (mode == "o")
         {
@@ -202,10 +214,14 @@ void Server::MODEhandler(const std::vector<std::string> &data, int fd)
                 if (target != -1 && channel->hasUser(target))
                     channel->addOperator(target);
                 else
-                    SENDMESSAGE(":Server 401 " + user.getNickName() + " " + Values[valIndex - 1] + " :No such nick\n", user.getClientFd());
+                {
+                    return SENDMESSAGE(":Server 401 " + user.getNickName() + " " + Values[valIndex - 1] + " :No such nick\n", user.getClientFd());
+                }
             }
             else
-                SENDMESSAGE(":Server 461 " + user.getNickName() + " MODE +o :Not enough parameters\n", user.getClientFd());
+            {
+                return SENDMESSAGE(":Server 461 " + user.getNickName() + " MODE +o :Not enough parameters\n", user.getClientFd());
+            }
         }
         else if (mode == "l")
         {
@@ -215,7 +231,9 @@ void Server::MODEhandler(const std::vector<std::string> &data, int fd)
                 channel->setUserLimit(limit);
             }
             else
-                SENDMESSAGE(":Server 461 " + user.getNickName() + " MODE +l :Not enough parameters\n", user.getClientFd());
+            {
+                return SENDMESSAGE(":Laymouna.chat 461 " + user.getNickName() + " MODE +l :Not enough parameters\n", user.getClientFd());
+            }
         }
     }
 
@@ -238,17 +256,17 @@ void Server::MODEhandler(const std::vector<std::string> &data, int fd)
                 if (target != -1 && channel->hasUser(target))
                     channel->removeOperator(target);
                 else
-                    SENDMESSAGE(":Server 401 " + user.getNickName() + " " + Values[valIndex - 1] + " :No such nick\n", user.getClientFd());
+                    return SENDMESSAGE(":Laymouna.chat 401 " + user.getNickName() + " " + Values[valIndex - 1] + " :No such nick\n", user.getClientFd());
             }
             else
-                SENDMESSAGE(":Server 461 " + user.getNickName() + " MODE -o :Not enough parameters\n", user.getClientFd());
+                return SENDMESSAGE(":Laymouna.chat 461 " + user.getNickName() + " MODE -o :Not enough parameters\n", user.getClientFd());
         }
         else if (mode == "l")
             channel->removeUserLimit();
     }
 
     // Broadcast mode changes to all users in the channel
-    std::string modeChangeMessage = ":" + user.getNickName() + " MODE " + chanName;
+    std::string modeChangeMessage = ":" + user.getNickName() + "!~ " + " MODE " + chanName; // needs the ip address
 
     for (size_t i = 0; i < permittedOPTIONS.size(); i++) modeChangeMessage += " +" + permittedOPTIONS[i];
     for (size_t i = 0; i < NONpermittedOPTIONS.size(); i++) modeChangeMessage += " -" + NONpermittedOPTIONS[i];

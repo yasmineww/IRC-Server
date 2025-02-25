@@ -20,19 +20,19 @@ class Client;
 class Channel
 {
 	private:
-    	std::string name;                  
+    	std::string name;
         std::string _key;
-    	std::string topic;                 
+    	std::string topic;
     	std::map<int, Client> users;        // Users in the channel (key: fd, value: pointer to User)
     	std::vector<int> operators;        // List of operator FDs (can be optimized)
-    	std::vector<int> invited;        // List of invited clients 
+    	std::vector<int> invited;        // List of invited clients
         bool    inviteOnly;
         bool    topicRestricted;
         int     userLimit;
 
     public:
         int     ClientsAmount;
-        
+
         // Constructor & Destructor
         Channel();
         Channel(std::string _name, std::string key = "");
@@ -56,7 +56,7 @@ class Channel
         void setUserLimit(int limit);
         void setInviteOnly(bool state);
 
-        
+
         // User Management
         void addUser(Client user, int fd);
         void removeUser(int fd);
@@ -69,7 +69,7 @@ class Channel
 
         // Message Broadcasting
         void broadcast_priv(const std::string& message, int sender_fd);
-        
+
         void broadcast(const std::string& message);
 
         // Check if a user is in the channel
@@ -94,5 +94,9 @@ class Channel
         bool isInvited(int fd);
 
         int getRandomClient(int fd);
+
+
+        std::string getModeString() const;
+
 
 };

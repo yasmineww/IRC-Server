@@ -49,14 +49,14 @@ std::vector<std::string> *functionSearchNewline(char *Recvbuffer){
         vec->pop_back();
     };
     std::cout << vec->size() << std::endl ;
-    int counter = 0;
+    // int counter = 0;
     for (int i = 0; i < lenth(Recvbuffer); i++){
         store += Recvbuffer[i];
         if (Recvbuffer[i] == '\n'){
             store += '\0';
             vec->push_back(store) ;
             store = "";
-            counter++ ;
+            // counter++ ;
         }
     }
     vec->push_back(store) ;
@@ -174,8 +174,8 @@ void Server_Socket_Creation(std::string Port, std::string Pass_Code)
         // Creation Of a socket, struct pollfd StrcPol
         server_Cls.Server_PassCode = Pass_Code ;
         socket_connection = socket(AF_INET, SOCK_STREAM, 0);
-        fcntl(socket_connection, F_SETFL, O_NONBLOCK);
         setsockopt(atoi(Port.c_str()), SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+        fcntl(socket_connection, F_SETFL, O_NONBLOCK);
         check_status(socket_connection, "Socket Connection Faild !");
         server_Cls.bind_Arg = bind(socket_connection, (struct sockaddr *)&server_Cls.bindSocket_str, sizeof(server_Cls.bindSocket_str));
         check_status(server_Cls.bind_Arg, "Bind Faild !");

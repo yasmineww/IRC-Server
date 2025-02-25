@@ -30,7 +30,23 @@ Channel::Channel(std::string _name, std::string key) : name(_name), _key(key)
 
 Channel::~Channel()
 {
-	
+
+}
+
+std::string Channel::getModeString() const
+{
+    std::string modeString = "+";
+
+    if (inviteOnly) modeString += "i";
+    if (topicRestricted) modeString += "t";
+    if (hasKey()) modeString += "k";
+    if (userLimit > 0) modeString += "l";
+    // if (operatorOnly) modeString += "o";
+
+    if (modeString == "+") // No modes set
+        return "-itlk";
+
+    return modeString;
 }
 
 // Add user to channel
