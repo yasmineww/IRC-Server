@@ -11,7 +11,7 @@ class Server
     private:
         std::string Server_Name;
         std::map<std::string, void (Server::*)(const std::vector<std::string>&, int)> commandMap;
-        
+
         void PASShandler(const std::vector<std::string> &data, int fd);
         void USERhandler(const std::vector<std::string> &data, int fd);
         void NICKhandler(const std::vector<std::string> &data, int fd);
@@ -46,7 +46,7 @@ class Server
         size_t Size_Read  ;
         int Socket_listen ;
         int acceptSocket_id   ;
-        int socket_connection ;
+        // int socket_connection ;
         char Recv_Buffer[1024];
         struct pollfd poll_strc ;
         struct sockaddr_in bindSocket_str ;

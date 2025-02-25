@@ -109,7 +109,7 @@ for(std::vector<std::string>::iterator it = data.begin(); it < data.end(); ++it)
 				- UND getting user name
 			*/
 
-            
+
 			if (!((*it) == data[1] || (*it) == data[0]))
             {
                 it->erase(std::remove(it->begin(), it->end(), '\n'), it->end());
@@ -131,6 +131,11 @@ void Server::MODEhandler(const std::vector<std::string> &data, int fd)
 {
     Client user = Users[fd];
 
+<<<<<<< Updated upstream
+=======
+    if (!user.check_Authentication())
+		return SENDMESSAGE("LAYMONA * : You are not registred\n", fd);
+>>>>>>> Stashed changes
 
 	std::string minicmd;
 	std::string chanName;
@@ -180,17 +185,15 @@ void Server::MODEhandler(const std::vector<std::string> &data, int fd)
     {
         std::string mode = permittedOPTIONS[i];
 
-        if (mode == "i") {
+        if (mode == "i")
             channel->setInviteOnly(true);
-        }
-        else if (mode == "t") {
+        else if (mode == "t")
             channel->setTopicRestricted(true);
-        }
         else if (mode == "k")
         {
             if (valIndex < Values.size())
             {
-                std::cout << "index is --> " << valIndex << std::endl;
+                std::cout << "index is --> [" << valIndex << "]" << std::endl;
                 channel->setKey(Values[valIndex++]);  // Assign password
             }
             else
@@ -200,7 +203,7 @@ void Server::MODEhandler(const std::vector<std::string> &data, int fd)
         {
             if (valIndex < Values.size())
             {
-                int target = getClientByName(Values[valIndex++]);\
+                int target = getClientByName(Values[valIndex++]);
                 if (target != -1 && channel->hasUser(target))
                     channel->addOperator(target);
                 else

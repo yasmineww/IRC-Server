@@ -108,20 +108,33 @@ std::string	Server_Opening(void)
 	return (welcome);
 };
 
+void functionhandler(int signal)
+{
+    std::cout << "Function " << std::endl ;
+    if (signal == SIGINT){
+        close(socket_connection);
+        exit(1);
+    }
+}
+
 void Server_Socket_Creation(std::string Port, std::string Pass_Code)
 {
         cout << Server_Opening() << endl;
+
+        int opt = 1;
 
         Server server_Cls ;
         Client ForMulti_poll ;
         server_Cls.bindSocket_str.sin_port = htons(atoi(Port.c_str()));
         // Creation Of a socket, struct pollfd StrcPol
         server_Cls.Server_PassCode = Pass_Code ;
-        server_Cls.socket_connection = socket(AF_INET, SOCK_STREAM, 0);
-        check_status(server_Cls.socket_connection, "Socket Connection Faild !");
-        server_Cls.bind_Arg = bind(server_Cls.socket_connection, (struct sockaddr *)&server_Cls.bindSocket_str, sizeof(server_Cls.bindSocket_str));
+        socket_connection = socket(AF_INET, SOCK_STREAM, 0);
+        fcntl(socket_connection, F_SETFL, O_NONBLOCK);
+        setsockopt(atoi(Port.c_str()), SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+        check_status(socket_connection, "Socket Connection Faild !");
+        server_Cls.bind_Arg = bind(socket_connection, (struct sockaddr *)&server_Cls.bindSocket_str, sizeof(server_Cls.bindSocket_str));
         check_status(server_Cls.bind_Arg, "Bind Faild !");
-        server_Cls.Socket_listen = listen(server_Cls.socket_connection, 2);
+        server_Cls.Socket_listen = listen(socket_connection, 2);
         check_status(server_Cls.Socket_listen, "Listen Faild !");
 
         // the Client Struct For the Accept() function
@@ -130,15 +143,17 @@ void Server_Socket_Creation(std::string Port, std::string Pass_Code)
         std::pair<int, Client> TOADD ;
 
         // Initialization Of the First Poll() Struct For the Server
-        server_Cls.poll_strc.fd = server_Cls.socket_connection ;
+        server_Cls.poll_strc.fd = socket_connection ;
         server_Cls.poll_strc.events = POLLIN ;
         server_Cls.pollAr.push_back(server_Cls.poll_strc);
+
+        signal(SIGINT, functionhandler);
         while (1)
         {
             server_Cls.poll_returnV = poll(server_Cls.pollAr.data(), server_Cls.pollAr.size(), -1);
             if (server_Cls.poll_returnV > 0){
                 if (server_Cls.pollAr[0].revents & POLLIN) {
-                    server_Cls.acceptSocket_id = accept(server_Cls.socket_connection, (sockaddr *)&client_address, &client_addr_len);
+                    server_Cls.acceptSocket_id = accept(socket_connection, (sockaddr *)&client_address, &client_addr_len);
                     check_status(server_Cls.acceptSocket_id, "Accept Command Faild !");
                     if (server_Cls.acceptSocket_id > 0) {
                         SENDMESSAGE(Welcome_mssg(),server_Cls.acceptSocket_id) ;

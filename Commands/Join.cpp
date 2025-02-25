@@ -13,11 +13,19 @@
 #include "../Utils/Macros.hpp"
 
 void Server::JOINhandler(const std::vector<std::string> &data, int fd){
+<<<<<<< Updated upstream
     
     Client user = Users[fd];
     if (data.size() < 2)
         return (SENDMESSAGE(ERR_NEEDMOREPARAMS(user.getNickName(),  Server_Name, data[0]), fd));
     
+=======
+    Client user = Users[fd];
+
+    if (data.size() < 2)
+        return (SENDMESSAGE(ERR_NEEDMOREPARAMS(user.getNickName(),  "IRC"), fd));
+
+>>>>>>> Stashed changes
     std::vector<std::string> channels;
     std::vector<std::string> keys;
     std::string store;
@@ -34,8 +42,13 @@ void Server::JOINhandler(const std::vector<std::string> &data, int fd){
 
     for (size_t i = 0; i < channels.size(); i++){
         if (channels[i][0] != '#' && (channels[i][0] != '&')){
+<<<<<<< Updated upstream
             SENDMESSAGE(ERR_NOSUCHCHANNEL(Server_Name, channels[i], user.getNickName()), fd);
             continue;   
+=======
+            SENDMESSAGE(ERR_NOSUCHCHANNEL("IRC", channels[i], user.getNickName()), fd);
+            continue;
+>>>>>>> Stashed changes
         }
         Channel *channel = getChannel(channels[i]);
         if (!channel) {
@@ -46,7 +59,7 @@ void Server::JOINhandler(const std::vector<std::string> &data, int fd){
         else {
             if (channel->isUserInChannel(fd))
                 continue;
-            if ((!channel->getKey().empty() && (i >= keys.size() || keys[i] != channel->getKey()))) 
+            if ((!channel->getKey().empty() && (i >= keys.size() || keys[i] != channel->getKey())))
             {
                 SENDMESSAGE(ERR_BADCHANNELKEY(user.getNickName(), Server_Name, channel->getName()), fd);
                 continue;
@@ -59,6 +72,13 @@ void Server::JOINhandler(const std::vector<std::string> &data, int fd){
                 SENDMESSAGE(ERR_CHANNELISFULL(user.getNickName(),  Server_Name, channel->getName()), fd);
                 continue;
             }
+<<<<<<< Updated upstream
+=======
+            if (channel->getInviteOnly() && !channel->isInvited(fd))
+                SENDMESSAGE(ERR_INVITEONLYCHAN(user.getNickName(), "IRC", channel->getName()), fd);
+            if (channel->getUserCount()  == channel->getUserLimit())
+                SENDMESSAGE(ERR_CHANNELISFULL(getNick_name(),  "IRC", channel->getName()), fd);
+>>>>>>> Stashed changes
         }
         channel->addUser(user, fd);
         channel->broadcast(RPL_JOIN(user.getNickName(), user.getUserName(), channels[i], "10.13.4.16"));
@@ -76,6 +96,7 @@ void Server::JOINhandler(const std::vector<std::string> &data, int fd){
 //check which replies are being broadcasted
 //should i add mode notice when joining the channel??
 
+<<<<<<< Updated upstream
 //MODE Command 
 // MODE #chan1 +i              
 // :yasmine!~Pentagone.chat MODE #chan1 +i
@@ -87,3 +108,8 @@ void Server::JOINhandler(const std::vector<std::string> &data, int fd){
 
 //SERVER
 //if NICKNAME is already in use, limechat wont work
+=======
+        //segfault in PRIVMSG #unrecognized channel hey
+        // JOIN #chan +k
+        // :mama 403 +k a :No such channel
+>>>>>>> Stashed changes

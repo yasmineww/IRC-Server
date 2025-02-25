@@ -25,6 +25,7 @@
 # include <arpa/inet.h>
 # include <sys/poll.h>
 # include <unistd.h>
+# include <fcntl.h>
 
 
 # include <fstream>
@@ -38,6 +39,7 @@
 # include <algorithm>
 
 
+static int socket_connection ;
 
 using namespace std;
 
