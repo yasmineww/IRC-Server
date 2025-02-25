@@ -6,7 +6,7 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 10:51:36 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/02/22 20:35:52 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/02/25 00:09:02 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,11 +131,6 @@ void Server::MODEhandler(const std::vector<std::string> &data, int fd)
 {
     Client user = Users[fd];
 
-<<<<<<< Updated upstream
-=======
-    if (!user.check_Authentication())
-		return SENDMESSAGE("LAYMONA * : You are not registred\n", fd);
->>>>>>> Stashed changes
 
 	std::string minicmd;
 	std::string chanName;

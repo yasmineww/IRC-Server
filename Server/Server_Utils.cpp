@@ -33,7 +33,7 @@ Channel* Server::createChannel(const std::string& channelName)
         return channels[channelName]; // Return the existing channell
 
     // Create a new channel
-    static Channel* newChannel = new Channel(channelName);
+    Channel* newChannel = new Channel(channelName);
 
     channels[channelName] = newChannel; // Store the new channel in the channel's    map
     return newChannel;

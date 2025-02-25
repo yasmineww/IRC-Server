@@ -6,7 +6,7 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 10:51:45 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/02/23 20:56:58 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/02/25 01:04:46 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ void Server::PARThandler(const std::vector<std::string> &data, int fd)
 		if (!channnel->getUserCount())
 		{
 			channels.erase(channels.find(chanName));
-			// delete channnel;
+			delete channnel;
 		}
     }
     // SENDMESSAGE(PART_RPL(user.getNickName(), channelname), fd);

@@ -6,7 +6,7 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 11:04:43 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/02/23 21:40:18 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/02/25 00:55:31 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,6 +104,17 @@ std::string Channel::getTopic() const{
 }
 
 // Broadcast message to all users in the channel4
+
+void Channel::broadcast_priv(const std::string& message, int sender_fd)
+{
+    for (std::map<int, Client>::iterator it = users.begin(); it != users.end(); ++it)
+    {
+        int fd = it->first;
+        if (isUserInChannel(fd) && sender_fd != fd)
+            SENDMESSAGE(message, fd);
+    }
+}
+
 void Channel::broadcast(const std::string& message)
 {
     for (std::map<int, Client>::iterator it = users.begin(); it != users.end(); ++it)

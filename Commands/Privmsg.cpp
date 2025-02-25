@@ -21,7 +21,7 @@ void Server::PRIVMSGhandler(const std::vector<std::string> &data, int fd){
 
     std::string message = data[2];
     if (data[2][0] == ':')
-        message = data[2].substr(2);
+        message = data[2].substr(1);
 
     std::cout << "The message is " << message << std::endl;
     
