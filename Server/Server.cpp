@@ -162,6 +162,9 @@ void functionhandler(int signal)
     }
 }
 
+
+// bind failed prob fixed
+
 void Server_Socket_Creation(std::string Port, std::string Pass_Code)
 {
         cout << Server_Opening() << endl;
@@ -174,13 +177,27 @@ void Server_Socket_Creation(std::string Port, std::string Pass_Code)
         // Creation Of a socket, struct pollfd StrcPol
         server_Cls.Server_PassCode = Pass_Code ;
         socket_connection = socket(AF_INET, SOCK_STREAM, 0);
-        setsockopt(atoi(Port.c_str()), SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
-        fcntl(socket_connection, F_SETFL, O_NONBLOCK);
-        check_status(socket_connection, "Socket Connection Faild !");
+        if(socket_connection == -1)
+            check_status(server_Cls.bind_Arg, "Error in the Socket Creation !");
+
+        if (setsockopt(socket_connection, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
+        {
+            close (socket_connection);
+            check_status(server_Cls.bind_Arg, "Error in setsockopt !");
+        }
+
         server_Cls.bind_Arg = bind(socket_connection, (struct sockaddr *)&server_Cls.bindSocket_str, sizeof(server_Cls.bindSocket_str));
-        check_status(server_Cls.bind_Arg, "Bind Faild !");
+        if (server_Cls.bind_Arg < 0)
+        {
+            close(socket_connection);
+            check_status(server_Cls.bind_Arg, "Bind Faild !");
+        }
         server_Cls.Socket_listen = listen(socket_connection, 2);
-        check_status(server_Cls.Socket_listen, "Listen Faild !");
+        if (server_Cls.Socket_listen < 0)
+        {
+            close(socket_connection);
+            check_status(server_Cls.bind_Arg, "Listen Faild !");
+        }
 
         // the Client Struct For the Accept() function
         struct sockaddr_in client_address;
@@ -201,11 +218,28 @@ void Server_Socket_Creation(std::string Port, std::string Pass_Code)
             server_Cls.poll_returnV = poll(&server_Cls.pollAr[0], server_Cls.pollAr.size(), -1);
             // std::cout << " +Value+  2" << std::endl ;
             if (server_Cls.poll_returnV > 0){
-                if (server_Cls.pollAr[0].revents & POLLIN) {
+                if (server_Cls.pollAr[0].revents & POLLIN)
+                {
                     server_Cls.acceptSocket_id = accept(socket_connection, (sockaddr *)&client_address, &client_addr_len);
+                    if (server_Cls.acceptSocket_id < 0)
+                    {
+                        close(socket_connection);
+                        check_status(server_Cls.acceptSocket_id, "Accept Command Faild !");
+                    }
+
+                    int fcntlerror = fcntl(server_Cls.acceptSocket_id, F_SETFL, O_NONBLOCK);
+                    if (fcntlerror < 0)
+                    {
+                        close(socket_connection);
+                        check_status(fcntlerror, "Fcntl Faild !");
+                    }
+
                     // std::cout << " +Value+  3" << std::endl ;
+
+
                     check_status(server_Cls.acceptSocket_id, "Accept Command Faild !");
-                    if (server_Cls.acceptSocket_id > 0) {
+                    if (server_Cls.acceptSocket_id > 0)
+                    {
                         SENDMESSAGE(Welcome_mssg(),server_Cls.acceptSocket_id) ;
                         server_Cls.poll_strc.fd = server_Cls.acceptSocket_id ;
                         server_Cls.poll_strc.events = POLLIN ;
@@ -213,6 +247,8 @@ void Server_Socket_Creation(std::string Port, std::string Pass_Code)
                         TOADD.first = server_Cls.acceptSocket_id ;
                         TOADD.second.fd = server_Cls.acceptSocket_id ; // Adding User Socker ID to the USER Struct
                         server_Cls.Users.insert(TOADD);
+
+
                         // std::cout << " +Value+  4" << std::endl ;
                     }
                 }
