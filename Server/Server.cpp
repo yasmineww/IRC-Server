@@ -45,6 +45,9 @@ int countNewline(char *Recvbuffer){
 std::vector<std::string> *functionSearchNewline(char *Recvbuffer){
     std::string store ;
     std::vector<std::string> *vec = new std::vector<std::string>;
+    for (size_t i = 0; i < vec->size(); i++){
+        vec->pop_back();
+    };
     std::cout << vec->size() << std::endl ;
     int counter = 0;
     for (int i = 0; i < lenth(Recvbuffer); i++){
@@ -82,14 +85,14 @@ int Server::Authenticate_User(int fd)
     memset(Recv_Buffer, 0, sizeof(Recv_Buffer));
     this->Size_Read = recv(this->start->fd, Recv_Buffer, sizeof(Recv_Buffer) , 0);
     pas = functionSearchNewline(Recv_Buffer);
-    functionCheck(pas, this->start->fd) ;
+    functionCheck(pas, fd) ;
     if (this->Size_Read == 0)
     {
         std::cout << "\033[91mTHE CLIENT *** " << user.getNickName() << " *** DISCONNECTED\033[0m" << std::endl;
         return (-1);
     }
     // ctrlD(Recv_Buffer, this->start->fd);
-    // memset(Recv_Buffer, 0, sizeof(Recv_Buffer));
+    memset(Recv_Buffer, 0, sizeof(Recv_Buffer));
     return (0);
 }
 
@@ -193,10 +196,14 @@ void Server_Socket_Creation(std::string Port, std::string Pass_Code)
         signal(SIGPIPE, functionhandler);
         while (1)
         {
-            server_Cls.poll_returnV = poll(server_Cls.pollAr.data(), server_Cls.pollAr.size(), -1);
+            std::cout << " +Value+  1" << std::endl ;
+            server_Cls.Check_client_Request();
+            server_Cls.poll_returnV = poll(&server_Cls.pollAr[0], server_Cls.pollAr.size(), -1);
+            // std::cout << " +Value+  2" << std::endl ;
             if (server_Cls.poll_returnV > 0){
                 if (server_Cls.pollAr[0].revents & POLLIN) {
                     server_Cls.acceptSocket_id = accept(socket_connection, (sockaddr *)&client_address, &client_addr_len);
+                    // std::cout << " +Value+  3" << std::endl ;
                     check_status(server_Cls.acceptSocket_id, "Accept Command Faild !");
                     if (server_Cls.acceptSocket_id > 0) {
                         SENDMESSAGE(Welcome_mssg(),server_Cls.acceptSocket_id) ;
@@ -206,9 +213,11 @@ void Server_Socket_Creation(std::string Port, std::string Pass_Code)
                         TOADD.first = server_Cls.acceptSocket_id ;
                         TOADD.second.fd = server_Cls.acceptSocket_id ; // Adding User Socker ID to the USER Struct
                         server_Cls.Users.insert(TOADD);
+                        // std::cout << " +Value+  4" << std::endl ;
                     }
                 }
             }
-            server_Cls.Check_client_Request();
+            // std::cout << " +Value+  5" << std::endl ;
         }
 }
+
