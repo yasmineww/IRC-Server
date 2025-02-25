@@ -6,7 +6,7 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 13:35:59 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/02/23 16:15:08 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/02/25 15:12:57 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,9 @@
 
 int lenth(char *lenth){
     int i = 0;
+    if (!lenth || lenth[0] == '\0')
+        return (0);
+        std::cout << "=> "<< lenth << std::endl;
     while (lenth[i])
         i++;
     return (i);
@@ -22,6 +25,7 @@ int lenth(char *lenth){
 
 void Server::ctrlD(char *Recv_Buffer, int fd){
     std::map<int, Client>::iterator it ;
+    std::cout << lenth(Recv_Buffer) << std::endl;
         if (Recv_Buffer[lenth(Recv_Buffer) - 1] != '\n'){
         this->Users.find(fd)->second.Buffering = 1;
         this->Users.find(fd)->second.bufferHold += Recv_Buffer ;
@@ -37,7 +41,7 @@ int Server::Authenticate_User(int client_Id, int pos)
 {
     (void)client_Id ;
     this->Size_Read = 0;
-    char Recv_Buffer[1024];
+    char Recv_Buffer[1000000];
     
     memset(Recv_Buffer, 0, sizeof(Recv_Buffer));
     this->Size_Read = recv(this->start->fd, Recv_Buffer, sizeof(Recv_Buffer) , 0);
@@ -110,7 +114,6 @@ std::string	Server_Opening(void)
 
 void functionhandler(int signal)
 {
-    std::cout << "Function " << std::endl ;
     if (signal == SIGINT){
         close(socket_connection);
         exit(1);
@@ -148,6 +151,7 @@ void Server_Socket_Creation(std::string Port, std::string Pass_Code)
         server_Cls.pollAr.push_back(server_Cls.poll_strc);
 
         signal(SIGINT, functionhandler);
+        signal(SIGPIPE, functionhandler);
         while (1)
         {
             server_Cls.poll_returnV = poll(server_Cls.pollAr.data(), server_Cls.pollAr.size(), -1);
