@@ -17,7 +17,6 @@ int lenth(char *lenth){
     int i = 0;
     if (!lenth || lenth[0] == '\0')
         return (0);
-        std::cout << "=> "<< lenth << std::endl;
     while (lenth[i])
         i++;
     return (i);
@@ -25,8 +24,7 @@ int lenth(char *lenth){
 
 void Server::ctrlD(char *Recv_Buffer, int fd){
     std::map<int, Client>::iterator it ;
-    std::cout << lenth(Recv_Buffer) << std::endl;
-        if (Recv_Buffer[lenth(Recv_Buffer) - 1] != '\n'){
+    if (lenth(Recv_Buffer) > 0 && Recv_Buffer[lenth(Recv_Buffer) - 1] != '\n'){
         this->Users.find(fd)->second.Buffering = 1;
         this->Users.find(fd)->second.bufferHold += Recv_Buffer ;
     } else {
@@ -41,7 +39,7 @@ int Server::Authenticate_User(int client_Id, int pos)
 {
     (void)client_Id ;
     this->Size_Read = 0;
-    char Recv_Buffer[1000000];
+    char Recv_Buffer[999999];
     
     memset(Recv_Buffer, 0, sizeof(Recv_Buffer));
     this->Size_Read = recv(this->start->fd, Recv_Buffer, sizeof(Recv_Buffer) , 0);
@@ -51,6 +49,7 @@ int Server::Authenticate_User(int client_Id, int pos)
         return (-1);
     }
     ctrlD(Recv_Buffer, this->start->fd);
+    memset(Recv_Buffer, 0, sizeof(Recv_Buffer));
     return (0);
 }
 
