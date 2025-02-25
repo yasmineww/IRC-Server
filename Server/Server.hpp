@@ -94,7 +94,7 @@ class Server
         void ctrlD(char *Recv_Buffer, int flag);
         int functioncheck(std::string Nick, int fd);
         void Check_client_Request();
-        int Authenticate_User(int client_Id, int pos);
+        int Authenticate_User(int fd);
         void Check_Commands(std::string Command);
         void receiveData(const std::vector<std::string> &data, int fd);
 

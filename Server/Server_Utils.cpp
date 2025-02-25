@@ -65,9 +65,7 @@ void Server::removeClient(int fd)
 
     // Remove the client from the server's user list
     Users.erase(fd);
-    std::cout << "Client " << nickname << " (fd: " << fd << ") removed from server.\n";
-
-    // Close the socket
+    std::cout << "\033[91mTHE CLIENT *** " << nickname << " *** DISCONNECTED\033[0m" << std::endl;
     close(fd);
 }
 

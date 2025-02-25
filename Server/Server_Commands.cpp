@@ -69,6 +69,7 @@ void Server::USERhandler(const std::vector<std::string> &data, int fd)
     std::cout << "SERVER_name : " << it->second.getREALName() << std::endl ;
     it->second.Auth_USER = true ;
     if (it->second.Auth_USER && it->second.Auth_NICK && it->second.Auth_PASS && it->second.AUTH_WELCOM){
+        std::cout << "\033[92mNEW CLIENT *** "  << it->second.getNickName() << " *** CONNECTED\033[0m" << std::endl;
         SENDMESSAGE(RPL_WELCOME(it->second.getNickName(),  Server_Name), fd);
         SENDMESSAGE(RPL_YOURHOST(it->second.getNickName(), Server_Name), fd);
         SENDMESSAGE(RPL_CREATED(it->second.getNickName(),  Server_Name), fd);
@@ -112,6 +113,7 @@ void Server::NICKhandler(const std::vector<std::string> &data, int fd)
     it->second.setNickName(data[1]);
     it->second.Auth_NICK = true ;
     if (it->second.Auth_USER && it->second.Auth_NICK && it->second.Auth_PASS && it->second.AUTH_WELCOM){
+        std::cout << "\033[92mNEW CLIENT *** "  << it->second.getNickName() << " *** CONNECTED\033[0m" << std::endl;
         SENDMESSAGE(RPL_WELCOME(it->second.getNickName(),  Server_Name), fd);
         SENDMESSAGE(RPL_YOURHOST(it->second.getNickName(), Server_Name), fd);
         SENDMESSAGE(RPL_CREATED(it->second.getNickName(),  Server_Name), fd);

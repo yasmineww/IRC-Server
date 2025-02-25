@@ -6,7 +6,7 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 13:35:59 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/02/25 15:12:57 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/02/25 16:45:23 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,9 +72,9 @@ void Server::functionCheck(std::vector <std::string> *val, int where){
     }
 }
 
-int Server::Authenticate_User(int client_Id, int pos)
+int Server::Authenticate_User(int fd)
 {
-    (void)client_Id ;
+    Client user = Users[fd];
     this->Size_Read = 0;
     char Recv_Buffer[999999];
     std::vector<std::string> *pas ;
@@ -85,7 +85,7 @@ int Server::Authenticate_User(int client_Id, int pos)
     functionCheck(pas, this->start->fd) ;
     if (this->Size_Read == 0)
     {
-        std::cout << "Client Disconnected " << pos << std::endl ;
+        std::cout << "\033[91mTHE CLIENT *** " << user.getNickName() << " *** DISCONNECTED\033[0m" << std::endl;
         return (-1);
     }
     // ctrlD(Recv_Buffer, this->start->fd);
@@ -105,7 +105,7 @@ void Server::Check_client_Request()
         this->start++ ;
         for (;this->start != this->end; this->start++){
             if (this->start->revents & POLLIN){
-                Auth_Flag = Authenticate_User(this->start->fd, Remove_Position);
+                Auth_Flag = Authenticate_User(this->start->fd);
                 if (Auth_Flag == -1){
                     close(this->start->fd);
                     std::cout << "Remove _> " << Remove_Position << std::endl ;
