@@ -58,15 +58,15 @@ void Server::USERhandler(const std::vector<std::string> &data, int fd)
     it->second.setServerName(servername);
     it->second.setREALName(realname);
 
-    // if (data[1].size() == 1 && (data[1][0] == '*' || data[1][0] == '0')) it->second.getUserName() = "" ;
-    // if (data[2].size() == 1 && (data[2][0] == '*' || data[2][0] == '0')) it->second.getHostName() = "" ;
-    // if (data[3].size() == 1 && (data[3][0] == '*' || data[3][0] == '0')) it->second.getServerName() = "" ;
-    // if (data[4].size() == 1 && (data[4][0] == '*' || data[4][0] == '0')) it->second.getREALName() = "" ;
+    if (data[1].size() == 1 && (data[1][0] == '*' || data[1][0] == '0')) it->second.getUserName() = "" ;
+    if (data[2].size() == 1 && (data[2][0] == '*' || data[2][0] == '0')) it->second.getHostName() = "" ;
+    if (data[3].size() == 1 && (data[3][0] == '*' || data[3][0] == '0')) it->second.getServerName() = "" ;
+    if (data[4].size() == 1 && (data[4][0] == '*' || data[4][0] == '0')) it->second.getREALName() = "" ;
 
-    std::cout << "User_name   : " << it->second.getUserName() << std::endl  ;
-    std::cout << "HOST_name   : " <<  it->second.getHostName() << std::endl  ;
-    std::cout << "SERVER_name : " << it->second.getServerName() << std::endl  ;
-    std::cout << "SERVER_name : " << it->second.getREALName() << std::endl ;
+    // std::cout << "User_name   : " << it->second.getUserName() << std::endl  ;
+    // std::cout << "HOST_name   : " <<  it->second.getHostName() << std::endl  ;
+    // std::cout << "SERVER_name : " << it->second.getServerName() << std::endl  ;
+    // std::cout << "SERVER_name : " << it->second.getREALName() << std::endl ;
     it->second.Auth_USER = true ;
     if (it->second.Auth_USER && it->second.Auth_NICK && it->second.Auth_PASS && it->second.AUTH_WELCOM){
         std::cout << "\033[92mNEW CLIENT *** "  << it->second.getNickName() << " *** CONNECTED\033[0m" << std::endl;
@@ -136,7 +136,7 @@ void Server::PASShandler(const std::vector<std::string> &data, int fd)
         std::cout << Users.size() << std::endl ;
         it->second.AuthStep += 1;
         it->second.Auth_PASS = true ;
-        std::cout << "Password Accepted" << std::endl ;
+        // std::cout << "Password Accepted" << std::endl ;
         return ;
     };
     SENDMESSAGE("ERR_BADPASS\n", fd);

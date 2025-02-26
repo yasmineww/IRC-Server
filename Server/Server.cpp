@@ -56,7 +56,6 @@ int lenth(char *lenth){
 }
 
 void Server::ctrlD(char *Recv_Buffer, int fd){
-    std::cout << " | ==== > " << Recv_Buffer << std::endl ;
     std::map<int, Client>::iterator it ;
     if (lenth(Recv_Buffer) > 0 && Recv_Buffer[lenth(Recv_Buffer) - 1] != '\n'){
         this->Users.find(fd)->second.Buffering = 1;
@@ -82,7 +81,6 @@ std::vector<std::string> *functionSearchNewline(char *Recvbuffer){
     for (size_t i = 0; i < vec->size(); i++){
         vec->pop_back();
     };
-    std::cout << vec->size() << std::endl ;
     // int counter = 0;
     for (int i = 0; i < lenth(Recvbuffer); i++){
         store += Recvbuffer[i];
@@ -118,6 +116,7 @@ int Server::Authenticate_User(int fd)
 
     memset(Recv_Buffer, 0, sizeof(Recv_Buffer));
     Size_Read = recv(fd, Recv_Buffer, sizeof(Recv_Buffer) , 0);
+    std::cout << fd <<  " Recived From -> " << Recv_Buffer << std::endl ;
     check_status(Size_Read, "Error in setsockopt !");
     pas = functionSearchNewline(Recv_Buffer);
     functionCheck(pas, fd) ;
@@ -134,9 +133,8 @@ int Server::Authenticate_User(int fd)
 void Server::fdToremove (int fd) {
     std::map<int, Client>::iterator start = Users.begin();
     std::map<int, Client>::iterator end = Users.end();
-    long Count = 1;
+    
     for (;start != end; start++){
-        Count++ ;
         if (start->second.fd == fd){
             Users.erase(start);
             break ;
@@ -149,16 +147,20 @@ void Server::Check_client_Request()
     int Auth_Flag = 0;
     int Remove_Position = 0;
 
-    if (Clientcount > 0){
+    std::vector<struct pollfd>::iterator it = pollAr.begin();
+    std::vector<struct pollfd>::iterator end = pollAr.end();
 
-        for (int index = 1 ; index < Clientcount ; index++){
-            if (this->thepool[index].revents & POLLIN){
-                Auth_Flag = Authenticate_User(this->thepool[index].fd);
+    if (pollAr.size() > 1){
+        it++ ;
+        for (;it != end; it++){
+            Remove_Position++ ;
+            if (it->revents & POLLIN){
+                Auth_Flag = Authenticate_User(it->fd);
                 if (Auth_Flag == -1){
-                    close(this->thepool[index].fd);
-                    fdToremove(this->thepool[index].fd);
-                    this->thepool[index].fd = -1 ;
-                    std::cout << "Remove _> " << Remove_Position << std::endl ;
+                    fdToremove(it->fd);
+                    close(it->fd);
+                    pollAr.erase(it);
+                    std::cout << "Removed " << std::endl ;
                     return ;
                 }
             }
@@ -177,6 +179,14 @@ void functionhandler(int signal)
 
 
 // bind failed prob fixed
+
+void PrintArray(struct pollfd* pol){
+    std::cout << "==================================================" << std::endl ;
+    for (int index = 0; index < Clientcount; index++){
+        std::cout << "at  " << index <<  "Printing Client Fd => " << pol[index].fd << std::endl ;
+    }
+    std::cout << "==================================================---------------" ;
+}
 
 void Server_Socket_Creation(std::string Port, std::string Pass_Code)
 {
@@ -229,11 +239,12 @@ void Server_Socket_Creation(std::string Port, std::string Pass_Code)
         std::pair<int, Client> TOADD ;
 
         // Initialization Of the First Poll() Struct For the Server        
-        server_Cls.thepool[0].fd = socket_connection;
-        server_Cls.thepool[0].events = POLLIN;
+        server_Cls.poll_strc.fd = socket_connection ;
+        server_Cls.poll_strc.events = POLLIN ;
 
         Clientcount++;
         
+
         server_Cls.pollAr.push_back(server_Cls.poll_strc);
         int checkfcntl = fcntl(socket_connection, F_SETFL, O_NONBLOCK);
         if (checkfcntl < 0)
@@ -245,14 +256,13 @@ void Server_Socket_Creation(std::string Port, std::string Pass_Code)
         signal(SIGPIPE, functionhandler);
         while (1)
         {
-            std::cout << Clientcount << std::endl ;
-            server_Cls.poll_returnV = poll(server_Cls.thepool, Clientcount , -1);
+            server_Cls.poll_returnV = poll(server_Cls.pollAr.data(), server_Cls.pollAr.size() , -1);
             if (server_Cls.poll_returnV < 0)
             {
                 close(socket_connection);
                 check_status(server_Cls.poll_returnV, "Poll Faild !");
             }
-                if (server_Cls.thepool[0].revents & POLLIN)
+                if (server_Cls.pollAr[0].revents & POLLIN)
                 {
                     // std::cout << "Event Happended" << std::endl ;
                     server_Cls.acceptSocket_id = accept(socket_connection, (sockaddr *)&client_address, &client_addr_len);
@@ -271,12 +281,16 @@ void Server_Socket_Creation(std::string Port, std::string Pass_Code)
                     {
                         check_status(server_Cls.acceptSocket_id, "Accept Command Faild !");
                         SENDMESSAGE(Welcome_mssg(),server_Cls.acceptSocket_id) ;
-                        server_Cls.thepool[Clientcount].fd =  server_Cls.acceptSocket_id ;
-                        server_Cls.thepool[Clientcount].events = POLLIN;
-                        Clientcount++;
+
+                        server_Cls.poll_strc.fd = server_Cls.acceptSocket_id ;
+                        server_Cls.poll_strc.events = POLLIN ;
+
+                        server_Cls.pollAr.push_back(server_Cls.poll_strc);
+
                         TOADD.first = server_Cls.acceptSocket_id ;
                         TOADD.second.fd = server_Cls.acceptSocket_id;  // Adding User Socker ID to the USER Struct
                         server_Cls.Users.insert(TOADD);
+                        std::cout << "Here " << std::endl ;
                     }
                 }
             server_Cls.Check_client_Request();
