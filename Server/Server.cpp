@@ -6,11 +6,43 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 13:35:59 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/02/25 16:45:23 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/02/26 01:10:43 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../Utils/Macros.hpp"
+
+std::string	Welcome_mssg(void)
+{
+	std::string welcome = GREEN;
+	welcome.append("\n");
+	welcome.append("██╗    ██╗███████╗██╗      ██████╗ ██████╗ ███╗   ███╗███████╗\n");
+	welcome.append("██║    ██║██╔════╝██║     ██╔════╝██╔═══██╗████╗ ████║██╔════╝\n");
+	welcome.append("██║ █╗ ██║█████╗  ██║     ██║     ██║   ██║██╔████╔██║█████╗\n");
+	welcome.append("██║███╗██║██╔══╝  ██║     ██║     ██║   ██║██║╚██╔╝██║██╔══╝\n");
+	welcome.append("╚███╔███╔╝███████╗███████╗╚██████╗╚██████╔╝██║ ╚═╝ ██║███████╗\n");
+	welcome.append(" ╚══╝╚══╝ ╚══════╝╚══════╝ ╚═════╝ ╚═════╝ ╚═╝     ╚═╝╚══════╝\n");
+	welcome.append(YELLOW);
+	welcome.append("Login in to use LAYMONA OR you can send HELP to see the MANUAL.\n");
+	welcome.append(RESET);
+	return (welcome);
+};
+
+std::string	Server_Opening(void)
+{
+	std::string welcome = GREEN;
+	welcome.append("\n");
+	welcome.append("██╗    ██╗███████╗██╗      ██████╗ ██████╗ ███╗   ███╗███████╗\n");
+	welcome.append("██║    ██║██╔════╝██║     ██╔════╝██╔═══██╗████╗ ████║██╔════╝\n");
+	welcome.append("██║ █╗ ██║█████╗  ██║     ██║     ██║   ██║██╔████╔██║█████╗\n");
+	welcome.append("██║███╗██║██╔══╝  ██║     ██║     ██║   ██║██║╚██╔╝██║██╔══╝\n");
+	welcome.append("╚███╔███╔╝███████╗███████╗╚██████╗╚██████╔╝██║ ╚═╝ ██║███████╗\n");
+	welcome.append(" ╚══╝╚══╝ ╚══════╝╚══════╝ ╚═════╝ ╚═════╝ ╚═╝     ╚═╝╚══════╝\n");
+	welcome.append(YELLOW);
+	welcome.append("Server is Loading ... \n\n");
+	welcome.append(RESET);
+	return (welcome);
+};
 
 
 int lenth(char *lenth){
@@ -23,13 +55,14 @@ int lenth(char *lenth){
 }
 
 void Server::ctrlD(char *Recv_Buffer, int fd){
+    std::cout << " | ==== > " << Recv_Buffer << std::endl ;
     std::map<int, Client>::iterator it ;
     if (lenth(Recv_Buffer) > 0 && Recv_Buffer[lenth(Recv_Buffer) - 1] != '\n'){
         this->Users.find(fd)->second.Buffering = 1;
         this->Users.find(fd)->second.bufferHold += Recv_Buffer ;
     } else {
         std::string command = this->Users.find(fd)->second.bufferHold + Recv_Buffer ;
-        Check_Commands(command);
+        Check_Commands(command, fd);
         this->Users.find(fd)->second.bufferHold = "" ;
     }
 };
@@ -78,15 +111,15 @@ void Server::functionCheck(std::vector <std::string> *val, int where){
 int Server::Authenticate_User(int fd)
 {
     Client user = Users[fd];
-    this->Size_Read = 0;
-    char Recv_Buffer[999999];
+    int Size_Read = 0;
+    char Recv_Buffer[1024];
     std::vector<std::string> *pas ;
 
     memset(Recv_Buffer, 0, sizeof(Recv_Buffer));
-    this->Size_Read = recv(this->start->fd, Recv_Buffer, sizeof(Recv_Buffer) , 0);
+    Size_Read = recv(fd, Recv_Buffer, sizeof(Recv_Buffer) , 0);
     pas = functionSearchNewline(Recv_Buffer);
     functionCheck(pas, fd) ;
-    if (this->Size_Read == 0)
+    if (Size_Read == 0)
     {
         std::cout << "\033[91mTHE CLIENT *** " << user.getNickName() << " *** DISCONNECTED\033[0m" << std::endl;
         return (-1);
@@ -96,63 +129,40 @@ int Server::Authenticate_User(int fd)
     return (0);
 }
 
+void Server::fdToremove (int fd) {
+    std::map<int, Client>::iterator start = Users.begin();
+    std::map<int, Client>::iterator end = Users.end();
+    long Count = 1;
+    for (;start != end; start++){
+        Count++ ;
+        if (start->second.fd == fd){
+            Users.erase(start);
+            break ;
+        }
+    }
+};
+
 void Server::Check_client_Request()
 {
     int Auth_Flag = 0;
     int Remove_Position = 0;
-    this->start = this->pollAr.begin();
-    this->end   = this->pollAr.end();
-    if (this->pollAr.size() > 1)
-    {
-        Remove_Position++ ;
-        this->start++ ;
-        for (;this->start != this->end; this->start++){
-            if (this->start->revents & POLLIN){
-                Auth_Flag = Authenticate_User(this->start->fd);
+
+    if (Clientcount > 0){
+
+        for (int index = 1 ; index < Clientcount ; index++){
+            if (this->thepool[index].revents & POLLIN){
+                Auth_Flag = Authenticate_User(this->thepool[index].fd);
                 if (Auth_Flag == -1){
-                    close(this->start->fd);
+                    close(this->thepool[index].fd);
+                    fdToremove(this->thepool[index].fd);
+                    this->thepool[index].fd = -1 ;
                     std::cout << "Remove _> " << Remove_Position << std::endl ;
-                    this->Users.erase(this->Users.find(this->start->fd));
-                    this->pollAr.erase(this->pollAr.begin() + Remove_Position);
                     return ;
                 }
             }
         }
     }
 }
-
-
-std::string	Welcome_mssg(void)
-{
-	std::string welcome = GREEN;
-	welcome.append("\n");
-	welcome.append("██╗    ██╗███████╗██╗      ██████╗ ██████╗ ███╗   ███╗███████╗\n");
-	welcome.append("██║    ██║██╔════╝██║     ██╔════╝██╔═══██╗████╗ ████║██╔════╝\n");
-	welcome.append("██║ █╗ ██║█████╗  ██║     ██║     ██║   ██║██╔████╔██║█████╗\n");
-	welcome.append("██║███╗██║██╔══╝  ██║     ██║     ██║   ██║██║╚██╔╝██║██╔══╝\n");
-	welcome.append("╚███╔███╔╝███████╗███████╗╚██████╗╚██████╔╝██║ ╚═╝ ██║███████╗\n");
-	welcome.append(" ╚══╝╚══╝ ╚══════╝╚══════╝ ╚═════╝ ╚═════╝ ╚═╝     ╚═╝╚══════╝\n");
-	welcome.append(YELLOW);
-	welcome.append("Login in to use LAYMONA OR you can send HELP to see the MANUAL.\n");
-	welcome.append(RESET);
-	return (welcome);
-};
-
-std::string	Server_Opening(void)
-{
-	std::string welcome = GREEN;
-	welcome.append("\n");
-	welcome.append("██╗    ██╗███████╗██╗      ██████╗ ██████╗ ███╗   ███╗███████╗\n");
-	welcome.append("██║    ██║██╔════╝██║     ██╔════╝██╔═══██╗████╗ ████║██╔════╝\n");
-	welcome.append("██║ █╗ ██║█████╗  ██║     ██║     ██║   ██║██╔████╔██║█████╗\n");
-	welcome.append("██║███╗██║██╔══╝  ██║     ██║     ██║   ██║██║╚██╔╝██║██╔══╝\n");
-	welcome.append("╚███╔███╔╝███████╗███████╗╚██████╗╚██████╔╝██║ ╚═╝ ██║███████╗\n");
-	welcome.append(" ╚══╝╚══╝ ╚══════╝╚══════╝ ╚═════╝ ╚═════╝ ╚═╝     ╚═╝╚══════╝\n");
-	welcome.append(YELLOW);
-	welcome.append("Server is Loading ... \n\n");
-	welcome.append(RESET);
-	return (welcome);
-};
 
 void functionhandler(int signal)
 {
@@ -173,6 +183,7 @@ void Server_Socket_Creation(std::string Port, std::string Pass_Code)
 
         Server server_Cls ;
         Client ForMulti_poll ;
+        
         server_Cls.bindSocket_str.sin_port = htons(atoi(Port.c_str()));
         // Creation Of a socket, struct pollfd StrcPol
         server_Cls.Server_PassCode = Pass_Code ;
@@ -192,73 +203,82 @@ void Server_Socket_Creation(std::string Port, std::string Pass_Code)
             close(socket_connection);
             check_status(server_Cls.bind_Arg, "Bind Faild !");
         }
+        
         server_Cls.Socket_listen = listen(socket_connection, 2);
         if (server_Cls.Socket_listen < 0)
         {
             close(socket_connection);
             check_status(server_Cls.bind_Arg, "Listen Faild !");
         }
-
+        
         // the Client Struct For the Accept() function
         struct sockaddr_in client_address;
         socklen_t client_addr_len = sizeof(client_address);
         std::pair<int, Client> TOADD ;
 
         // Initialization Of the First Poll() Struct For the Server
+        
         server_Cls.poll_strc.fd = socket_connection ;
         server_Cls.poll_strc.events = POLLIN ;
-        server_Cls.pollAr.push_back(server_Cls.poll_strc);
+        
+        server_Cls.thepool[0].fd = socket_connection;
+        server_Cls.thepool[0].events = POLLIN;
 
+        std::cout << "Socket " << socket_connection << std::endl ;
+        Clientcount++;
+        
+        std::cout << " ===== < " << Clientcount << std::endl ;
+        server_Cls.pollAr.push_back(server_Cls.poll_strc);
+        int checkfcntl = fcntl(socket_connection, F_SETFL, O_NONBLOCK);
+        if (checkfcntl < 0)
+        {
+            close(socket_connection);
+            check_status(checkfcntl, "Fcntl Faild !");
+        }
         signal(SIGINT, functionhandler);
         signal(SIGPIPE, functionhandler);
         while (1)
         {
-            std::cout << " +Value+  1" << std::endl ;
-            server_Cls.Check_client_Request();
-            server_Cls.poll_returnV = poll(&server_Cls.pollAr[0], server_Cls.pollAr.size(), -1);
+            std::cout << Clientcount << std::endl ;
+            server_Cls.poll_returnV = poll(server_Cls.thepool, Clientcount , -1);
             if (server_Cls.poll_returnV < 0)
             {
                 close(socket_connection);
                 check_status(server_Cls.poll_returnV, "Poll Faild !");
             }
-            // std::cout << " +Value+  2" << std::endl ;
-            if (server_Cls.poll_returnV > 0){
-                if (server_Cls.pollAr[0].revents & POLLIN)
+                if (server_Cls.thepool[0].revents & POLLIN)
                 {
+                    // std::cout << "Event Happended" << std::endl ;
                     server_Cls.acceptSocket_id = accept(socket_connection, (sockaddr *)&client_address, &client_addr_len);
-                    if (server_Cls.acceptSocket_id < 0)
-                    {
-                        close(socket_connection);
-                        check_status(server_Cls.acceptSocket_id, "Accept Command Faild !");
-                    }
-
                     int fcntlerror = fcntl(server_Cls.acceptSocket_id, F_SETFL, O_NONBLOCK);
                     if (fcntlerror < 0)
                     {
                         close(socket_connection);
                         check_status(fcntlerror, "Fcntl Faild !");
                     }
-
-                    // std::cout << " +Value+  3" << std::endl ;
-
-
-                    check_status(server_Cls.acceptSocket_id, "Accept Command Faild !");
-                    if (server_Cls.acceptSocket_id > 0)
+                    if (server_Cls.acceptSocket_id < 0)
                     {
+                        close(socket_connection);
+                        check_status(server_Cls.acceptSocket_id, "Accept Command Faild !");
+                    }
+                    else {
+                        check_status(server_Cls.acceptSocket_id, "Accept Command Faild !");
+                        // std::cout << "Check -> " << Clientcount << std::endl ;
                         SENDMESSAGE(Welcome_mssg(),server_Cls.acceptSocket_id) ;
-                        server_Cls.poll_strc.fd = server_Cls.acceptSocket_id ;
-                        server_Cls.poll_strc.events = POLLIN ;
-                        server_Cls.pollAr.push_back(server_Cls.poll_strc);
+                        // server_Cls.poll_strc.fd = server_Cls.acceptSocket_id ;
+                        // server_Cls.poll_strc.events = POLLIN;
+                        // std::cout << "Pol => " << socket_connection << std::endl ;
+                        server_Cls.thepool[Clientcount].fd =  server_Cls.acceptSocket_id ;
+                        server_Cls.thepool[Clientcount].events = POLLIN;
+                        Clientcount++;
+                        // server_Cls.pollAr.push_back(server_Cls.poll_strc);
                         TOADD.first = server_Cls.acceptSocket_id ;
-                        TOADD.second.fd = server_Cls.acceptSocket_id ; // Adding User Socker ID to the USER Struct
+                        TOADD.second.fd = server_Cls.acceptSocket_id;  // Adding User Socker ID to the USER Struct
                         server_Cls.Users.insert(TOADD);
-
-
                         // std::cout << " +Value+  4" << std::endl ;
                     }
                 }
-            }
-            // std::cout << " +Value+  5" << std::endl ;
+            server_Cls.Check_client_Request();
         }
 }
 

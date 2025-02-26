@@ -6,6 +6,8 @@
 class Channel;
 class Client;
 
+static int Clientcount ;
+
 class Server
 {
     private:
@@ -29,6 +31,7 @@ class Server
         // ARRAY'S ----------
         std::map<int, Client> Users ; // the Array of Clients Contains each One
         std::vector<struct pollfd> pollAr;
+        struct pollfd thepool[1024];
 
         // Iterators -----------
         std::vector<struct pollfd>::iterator start;
@@ -95,12 +98,12 @@ class Server
         int functioncheck(std::string Nick, int fd);
         void Check_client_Request();
         int Authenticate_User(int fd);
-        void Check_Commands(std::string Command);
+        void Check_Commands(std::string Command, int fd);
         void receiveData(const std::vector<std::string> &data, int fd);
 
 
         // Channel Operations
-
+        void fdToremove (int fd);
     	Channel* getChannel(const std::string& channelName);
     	Channel* createChannel(const std::string& channelName);
 

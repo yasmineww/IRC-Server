@@ -104,20 +104,19 @@ int Server::getClientByName(const std::string& nickname)
             return it->first; // Return the found  fd client .
         }
     }
-    return -1;// Return -1 for error
+    return -1 ; // Return -1 for error
 }
 
-void Server::Check_Commands(std::string Command)
+void Server::Check_Commands(std::string Command, int fd)
 {
-    int fd = this->start->fd;
     std::vector<std::string> data;
 
     size_t found = Command.find(":");
     std::string store;
 
     if (found != std::string::npos){
-        std::string first = Command.substr(0, found); //PRIVMSG younes
-        Command.erase(0, found); //: hello younes how are you
+        std::string first = Command.substr(0, found);  //PRIVMSG younes
+        Command.erase(0, found);  //: hello younes how are you
         std::stringstream s(first);
         while (s >> store){
             data.push_back(store);
