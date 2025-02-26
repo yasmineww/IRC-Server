@@ -93,32 +93,34 @@ int Server::functioncheck(std::string Nick, int fd){
 
 void Server::NICKhandler(const std::vector<std::string> &data, int fd)
 {
-    std::map<int ,Client>::iterator it ;
+    std::map<int, Client>::iterator it = Users.find(fd);
+    Client &user = it->second;
 
-    if (data.size() < 2 || data[1].size() == 0)
-        return (SENDMESSAGE(ERR_NONICKNAMEGIVEN(it->second.getNickName(), Server_Name), fd));
+    if (data.size() < 2)
+        return (SENDMESSAGE(ERR_NONICKNAMEGIVEN(user.getNickName(), Server_Name), fd));
     if (this->functioncheck(data[1], fd) == -1)
         return ;
-    it = Users.find(fd);
     if (data.size() > 2)
-        return (SENDMESSAGE(ERR_NONICKNAMEGIVEN(it->second.getNickName(),Server_Name), fd));
-    if (!it->second.Auth_PASS)
-        return (SENDMESSAGE(ERR_NOTAUTHENTICATED(it->second.getNickName(), Server_Name), fd));
-    if (it->second.Auth_USER && it->second.Auth_NICK && it->second.Auth_PASS && !it->second.AUTH_WELCOM)
+        return (SENDMESSAGE(ERR_ERRONEUSNICKNAME(user.getNickName(),Server_Name), fd));
+    if (!user.Auth_PASS)
+        return (SENDMESSAGE(ERR_NOTAUTHENTICATED(user.getNickName(), Server_Name), fd));
+    if (user.Auth_USER && user.Auth_NICK && user.Auth_PASS && !user.AUTH_WELCOM)
     {
-        std::string tempNICK = it->second.getNickName();
-        it->second.setNickName(data[1]);
-        return (SENDMESSAGE(RPL_NICKCHANGE(tempNICK ,it->second.getNickName(),Server_Name), fd));
+        std::string tempNICK = user.getNickName();
+        user.setNickName(data[1]);
+        return (SENDMESSAGE(RPL_NICKCHANGE(tempNICK ,user.getNickName(),Server_Name), fd));
     }
-    it->second.setNickName(data[1]);
-    it->second.Auth_NICK = true ;
-    if (it->second.Auth_USER && it->second.Auth_NICK && it->second.Auth_PASS && it->second.AUTH_WELCOM){
-        std::cout << "\033[92mNEW CLIENT *** "  << it->second.getNickName() << " *** CONNECTED\033[0m" << std::endl;
-        SENDMESSAGE(RPL_WELCOME(it->second.getNickName(),  Server_Name), fd);
-        SENDMESSAGE(RPL_YOURHOST(it->second.getNickName(), Server_Name), fd);
-        SENDMESSAGE(RPL_CREATED(it->second.getNickName(),  Server_Name), fd);
-        SENDMESSAGE(RPL_MYINFO(it->second.getNickName(),   Server_Name), fd);
-        it->second.AUTH_WELCOM = false;
+    user.setNickName(data[1]);
+    std::cout << "this is 1" << std::endl;
+    user.Auth_NICK = true ;
+    if (user.Auth_USER && user.Auth_NICK && user.Auth_PASS && user.AUTH_WELCOM){
+    std::cout << "this is 2" << std::endl;
+        std::cout << "\033[92mNEW CLIENT *** "  << user.getNickName() << " *** CONNECTED\033[0m" << std::endl;
+        SENDMESSAGE(RPL_WELCOME(user.getNickName(),  Server_Name), fd);
+        SENDMESSAGE(RPL_YOURHOST(user.getNickName(), Server_Name), fd);
+        SENDMESSAGE(RPL_CREATED(user.getNickName(),  Server_Name), fd);
+        SENDMESSAGE(RPL_MYINFO(user.getNickName(),   Server_Name), fd);
+        user.AUTH_WELCOM = false;
     }
 }
 

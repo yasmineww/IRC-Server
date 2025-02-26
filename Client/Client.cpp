@@ -6,7 +6,7 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/21 17:33:39 by ymakhlou          #+#    #+#             */
-/*   Updated: 2025/02/20 17:11:24 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/02/26 23:45:17 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,6 @@ Client::~Client() {}
 
 void		Client::setUserName(std::string UserName)	{ this->User_name = UserName; };
 void		Client::setNickName( std::string NickName )	{ this->Nick_name = NickName; };
-// void		Client::setLogName( std::string LOGINName )	{ this->LOGIN_name = LOGINName; };
 void		Client::setServerName( std::string SERVERName )	{ this->SERVER_name = SERVERName; };
 void		Client::setHostName( std::string HOSTName )	{ this->HOST_name = HOSTName; };
 void	    Client::setREALName(std::string REALName)	 { this->REAL_name = REALName; };
@@ -60,7 +59,6 @@ int			Client::getRegistered()		const { return (this->is_Registered); };
 
 std::string	Client::getUserName()		const { return (this->User_name); };
 std::string	Client::getNickName()		const { return (this->Nick_name); };
-// std::string	Client::getLogName()		const { return (this->LOGIN_name); };
 std::string Client::getServerName()		const { return (this->SERVER_name); };
 std::string Client::getHostName()		const { return (this->HOST_name); }
 std::string	Client::getREALName()		const { return (this->REAL_name); };
