@@ -49,6 +49,7 @@ using namespace std;
 # include "../Channel/Channel.hpp"
 
 
+#define PAIN 999999
 #define PASS_STR "PASS"
 #define USER_STR "USER"
 #define NICK_STR "NICK"

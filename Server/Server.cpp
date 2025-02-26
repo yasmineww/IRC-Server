@@ -46,11 +46,12 @@ std::string	Server_Opening(void)
 
 
 int lenth(char *lenth){
-    int i = 0;
-    if (!lenth || lenth[0] == '\0')
+    long long i = 0;
+    if (lenth == nullptr || lenth == NULL || lenth[0] == '\0')
         return (0);
     while (lenth[i])
         i++;
+        strlen(lenth);
     return (i);
 }
 
@@ -112,11 +113,12 @@ int Server::Authenticate_User(int fd)
 {
     Client user = Users[fd];
     int Size_Read = 0;
-    char Recv_Buffer[1024];
+    char Recv_Buffer[PAIN];
     std::vector<std::string> *pas ;
 
     memset(Recv_Buffer, 0, sizeof(Recv_Buffer));
     Size_Read = recv(fd, Recv_Buffer, sizeof(Recv_Buffer) , 0);
+    check_status(Size_Read, "Error in setsockopt !");
     pas = functionSearchNewline(Recv_Buffer);
     functionCheck(pas, fd) ;
     if (Size_Read == 0)
@@ -162,7 +164,7 @@ void Server::Check_client_Request()
             }
         }
     }
-    
+
 }
 
 void functionhandler(int signal)
@@ -185,6 +187,10 @@ void Server_Socket_Creation(std::string Port, std::string Pass_Code)
         Server server_Cls ;
         Client ForMulti_poll ;
         
+        if (Pass_Code.size() == 0) {
+            check_status(-1, "Error invalid Passcode!"); 
+            return ;
+        } 
         server_Cls.bindSocket_str.sin_port = htons(atoi(Port.c_str()));
         // Creation Of a socket, struct pollfd StrcPol
         server_Cls.Server_PassCode = Pass_Code ;
@@ -197,6 +203,10 @@ void Server_Socket_Creation(std::string Port, std::string Pass_Code)
             close (socket_connection);
             check_status(server_Cls.bind_Arg, "Error in setsockopt !");
         }
+        if (setsockopt(socket_connection, SOL_SOCKET, SO_KEEPALIVE, &opt, sizeof(opt)) < 0) {
+            std::cerr << "Error setting socket option SO_KEEPALIVE" << std::endl;
+            return ;
+        }
 
         server_Cls.bind_Arg = bind(socket_connection, (struct sockaddr *)&server_Cls.bindSocket_str, sizeof(server_Cls.bindSocket_str));
         if (server_Cls.bind_Arg < 0)
@@ -205,7 +215,7 @@ void Server_Socket_Creation(std::string Port, std::string Pass_Code)
             check_status(server_Cls.bind_Arg, "Bind Faild !");
         }
         
-        server_Cls.Socket_listen = listen(socket_connection, 2);
+        server_Cls.Socket_listen = listen(socket_connection, 1000);
         if (server_Cls.Socket_listen < 0)
         {
             close(socket_connection);
@@ -225,10 +235,8 @@ void Server_Socket_Creation(std::string Port, std::string Pass_Code)
         server_Cls.thepool[0].fd = socket_connection;
         server_Cls.thepool[0].events = POLLIN;
 
-        std::cout << "Socket " << socket_connection << std::endl ;
         Clientcount++;
         
-        std::cout << " ===== < " << Clientcount << std::endl ;
         server_Cls.pollAr.push_back(server_Cls.poll_strc);
         int checkfcntl = fcntl(socket_connection, F_SETFL, O_NONBLOCK);
         if (checkfcntl < 0)
@@ -262,21 +270,16 @@ void Server_Socket_Creation(std::string Port, std::string Pass_Code)
                         close(socket_connection);
                         check_status(server_Cls.acceptSocket_id, "Accept Command Faild !");
                     }
-                    else {
+                    else
+                    {
                         check_status(server_Cls.acceptSocket_id, "Accept Command Faild !");
-                        // std::cout << "Check -> " << Clientcount << std::endl ;
                         SENDMESSAGE(Welcome_mssg(),server_Cls.acceptSocket_id) ;
-                        // server_Cls.poll_strc.fd = server_Cls.acceptSocket_id ;
-                        // server_Cls.poll_strc.events = POLLIN;
-                        // std::cout << "Pol => " << socket_connection << std::endl ;
                         server_Cls.thepool[Clientcount].fd =  server_Cls.acceptSocket_id ;
                         server_Cls.thepool[Clientcount].events = POLLIN;
                         Clientcount++;
-                        // server_Cls.pollAr.push_back(server_Cls.poll_strc);
                         TOADD.first = server_Cls.acceptSocket_id ;
                         TOADD.second.fd = server_Cls.acceptSocket_id;  // Adding User Socker ID to the USER Struct
                         server_Cls.Users.insert(TOADD);
-                        // std::cout << " +Value+  4" << std::endl ;
                     }
                 }
             server_Cls.Check_client_Request();
