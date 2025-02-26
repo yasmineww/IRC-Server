@@ -191,21 +191,20 @@ void Server_Socket_Creation(std::string Port, std::string Pass_Code)
             check_status(-1, "Error invalid Passcode!"); 
             return ;
         } 
+        server_Cls.bindSocket_str.sin_family = AF_INET ;
+        server_Cls.bindSocket_str.sin_addr.s_addr = INADDR_ANY;
         server_Cls.bindSocket_str.sin_port = htons(atoi(Port.c_str()));
         // Creation Of a socket, struct pollfd StrcPol
+
         server_Cls.Server_PassCode = Pass_Code ;
         socket_connection = socket(AF_INET, SOCK_STREAM, 0);
-        if(socket_connection == -1)
-            check_status(server_Cls.bind_Arg, "Error in the Socket Creation !");
+    
+        if(socket_connection == -1) check_status(server_Cls.bind_Arg, "Error in the Socket Creation !");
 
         if (setsockopt(socket_connection, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
         {
             close (socket_connection);
             check_status(server_Cls.bind_Arg, "Error in setsockopt !");
-        }
-        if (setsockopt(socket_connection, SOL_SOCKET, SO_KEEPALIVE, &opt, sizeof(opt)) < 0) {
-            std::cerr << "Error setting socket option SO_KEEPALIVE" << std::endl;
-            return ;
         }
 
         server_Cls.bind_Arg = bind(socket_connection, (struct sockaddr *)&server_Cls.bindSocket_str, sizeof(server_Cls.bindSocket_str));
@@ -215,7 +214,7 @@ void Server_Socket_Creation(std::string Port, std::string Pass_Code)
             check_status(server_Cls.bind_Arg, "Bind Faild !");
         }
         
-        server_Cls.Socket_listen = listen(socket_connection, 1000);
+        server_Cls.Socket_listen = listen(socket_connection, 3);
         if (server_Cls.Socket_listen < 0)
         {
             close(socket_connection);
@@ -225,13 +224,11 @@ void Server_Socket_Creation(std::string Port, std::string Pass_Code)
         // the Client Struct For the Accept() function
         struct sockaddr_in client_address;
         socklen_t client_addr_len = sizeof(client_address);
+
+
         std::pair<int, Client> TOADD ;
 
-        // Initialization Of the First Poll() Struct For the Server
-        
-        server_Cls.poll_strc.fd = socket_connection ;
-        server_Cls.poll_strc.events = POLLIN ;
-        
+        // Initialization Of the First Poll() Struct For the Server        
         server_Cls.thepool[0].fd = socket_connection;
         server_Cls.thepool[0].events = POLLIN;
 
