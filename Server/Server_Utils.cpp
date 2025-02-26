@@ -13,10 +13,8 @@ std::vector<std::string> Server::getJoinedChannels(int fd)
     return Joinedchannels;
 }
 
-
 Channel* Server::getChannel(const std::string& channelName)
 {
-
 
     // Check if the channel exists in the map
     if (channels.find(channelName) != channels.end())
@@ -27,7 +25,6 @@ Channel* Server::getChannel(const std::string& channelName)
 // Create a new channel if it doesn't exist
 Channel* Server::createChannel(const std::string& channelName)
 {
-
     // Check if the channel already exists
     if (channels.find(channelName) != channels.end())
         return channels[channelName]; // Return the existing channell
@@ -69,7 +66,6 @@ void Server::removeClient(int fd)
     close(fd);
 }
 
-
 void Server::receiveData(const std::vector<std::string> &data, int fd)
 {
     if (!data.empty())
@@ -81,7 +77,7 @@ void Server::receiveData(const std::vector<std::string> &data, int fd)
             Client user = Users[fd];
 
             if (command != "PASS"  && command != "USER" && command != "NICK" && !user.check_Authentication())
-                return SENDMESSAGE("ERROR : You are not registred\n", fd);
+                return (SENDMESSAGE(ERR_NOTREGISTERED(Server_Name, user.getHostName()), fd));
             (this->*commandMap[command])(data, fd);// calls the function (value) stored in the map at the key command
         }
         else
@@ -91,7 +87,6 @@ void Server::receiveData(const std::vector<std::string> &data, int fd)
 
 // PRIVMSG younes : hello younes how are you
 // PRIVMSG younes hello younes how are you
-
 
 int Server::getClientByName(const std::string& nickname)
 {
@@ -131,4 +126,3 @@ void Server::Check_Commands(std::string Command, int fd)
     }
     receiveData(data, fd);
 }
-

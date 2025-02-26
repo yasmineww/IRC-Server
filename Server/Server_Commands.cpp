@@ -32,13 +32,13 @@ void Server::USERhandler(const std::vector<std::string> &data, int fd)
     it = Users.find(fd);
 
     if (it->second.Auth_USER)
-        return (SENDMESSAGE(ERR_ALREADYREGISTERED(it->second.getNickName(), it->second.getHostName()), fd));
+        return (SENDMESSAGE(ERR_ALREADYREGISTERED(it->second.getNickName(), Server_Name), fd));
     if (!it->second.Auth_PASS)
-        return (SENDMESSAGE(ERR_NOTAUTHENTICATED(it->second.getNickName(), it->second.getHostName()), fd));
+        return (SENDMESSAGE(ERR_NOTAUTHENTICATED(it->second.getNickName(), Server_Name), fd));
     if (data.size() < 5)
-        return (SENDMESSAGE(ERR_NEEDMOREPARAMS(it->second.getNickName(), it->second.getHostName(), ""), fd));
+        return (SENDMESSAGE(ERR_NEEDMOREPARAMS(it->second.getNickName(), Server_Name, ""), fd));
     if (data.size() > 5)
-        return (SENDMESSAGE(ERR_NEEDMOREPARAMS(it->second.getNickName(), it->second.getHostName(), ""), fd));
+        return (SENDMESSAGE(ERR_NEEDMOREPARAMS(it->second.getNickName(), Server_Name, ""), fd));
 
 
     std::string username = data[1];
@@ -84,7 +84,7 @@ int Server::functioncheck(std::string Nick, int fd){
 
     for (;it != end; it++){
         if (Nick == it->second.getNickName()){
-            SENDMESSAGE(ERR_NICKNAMEINUSE(it->second.getNickName(),it->second.getHostName()), fd);
+            SENDMESSAGE(ERR_NICKNAMEINUSE(it->second.getNickName(),Server_Name), fd);
             return (-1);
         }
    }
@@ -96,19 +96,19 @@ void Server::NICKhandler(const std::vector<std::string> &data, int fd)
     std::map<int ,Client>::iterator it ;
 
     if (data.size() < 2 || data[1].size() == 0)
-        return (SENDMESSAGE(ERR_NONICKNAMEGIVEN(it->second.getNickName(), it->second.getHostName()), fd));
+        return (SENDMESSAGE(ERR_NONICKNAMEGIVEN(it->second.getNickName(), Server_Name), fd));
     if (this->functioncheck(data[1], fd) == -1)
         return ;
     it = Users.find(fd);
     if (data.size() > 2)
-        return (SENDMESSAGE(ERR_NONICKNAMEGIVEN(it->second.getNickName(),it->second.getHostName()), fd));
+        return (SENDMESSAGE(ERR_NONICKNAMEGIVEN(it->second.getNickName(),Server_Name), fd));
     if (!it->second.Auth_PASS)
-        return (SENDMESSAGE(ERR_NOTAUTHENTICATED(it->second.getNickName(), it->second.getHostName()), fd));
+        return (SENDMESSAGE(ERR_NOTAUTHENTICATED(it->second.getNickName(), Server_Name), fd));
     if (it->second.Auth_USER && it->second.Auth_NICK && it->second.Auth_PASS && !it->second.AUTH_WELCOM)
     {
         std::string tempNICK = it->second.getNickName();
         it->second.setNickName(data[1]);
-        return (SENDMESSAGE(RPL_NICKCHANGE(tempNICK ,it->second.getNickName(),it->second.getHostName()), fd));
+        return (SENDMESSAGE(RPL_NICKCHANGE(tempNICK ,it->second.getNickName(),Server_Name), fd));
     }
     it->second.setNickName(data[1]);
     it->second.Auth_NICK = true ;
@@ -136,18 +136,7 @@ void Server::PASShandler(const std::vector<std::string> &data, int fd)
         std::cout << Users.size() << std::endl ;
         it->second.AuthStep += 1;
         it->second.Auth_PASS = true ;
-        // std::cout << "Password Accepted" << std::endl ;
         return ;
-    };
-    SENDMESSAGE("ERR_BADPASS\n", fd);
-};
-
-
-void HELP_command(std::string Command, int fd, Server *Server_CLS)
-{
-    (void) Command;
-    (void) Server_CLS;
-    SENDMESSAGE("Step eins (1) :\n * Use Command PASS to enter the Vinci code : example >> PASS <password>\n", fd);
-    SENDMESSAGE("Step zwei (2) :\n * Use Command NICK to give you a legendary name : example >> NICK <nickname>\n", fd);
-    SENDMESSAGE("Step drei (3) :\n * Use Command USER to introduce yourself to the server : example >> USER <name> <whatever> : name\n", fd);
+    }
+    SENDMESSAGE(ERR_PASSWDMISMATCH(user.getNickName(),  Server_Name), fd);
 }

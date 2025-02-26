@@ -6,13 +6,12 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 10:52:04 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/02/25 16:33:51 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/02/26 22:52:55 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 #pragma once
-
 
 
 #include "stdio.h"
@@ -21,9 +20,9 @@
 #include <fcntl.h>
 # include <csignal>
 # include <sys/socket.h>
+# include <sys/poll.h>
 # include <netinet/in.h>
 # include <arpa/inet.h>
-# include <sys/poll.h>
 # include <unistd.h>
 
 
@@ -42,31 +41,11 @@ static int socket_connection ;
 
 using namespace std;
 
-
-
 # include "../Client/Client.hpp"
 # include "../Server/Server.hpp"
 # include "../Channel/Channel.hpp"
 
-
 #define PAIN 999999
-#define PASS_STR "PASS"
-#define USER_STR "USER"
-#define NICK_STR "NICK"
-#define KICK_STR "KICK"
-#define MODE_STR "MODE"
-#define PRIVMSG_STR "PRIVMSG"
-#define JOIN_STR "JOIN"
-#define HELP_STR "HELP"
-#define PART_STR "PART"
-#define MODE_STR "MODE"
-#define INVITE_STR "INVITE"
-#define TOPIC_STR "TOPIC"
-#define NOTICE_STR "NOTICE"
-#define QUIT_STR "QUIT"
-#define SEND_STR "SEND"
-
-
 
 # define GREEN "\e[1;32m"
 # define RESET "\e[0m"
@@ -77,42 +56,17 @@ using namespace std;
 # define BLUE "\e[1;34m"
 
 
-# define PASS 1
-# define USER 2
-# define NICK 3
-# define MODE 4
-# define JOIN 5
-# define HELP 6
-# define PRIVMSG 7
-# define PART 8
-# define KICK 9
-# define INVITE 10
-# define TOPIC 11
-# define NOTICE 12
-# define QUIT 13
-# define SEND 14
-
 # define REALNAME 99
 # define USERNAME 88
 # define SERVERNAME 77
 # define HOSTNAME 66
 
 
-/* BONUS */
-
-
-void handleDCCSend(std::string command, int fd, Server *server_ClS);
-
-
-
-
 /* Extra Temp Func */
 void    printchannelvectorlist(std::string msg, std::vector<std::string> channels);
 
 
-
-
-# define PART_RPL(nick, channelName) (":")+ std::string(nick)+ std::string(" !~ ") + std::string(nick) + std::string(" @localhost ") + std::string(" PART ") + std::string(channelName) + std::string("\r\n");
+#define PART_RPL(nick, channelName) (":")+ std::string(nick)+ std::string(" !~ ") + std::string(nick) + std::string(" @localhost ") + std::string(" PART ") + std::string(channelName) + std::string("\r\n");
 
 #define RPL_WELCOME(nick, hostname)  std::string(":") + std::string(hostname) + std::string(" 001 ") + std::string(nick) + std::string(" :Welcome ") + std::string(nick) + std::string(" to the Laymouna.chat network !\r\n")
 #define RPL_YOURHOST(nick, hostname) std::string(":") + std::string(hostname) + std::string(" 002 ") + std::string(nick) + std::string(" :Your host is ") + std::string(hostname) + std::string(" running version 1.0 !\r\n")
@@ -120,27 +74,26 @@ void    printchannelvectorlist(std::string msg, std::vector<std::string> channel
 #define RPL_MYINFO(nick, hostname)   std::string(":") + std::string(hostname) + std::string(" 004 ") + std::string(nick) + std::string(" :Host: ") + std::string(hostname) + std::string(", Version: 1.0, User mode: none, Channel modes: o, t, k, i !\r\n")
 
 
-
 #define ERR_NEEDMOREPARAMS(nick, hostname, command)                       std::string(":") + std::string(hostname) + " 461 " + std::string(nick) + " " + std::string(command) + " :Not enough parameters\r\n"
-#define ERR_PASSWDMISMATCH(nick, hostname)                                std::string(":") + std::string(hostname) + " 464 " + std::string(nick) + " :Password incorrect !\r\n"
-#define ERR_ALREADYREGISTERED(nick, hostname)                             std::string(":") + std::string(hostname) + " 462 " + std::string(nick) + " :You may not reregister !\r\n"
+#define ERR_PASSWDMISMATCH(nick, hostname)                                std::string(":") + std::string(hostname) + " 464 " + std::string(nick) + " :Password incorrect\r\n"
+#define ERR_ALREADYREGISTERED(nick, hostname)                             std::string(":") + std::string(hostname) + " 462 " + std::string(nick) + " :You may not reregister\r\n"
 
-#define ERR_ERRONEUSNICKNAME(nick, hostname)                              std::string(":") + std::string(hostname) + " 432 " + std::string(nick) + " :Erroneus nickname !\r\n"
-#define ERR_NONICKNAMEGIVEN(nick, hostname)                               std::string(":") + std::string(hostname) + " 431 " + std::string(nick) + " :No nickname given !\r\n"
-#define ERR_NICKNAMEINUSE(nick, hostname)                                  std::string(":") + std::string(hostname) + " 433 " + std::string(nick) + " :Nickname is already in use !\r\n"
-#define RPL_NICKCHANGE(oldNick, nick, hostname)                            std::string(":") + std::string(oldNick) + " NICK "  + std::string(nick) + "\r\n"
-
-
-#define ERR_BADCHANNELMASK(nick, hostname, mask, correction)               std::string(":") + std::string(hostname) + " 476 " + std::string(nick) + " " + std::string(mask) + " :Invalid channel mask." + std::string(correction) + "\r\n"
-#define ERR_CHANNELISFULL(nick, hostname, channelName)                     std::string(":") + std::string(hostname) + " 471 " + std::string(nick) + " " + std::string(channelName) + " :Cannot join channel (+l) - channel is full\r\n"
-#define ERR_BADCHANNELKEY(nick, hostname, channelName)                     std::string(":") + std::string(hostname) + " 475 " + std::string(nick) + " " + std::string(channelName) + " :Cannot join channel (+k) - bad key\r\n"
-#define ERR_INVITEONLYCHAN(nick, hostname, channel)                        std::string(":") + std::string(hostname) + " 473 " + std::string(nick) + " " + std::string(channel) + " :Cannot join channel (+i)\r\n"
+#define ERR_ERRONEUSNICKNAME(nick, hostname)                              std::string(":") + std::string(hostname) + " 432 " + std::string(nick) + " :Erroneus nickname\r\n"
+#define ERR_NONICKNAMEGIVEN(nick, hostname)                               std::string(":") + std::string(hostname) + " 431 " + std::string(nick) + " :No nickname given\r\n"
+#define ERR_NICKNAMEINUSE(nick, hostname)                                 std::string(":") + std::string(hostname) + " 433 " + std::string(nick) + " :Nickname is already in use !\r\n"
+#define RPL_NICKCHANGE(oldNick, nick, hostname)                           std::string(":") + std::string(oldNick) + " NICK "  + std::string(nick) + "\r\n"
 
 
-#define RPL_UMODEIS(hostname, channelname)                                 std::string(":") + std::string(hostname) + " MODE " + std::string(channelname) + " +nt\r\n"
-#define RPL_JOIN(nick, username, channelname, ipaddress)                   std::string(":") + std::string(nick) + "!~" + std::string(username) + "@" + std::string(ipaddress) + " JOIN " + std::string(channelname) + "\r\n"
-#define RPL_TOPIC(hostname, topic, nick, channelName)                      std::string(":") + std::string(hostname) + " 332 " + std::string(nick) + " " + std::string(channelName) + " :" + std::string(topic) + "\r\n"
-#define RPL_TOPICWHOTIME(topicsetter, time, nick, hostname, channelName)   std::string(":") + std::string(hostname) + " 333 " + std::string(nick) + " " + std::string(channelName) + " " + std::string(topicsetter) + "!~" + std::string(topicsetter) + "@" + std::string(hostname) + " " + std::string(time) + "\r\n"
+#define ERR_BADCHANNELMASK(nick, hostname, mask, correction)              std::string(":") + std::string(hostname) + " 476 " + std::string(nick) + " " + std::string(mask) + " :Invalid channel mask." + std::string(correction) + "\r\n"
+#define ERR_CHANNELISFULL(nick, hostname, channelName)                    std::string(":") + std::string(hostname) + " 471 " + std::string(nick) + " " + std::string(channelName) + " :Cannot join channel (+l) - channel is full\r\n"
+#define ERR_BADCHANNELKEY(nick, hostname, channelName)                    std::string(":") + std::string(hostname) + " 475 " + std::string(nick) + " " + std::string(channelName) + " :Cannot join channel (+k) - bad key\r\n"
+#define ERR_INVITEONLYCHAN(nick, hostname, channel)                       std::string(":") + std::string(hostname) + " 473 " + std::string(nick) + " " + std::string(channel) + " :Cannot join channel (+i)\r\n"
+
+
+#define RPL_UMODEIS(hostname, channelname)                                std::string(":") + std::string(hostname) + " MODE " + std::string(channelname) + " +nt\r\n"
+#define RPL_JOIN(nick, username, channelname, ipaddress)                  std::string(":") + std::string(nick) + "!~" + std::string(username) + "@" + std::string(ipaddress) + " JOIN " + std::string(channelname) + "\r\n"
+#define RPL_TOPIC(hostname, topic, nick, channelName)                     std::string(":") + std::string(hostname) + " 332 " + std::string(nick) + " " + std::string(channelName) + " :" + std::string(topic) + "\r\n"
+#define RPL_TOPICWHOTIME(topicsetter, time, nick, hostname, channelName)  std::string(":") + std::string(hostname) + " 333 " + std::string(nick) + " " + std::string(channelName) + " " + std::string(topicsetter) + "!~" + std::string(topicsetter) + "@" + std::string(hostname) + " " + std::string(time) + "\r\n"
 
 
 #define RPL_NAMREPLY(hostname, clients, channelname, nick)                std::string(":") + std::string(hostname) + " 353 " + std::string(nick) + " @ " + std::string(channelname) + " :" + std::string(clients) + "\r\n"
@@ -168,8 +121,7 @@ void    printchannelvectorlist(std::string msg, std::vector<std::string> channel
 #define ERR_CHANOPRIVSNEEDED(nick, hostname)                              std::string(":") + std::string(hostname) + " 482 " + std::string(nick) + " :You're not channel operator !\r\n"
 #define RPL_NOTOPIC(nick, hostname, channel)                              std::string(":") + std::string(hostname) + " 331 " + std::string(nick) + " " + std::string(channel) + " :No topic is set\r\n"
 
-
-
+#define ERR_NOTREGISTERED(hostname, user)                                 std::string(":") + std::string(hostname) + " 451 " + std::string(user) + " :You have not registered\r\n"
 
 // PRIVMSG 
 
@@ -185,7 +137,4 @@ void    printchannelvectorlist(std::string msg, std::vector<std::string> channel
 
 #define ERR_TOOMANYTARGETS(nick, hostname, target)                        std::string(":") + std::string(hostname) + " 407 " + std::string(nick) + " " + std::string(target) + " :Too many recipients\r\n"
 
-#define RPL_AWAY(nick, hostname, targetNick, awayMessage)                 std::string(":") + std::string(hostname) + " 301 " + std::string(nick) + " " + std::string(targetNick) + " :" + std::string(awayMessage) + "\r\n"
-
-
-#define ERR_NOTAUTHENTICATED(nick, hostname)                               std::string(":") + std::string(hostname) + " 451 " + std::string(nick) + " :You have not registered\r\n"
+#define ERR_NOTAUTHENTICATED(nick, hostname)                              std::string(":") + std::string(hostname) + " 451 " + std::string(nick) + " :You have not registered\r\n"
