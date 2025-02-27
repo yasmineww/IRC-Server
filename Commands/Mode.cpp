@@ -6,7 +6,7 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 10:51:36 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/02/27 05:46:57 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/02/27 06:17:38 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -270,5 +270,5 @@ void Server::MODEhandler(const std::vector<std::string> &data, int fd)
     for (size_t i = 0; i < permittedOPTIONS.size(); i++) modeChangeMessage += " +" + permittedOPTIONS[i];
     for (size_t i = 0; i < NONpermittedOPTIONS.size(); i++) modeChangeMessage += " -" + NONpermittedOPTIONS[i];
 
-    channel->broadcast(modeChangeMessage);
+    channel->broadcast(modeChangeMessage + "\n");
 }

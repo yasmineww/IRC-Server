@@ -6,7 +6,7 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 10:51:45 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/02/27 05:47:24 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/02/27 06:25:35 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,45 +42,40 @@ void Server::PARThandler(const std::vector<std::string> &data, int fd)
         if (chanName.empty() || (chanName[0] != '#' && chanName[0] != '&'))
             return(SENDMESSAGE(ERR_NOSUCHCHANNEL(Server_Name, chanName, user.getNickName()), fd));
 
-        Channel *channnel = getChannel(chanName);
+        Channel *channel = getChannel(chanName);
 
 
-        if (!channnel)
+        if (!channel)
         {
             SENDMESSAGE(ERR_NOSUCHCHANNEL(Server_Name, chanName, user.getNickName()), fd);
             continue;
         }
-        if (!channnel->isUserInChannel(fd))
+        if (!channel->isUserInChannel(fd))
         {
             SENDMESSAGE(ERR_NOTONCHANNEL(Server_Name, user.getNickName(), chanName), fd);
             continue;
         }
-           // if the operator wants to leave and there is another client on the channel, he must be the new governor.
-        if (channnel->isOperator(fd) && channnel->getUserCount())
+           // if the operator wants to leave and there is another client on the channel, he must be the new governor.\
+           //add check if there is no other operator
+        if (channel->isOperator(fd) && channel->getUserCount() && channel->getOperatorsSize() == 1) 
         {
-            int newfd = channnel->getRandomClient(fd);
-            if (newfd != -1)
-                channnel->addOperator(newfd);
+            int newfd = channel->getNewClient(fd);
+            if (newfd != -1){
+                channel->addOperator(newfd);
+                std::string Message = ":" + user.getNickName() + "!~" + Server_Name + " MODE " + chanName + " +o " + Users[newfd].getNickName() + "\n";
+                channel->broadcast(Message);           
+            }
         }
-        channnel->removeUser(fd);
+        channel->removeUser(fd);
 
-        // Send PART message to all users in the channel
-        std::string partMessage = ":" + user.getNickName() + "!~" + user.getHostName() + "@" + Server_Name + " PART " + chanName + " :" + reason +"\r\n";
+        std::string partMessage = ":" + user.getNickName() + "!~" + user.getHostName() + "@" + Server_Name + " PART " + chanName + " :" + reason +"\n";
         SENDMESSAGE(partMessage, fd);
-        channnel->broadcast(partMessage);
+        channel->broadcast(partMessage);
 
-		if (!channnel->getUserCount())
+		if (!channel->getUserCount())
 		{
 			channels.erase(channels.find(chanName));
-			delete channnel;
+			delete channel;
 		}
     }
-    // SENDMESSAGE(PART_RPL(user.getNickName(), channelname), fd);
 }
-
-// Receiver
-// :yasmine!~A@Pentagone.chat PART #new :Without reason
-// :yasmine!~Pentagone.chat MODE #new +o salma
-// :Pentagone.chat :New Admin for this channel #new salma
-// //client who left
-// :yasmine!~A@Pentagone.chat PART #new :Without reason

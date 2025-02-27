@@ -6,7 +6,7 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 11:04:43 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/02/25 00:55:31 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/02/27 06:10:01 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -268,8 +268,9 @@ int Channel::getUserCount() const
 
 
 
-int Channel::getRandomClient(int fd)
+int Channel::getNewClient(int fd)
 {
+    
     for (std::map<int, Client>::iterator it = users.begin(); it != users.end(); ++it)
     {
         cout << "*it === " << it->first << endl;

@@ -6,7 +6,7 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 10:51:48 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/02/24 21:07:55 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/02/27 06:10:01 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,7 @@ class Channel
         // check if user is invited
         bool isInvited(int fd);
 
-        int getRandomClient(int fd);
+        int getNewClient(int fd);
 
 
         std::string getModeString() const;
