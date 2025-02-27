@@ -6,7 +6,7 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 11:04:43 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/02/27 06:10:01 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/02/27 10:12:49 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ std::string Channel::getModeString() const
     // if (operatorOnly) modeString += "o";
 
     if (modeString == "+") // No modes set
-        return "-itlk";
+        return "+t";
 
     return modeString;
 }

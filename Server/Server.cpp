@@ -6,7 +6,7 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 13:35:59 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/02/26 23:50:30 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/02/27 10:45:37 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,6 +123,7 @@ int Server::Authenticate_User(int fd)
     if (Size_Read == 0)
     {
         std::cout << "\033[91mTHE CLIENT *** " << user.getNickName() << " *** DISCONNECTED\033[0m" << std::endl;
+        removeClient(fd);
         return (-1);
     }
     // ctrlD(Recv_Buffer, this->start->fd);
@@ -155,8 +156,8 @@ void Server::Check_client_Request()
             if (it->revents & POLLIN){
                 Auth_Flag = Authenticate_User(it->fd);
                 if (Auth_Flag == -1){
-                    fdToremove(it->fd);
-                    close(it->fd);
+                    // fdToremove(it->fd);
+                    // close(it->fd);
                     pollAr.erase(it);
                     std::cout << "Removed " << std::endl ;
                     return ;

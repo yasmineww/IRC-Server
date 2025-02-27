@@ -22,5 +22,5 @@ void Server::QUIThandler(const std::vector<std::string> &data, int fd)
         }
     }
     removeClient(fd);
-    close(fd);
+    // close(fd); --->uneccsryy
 }

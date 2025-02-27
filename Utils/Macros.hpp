@@ -6,7 +6,7 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 10:52:04 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/02/27 04:37:10 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/02/27 11:30:30 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,14 +68,12 @@ void    printchannelvectorlist(std::string msg, std::vector<std::string> channel
 
 #define PART_RPL(nick, channelName) (":")+ std::string(nick)+ std::string(" !~ ") + std::string(nick) + std::string(" @localhost ") + std::string(" PART ") + std::string(channelName) + std::string("\r\n");
 
-
 #define ERR_UNKNOWNMODE(nick, modechar, servername) (std::string(":") + std::string(servername) + " 472 " + std::string(nick) + " " + std::string(modechar) + " :is an unknown mode char to me\r\n")
 
-
-#define RPL_WELCOME(nick, hostname)  std::string(":") + std::string(hostname) + std::string(" 001 ") + std::string(nick) + std::string(" :Welcome ") + std::string(nick) + std::string(" to the Laymouna.chat network !\r\n")
-#define RPL_YOURHOST(nick, hostname) std::string(":") + std::string(hostname) + std::string(" 002 ") + std::string(nick) + std::string(" :Your host is ") + std::string(hostname) + std::string(" running version 1.0 !\r\n")
-#define RPL_CREATED(nick, hostname)  std::string(":") + std::string(hostname) + std::string(" 003 ") + std::string(nick) + std::string(" :This server was created 2024-01-27 !\r\n")
-#define RPL_MYINFO(nick, hostname)   std::string(":") + std::string(hostname) + std::string(" 004 ") + std::string(nick) + std::string(" :Host: ") + std::string(hostname) + std::string(", Version: 1.0, User mode: none, Channel modes: i, t, k, o, l\r\n")
+#define RPL_WELCOME(nick, hostname)  std::string(":") + std::string(hostname) + std::string(" 001 ") + std::string(nick) + std::string(" :Welcome to the Internet Relay Chat Network ") + std::string(nick) + "!~" + std::string(nick) + "@" + std::string(hostname) + "\r\n"
+#define RPL_YOURHOST(nick, hostname) std::string(":") + std::string(hostname) + std::string(" 002 ") + std::string(nick) + std::string(" :Your host is ") + std::string(hostname) + std::string(", running version 1.0\r\n")
+#define RPL_CREATED(nick, hostname)  std::string(":") + std::string(hostname) + std::string(" 003 ") + std::string(nick) + std::string(" :This server was created Wed Jan 01 2025\r\n")
+#define RPL_MYINFO(nick, hostname)   std::string(":") + std::string(hostname) + std::string(" 004 ") + std::string(nick) + std::string(hostname) + std::string(", Version: 1.0, User mode: none, Channel modes: i, t, k, o, l\r\n")
 
 
 #define ERR_NEEDMOREPARAMS(nick, hostname, command)                       std::string(":") + std::string(hostname) + " 461 " + std::string(nick) + " " + std::string(command) + " :Not enough parameters\r\n"

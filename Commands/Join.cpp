@@ -6,7 +6,7 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 10:52:17 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/02/27 04:06:17 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/02/27 10:58:55 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,9 @@ void Server::JOINhandler(const std::vector<std::string> &data, int fd){
         }
         channel->addUser(user, fd);
         channel->broadcast(RPL_JOIN(user.getNickName(), user.getUserName(), channels[i], "127.0.0.1"));
+        // :Pentagone.chat MODE #chan +t we will turn msg into this
+        std::string msg = ":" + Server_Name + " MODE " + channel->getName() + " +t\r\n"; 
+        SENDMESSAGE(msg, fd); 
         SENDMESSAGE(RPL_NAMREPLY(Server_Name, channel->getUserList(), channels[i] ,user.getNickName()), fd);
         SENDMESSAGE(RPL_ENDOFNAMES(Server_Name, user.getNickName(), channels[i]), fd);
         SENDMESSAGE(RPL_TOPIC(Server_Name, channel->getTopic(),  user.getNickName(), channel->getName()), fd);

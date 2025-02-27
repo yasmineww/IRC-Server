@@ -108,6 +108,7 @@ void Server::Check_Commands(std::string Command, int fd)
 
     size_t found = Command.find(":");
     std::string store;
+    std::cout << "Command : " << Command << std::endl;
 
     if (found != std::string::npos){
         std::string first = Command.substr(0, found);  //PRIVMSG younes
