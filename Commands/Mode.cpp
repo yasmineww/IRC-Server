@@ -12,9 +12,19 @@
 
 #include "../Utils/Macros.hpp"
 
+
+static int globalFLAG;
+static std::string globalSTR;
+
 // check if an option is already exits so we cannot store it again
 bool	Is_Already_exist(std::vector<std::string> container, std::string option)
 {
+    cout << " @@@@@@@ > " << option << endl;
+    if (option != "i" || option != "t" || option != "o" || option != "k" || option != "l")
+    {
+        globalSTR = option;
+        globalFLAG = 1;
+    }
 	for (std::vector<std::string>::iterator it = container.begin(); it < container.end(); ++it)
 	{
 		if (*it == option)
@@ -157,9 +167,11 @@ void Server::MODEhandler(const std::vector<std::string> &data, int fd)
 
 
     store_options(data_copy, permittedOPTIONS, NONpermittedOPTIONS, Values);
-
-
-    printchannelvectorlist("values", Values);
+    if (globalFLAG == 0x1)
+    {
+        puts("am here");
+        return SENDMESSAGE(ERR_UNKNOWNMODE(user.getNickName(), globalSTR, Server_Name), fd);
+    }
 
     // Check if the channel exists
     Channel *channel = getChannel(chanName);

@@ -68,6 +68,10 @@ void    printchannelvectorlist(std::string msg, std::vector<std::string> channel
 
 #define PART_RPL(nick, channelName) (":")+ std::string(nick)+ std::string(" !~ ") + std::string(nick) + std::string(" @localhost ") + std::string(" PART ") + std::string(channelName) + std::string("\r\n");
 
+
+#define ERR_UNKNOWNMODE(nick, modechar, servername) (std::string(":") + std::string(servername) + " 472 " + std::string(nick) + " " + std::string(modechar) + " :is an unknown mode char to me\r\n")
+
+
 #define RPL_WELCOME(nick, hostname)  std::string(":") + std::string(hostname) + std::string(" 001 ") + std::string(nick) + std::string(" :Welcome ") + std::string(nick) + std::string(" to the Laymouna.chat network !\r\n")
 #define RPL_YOURHOST(nick, hostname) std::string(":") + std::string(hostname) + std::string(" 002 ") + std::string(nick) + std::string(" :Your host is ") + std::string(hostname) + std::string(" running version 1.0 !\r\n")
 #define RPL_CREATED(nick, hostname)  std::string(":") + std::string(hostname) + std::string(" 003 ") + std::string(nick) + std::string(" :This server was created 2024-01-27 !\r\n")
@@ -104,7 +108,7 @@ void    printchannelvectorlist(std::string msg, std::vector<std::string> channel
 #define ERR_INVALIDMODEPARAM(channel, hostname, flag)                     std::string(":") + std::string(hostname) + " 696 " + std::string(channel) + " " + std::string(flag) + " * you must specifiy a parameter for the op mode\r\n"
 
 #define RPL_INVITING(hostname, inviting, invited, channel)                std::string(":") + std::string(hostname) + " 341 " + std::string(inviting) + " " + std::string(invited) + " " + std::string(channel) + "\r\n"
-#define RPL_INVITED(nick, hostname, invited, channel)                     std::string(":") + std::string(nick) + "!~" + std::string(hostname) + " INVITE " + std::string(invited) + " :" + std::string(channel) + "\r\n" 
+#define RPL_INVITED(nick, hostname, invited, channel)                     std::string(":") + std::string(nick) + "!~" + std::string(hostname) + " INVITE " + std::string(invited) + " :" + std::string(channel) + "\r\n"
 
 
 #define ERR_NOTONCHANNEL(hostname, nick, channel)                         std::string(":") + std::string(hostname) + " 442 " + std::string(nick) + " " + std::string(channel) + " :You're not on that channel\r\n"
@@ -121,7 +125,7 @@ void    printchannelvectorlist(std::string msg, std::vector<std::string> channel
 
 #define ERR_NOTREGISTERED(hostname, user)                                 std::string(":") + std::string(hostname) + " 451 " + std::string(user) + " :You have not registered\r\n"
 
-// PRIVMSG 
+// PRIVMSG
 
 #define ERR_NORECIPIENT(nick, hostname)                                   std::string(":") + std::string(hostname) + " 411 " + std::string(nick) + " :No recipient given (PRIVMSG)\r\n"
 

@@ -133,7 +133,7 @@ int Server::Authenticate_User(int fd)
 void Server::fdToremove (int fd) {
     std::map<int, Client>::iterator start = Users.begin();
     std::map<int, Client>::iterator end = Users.end();
-    
+
     for (;start != end; start++){
         if (start->second.fd == fd){
             Users.erase(start);
@@ -145,7 +145,6 @@ void Server::fdToremove (int fd) {
 void Server::Check_client_Request()
 {
     int Auth_Flag = 0;
-    int Remove_Position = 0;
 
     std::vector<struct pollfd>::iterator it = pollAr.begin();
     std::vector<struct pollfd>::iterator end = pollAr.end();
@@ -153,7 +152,6 @@ void Server::Check_client_Request()
     if (pollAr.size() > 1){
         it++ ;
         for (;it != end; it++){
-            Remove_Position++ ;
             if (it->revents & POLLIN){
                 Auth_Flag = Authenticate_User(it->fd);
                 if (Auth_Flag == -1){
@@ -196,11 +194,11 @@ void Server_Socket_Creation(std::string Port, std::string Pass_Code)
 
         Server server_Cls ;
         Client ForMulti_poll ;
-        
+
         if (Pass_Code.size() == 0) {
-            check_status(-1, "Error invalid Passcode!"); 
+            check_status(-1, "Error invalid Passcode!");
             return ;
-        } 
+        }
         server_Cls.bindSocket_str.sin_family = AF_INET ;
         server_Cls.bindSocket_str.sin_addr.s_addr = INADDR_ANY;
         server_Cls.bindSocket_str.sin_port = htons(atoi(Port.c_str()));
@@ -208,7 +206,7 @@ void Server_Socket_Creation(std::string Port, std::string Pass_Code)
 
         server_Cls.Server_PassCode = Pass_Code ;
         socket_connection = socket(AF_INET, SOCK_STREAM, 0);
-    
+
         if(socket_connection == -1) check_status(server_Cls.bind_Arg, "Error in the Socket Creation !");
 
         if (setsockopt(socket_connection, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
@@ -223,14 +221,14 @@ void Server_Socket_Creation(std::string Port, std::string Pass_Code)
             close(socket_connection);
             check_status(server_Cls.bind_Arg, "Bind Faild !");
         }
-        
+
         server_Cls.Socket_listen = listen(socket_connection, 3);
         if (server_Cls.Socket_listen < 0)
         {
             close(socket_connection);
             check_status(server_Cls.bind_Arg, "Listen Faild !");
         }
-        
+
         // the Client Struct For the Accept() function
         struct sockaddr_in client_address;
         socklen_t client_addr_len = sizeof(client_address);
@@ -238,12 +236,12 @@ void Server_Socket_Creation(std::string Port, std::string Pass_Code)
 
         std::pair<int, Client> TOADD ;
 
-        // Initialization Of the First Poll() Struct For the Server        
+        // Initialization Of the First Poll() Struct For the Server
         server_Cls.poll_strc.fd = socket_connection ;
         server_Cls.poll_strc.events = POLLIN ;
 
         Clientcount++;
-        
+
 
         server_Cls.pollAr.push_back(server_Cls.poll_strc);
         int checkfcntl = fcntl(socket_connection, F_SETFL, O_NONBLOCK);
