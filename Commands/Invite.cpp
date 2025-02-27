@@ -80,9 +80,7 @@ void Server::INVITEhandler(const std::vector<std::string> &data, int fd)
     std::string targetNick = data[1];
     int targetFd = getClientByName(targetNick);
     if (targetFd == -1)
-    {
         return SENDMESSAGE(ERR_NOSUCHNICK(Server_Name, channelName, targetNick), fd);
-    }
 
     // Check if target is already in channel
     if (channel->isUserInChannel(targetFd))

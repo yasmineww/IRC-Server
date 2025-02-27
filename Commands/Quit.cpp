@@ -2,16 +2,12 @@
 #include "../Utils/Macros.hpp"
 
 void Server::QUIThandler(const std::vector<std::string> &data, int fd)
-// void QUIT_command(std::string command, int fd, Server *Server_CLS)
 {
-    // Retrieve the client who issued the QUIT command
     Client user = Users[fd];
 
-    std::string quitMessage = "Client Quit"; // Default quit message
+    std::string quitMessage = "Client Quit";
     if (data.size() > 1)
-        quitMessage = data[1].substr(1); // Remove ':' from the message
-
-    std::string quitNotice = ":" + user.getNickName() + " QUIT :" +  + "\r\n";
+        quitMessage = data[1].substr(1);
 
     // Broadcast QUIT message to all channels the user is in
     std::vector<std::string> joinedChannels = getJoinedChannels(fd);
@@ -20,14 +16,11 @@ void Server::QUIThandler(const std::vector<std::string> &data, int fd)
         Channel *channel = getChannel(joinedChannels[i]);
         if (channel)
         {
-            channel->broadcast(quitNotice);
+            std::string partMessage = ":" + user.getNickName() + "!~" + user.getHostName() + "@" + Server_Name + " PART " + channel->getName() + " :Client Quit\n";
             channel->removeUser(fd);
+            channel->broadcast(partMessage);
         }
     }
-
-    // Remove user from the server's client list
     removeClient(fd);
-
-    // Close the socket connection
     close(fd);
 }
