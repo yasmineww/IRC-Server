@@ -37,9 +37,6 @@ void Server::USERhandler(const std::vector<std::string> &data, int fd)
         return (SENDMESSAGE(ERR_NOTAUTHENTICATED(it->second.getNickName(), Server_Name), fd));
     if (data.size() < 5)
         return (SENDMESSAGE(ERR_NEEDMOREPARAMS(it->second.getNickName(), Server_Name, ""), fd));
-    if (data.size() > 5)
-        return (SENDMESSAGE(ERR_NEEDMOREPARAMS(it->second.getNickName(), Server_Name, ""), fd));
-
 
     std::string username = data[1];
     std::string hostname = data[2];
@@ -111,10 +108,8 @@ void Server::NICKhandler(const std::vector<std::string> &data, int fd)
         return (SENDMESSAGE(RPL_NICKCHANGE(tempNICK ,user.getNickName(),Server_Name), fd));
     }
     user.setNickName(data[1]);
-    std::cout << "this is 1" << std::endl;
     user.Auth_NICK = true ;
     if (user.Auth_USER && user.Auth_NICK && user.Auth_PASS && user.AUTH_WELCOM){
-    std::cout << "this is 2" << std::endl;
         std::cout << "\033[92mNEW CLIENT *** "  << user.getNickName() << " *** CONNECTED\033[0m" << std::endl;
         SENDMESSAGE(RPL_WELCOME(user.getNickName(),  Server_Name), fd);
         SENDMESSAGE(RPL_YOURHOST(user.getNickName(), Server_Name), fd);
@@ -126,14 +121,13 @@ void Server::NICKhandler(const std::vector<std::string> &data, int fd)
 
 void Server::PASShandler(const std::vector<std::string> &data, int fd)
 {
-    std::map<int , Client>::iterator it ;
+    std::map<int , Client>::iterator it = Users.find(fd);
     Client user = Users[fd];
 
-    it = Users.find(fd) ;
     if (it->second.Auth_PASS == true)
         return (SENDMESSAGE(ERR_ALREADYREGISTERED(user.getNickName(),  Server_Name), fd));
     if (data.size() != 2)
-        return (SENDMESSAGE(ERR_NEEDMOREPARAMS(user.getNickName(),  Server_Name, data[0]), fd));
+        return (SENDMESSAGE(ERR_PASSWDMISMATCH(user.getNickName(),  Server_Name), fd));
     if (data[1] == Server_PassCode){
         std::cout << Users.size() << std::endl ;
         it->second.AuthStep += 1;

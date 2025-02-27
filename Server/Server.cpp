@@ -6,7 +6,7 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 13:35:59 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/02/26 01:10:43 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/02/26 23:50:30 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ std::string	Welcome_mssg(void)
 	welcome.append("╚███╔███╔╝███████╗███████╗╚██████╗╚██████╔╝██║ ╚═╝ ██║███████╗\n");
 	welcome.append(" ╚══╝╚══╝ ╚══════╝╚══════╝ ╚═════╝ ╚═════╝ ╚═╝     ╚═╝╚══════╝\n");
 	welcome.append(YELLOW);
-	welcome.append("Login in to use LAYMONA OR you can send HELP to see the MANUAL.\n");
+	welcome.append("Login in to use Laymona.chat Server. Please enter the PASS, USER and NICK\n");
 	welcome.append(RESET);
 	return (welcome);
 };

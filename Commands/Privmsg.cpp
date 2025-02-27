@@ -35,7 +35,7 @@ void Server::PRIVMSGhandler(const std::vector<std::string> &data, int fd){
                 continue;
             }
             if (!channel->hasUser(fd)){
-                SENDMESSAGE(ERR_NOTONCHANNEL(Server_Name, receivers[i]), fd);
+                SENDMESSAGE(ERR_NOTONCHANNEL(Server_Name, user.getNickName(), receivers[i]), fd);
                 continue;
             }
             std::string msgToSend = ":" + user.getNickName() + "!~" + Server_Name + " PRIVMSG " + receivers[i] + " :" + message + "\r\n";

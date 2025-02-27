@@ -6,7 +6,7 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 10:52:04 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/02/26 22:52:55 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/02/27 04:37:10 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ void    printchannelvectorlist(std::string msg, std::vector<std::string> channel
 #define RPL_WELCOME(nick, hostname)  std::string(":") + std::string(hostname) + std::string(" 001 ") + std::string(nick) + std::string(" :Welcome ") + std::string(nick) + std::string(" to the Laymouna.chat network !\r\n")
 #define RPL_YOURHOST(nick, hostname) std::string(":") + std::string(hostname) + std::string(" 002 ") + std::string(nick) + std::string(" :Your host is ") + std::string(hostname) + std::string(" running version 1.0 !\r\n")
 #define RPL_CREATED(nick, hostname)  std::string(":") + std::string(hostname) + std::string(" 003 ") + std::string(nick) + std::string(" :This server was created 2024-01-27 !\r\n")
-#define RPL_MYINFO(nick, hostname)   std::string(":") + std::string(hostname) + std::string(" 004 ") + std::string(nick) + std::string(" :Host: ") + std::string(hostname) + std::string(", Version: 1.0, User mode: none, Channel modes: o, t, k, i !\r\n")
+#define RPL_MYINFO(nick, hostname)   std::string(":") + std::string(hostname) + std::string(" 004 ") + std::string(nick) + std::string(" :Host: ") + std::string(hostname) + std::string(", Version: 1.0, User mode: none, Channel modes: i, t, k, o, l\r\n")
 
 
 #define ERR_NEEDMOREPARAMS(nick, hostname, command)                       std::string(":") + std::string(hostname) + " 461 " + std::string(nick) + " " + std::string(command) + " :Not enough parameters\r\n"
@@ -103,12 +103,11 @@ void    printchannelvectorlist(std::string msg, std::vector<std::string> channel
 #define RPL_MODEIS(channel, hostname, mode)                               std::string(":") + std::string(hostname) + " MODE " + std::string(channel) + " " + std::string(mode) + "\r\n"
 #define ERR_INVALIDMODEPARAM(channel, hostname, flag)                     std::string(":") + std::string(hostname) + " 696 " + std::string(channel) + " " + std::string(flag) + " * you must specifiy a parameter for the op mode\r\n"
 
+#define RPL_INVITING(hostname, inviting, invited, channel)                std::string(":") + std::string(hostname) + " 341 " + std::string(inviting) + " " + std::string(invited) + " " + std::string(channel) + "\r\n"
+#define RPL_INVITED(nick, hostname, invited, channel)                     std::string(":") + std::string(nick) + "!~" + std::string(hostname) + " INVITE " + std::string(invited) + " :" + std::string(channel) + "\r\n" 
 
-#define RPL_INVITING(hostname, inviting, invited, channel)                std::string(":") + std::string(hostname) + " 341 " + std::string(inviting) + " " + std::string(invited) + " " + std::string(channel) + " :Inviting " + std::string(invited) + " to " + std::string(channel) + "\r\n"
-#define RPL_INVITE(nick, username, clienthostname, invited, channel)      std::string(":") + std::string(nick) + "!" + std::string(username) + "@" + std::string(clienthostname) + " INVITE " + std::string(invited) + " :" + std::string(channel) + "\r\n"
 
-
-#define ERR_NOTONCHANNEL(hostname, channel)                               std::string(":") + std::string(hostname) + " 442 " + std::string(channel) + " :You're not on that channel\r\n"
+#define ERR_NOTONCHANNEL(hostname, nick, channel)                         std::string(":") + std::string(hostname) + " 442 " + std::string(nick) + " " + std::string(channel) + " :You're not on that channel\r\n"
 #define ERR_NOSUCHCHANNEL(hostname, channel, nick)                        std::string(":") + std::string(hostname) + " 403 " + std::string(nick) + " " + std::string(channel) + " :No such channel\r\n"
 #define ERR_NOSUCHNICK(hostname, channel, targetNick)                     std::string(":") + std::string(hostname) + " 401 " + std::string(channel) + " " + std::string(targetNick) + " :No such nick/channel\r\n"
 #define ERR_USERONCHANNEL(hostname, channel, nick)                        std::string(":") + std::string(hostname) + " 443 " + std::string(nick) + " " + std::string(channel) + " :is already on channel\r\n"
@@ -118,7 +117,6 @@ void    printchannelvectorlist(std::string msg, std::vector<std::string> channel
 #define RPL_BOT(hostname, nick, message)                                  std::string(":") + std::string(hostname) + " 001 " + std::string(nick) + " Dad joke: " + std::string(message) + "\r\n"
 
 
-#define ERR_CHANOPRIVSNEEDED(nick, hostname)                              std::string(":") + std::string(hostname) + " 482 " + std::string(nick) + " :You're not channel operator !\r\n"
 #define RPL_NOTOPIC(nick, hostname, channel)                              std::string(":") + std::string(hostname) + " 331 " + std::string(nick) + " " + std::string(channel) + " :No topic is set\r\n"
 
 #define ERR_NOTREGISTERED(hostname, user)                                 std::string(":") + std::string(hostname) + " 451 " + std::string(user) + " :You have not registered\r\n"
@@ -138,3 +136,9 @@ void    printchannelvectorlist(std::string msg, std::vector<std::string> channel
 #define ERR_TOOMANYTARGETS(nick, hostname, target)                        std::string(":") + std::string(hostname) + " 407 " + std::string(nick) + " " + std::string(target) + " :Too many recipients\r\n"
 
 #define ERR_NOTAUTHENTICATED(nick, hostname)                              std::string(":") + std::string(hostname) + " 451 " + std::string(nick) + " :You have not registered\r\n"
+
+//MODE
+
+#define RPL_CHANNELMODEIS(nick, hostname, channel, mode)                  std::string(":") + std::string(hostname) + " 324 " + std::string(nick) + " " + std::string(channel) + " " + std::string(mode) + "\r\n"
+#define ERR_USERNOTINCHANNEL(hostname, nick, nick2, channel)              std::string(":") + std::string(hostname) + " 441 " + std::string(nick) + " " + std::string(nick2) + " " + std::string(channel) + " :They aren't on that channel\r\n"
+#define ERR_CHANOPRIVSNEEDED(hostname, nick, channel)                     std::string(":") + std::string(hostname) + " 482 " + std::string(nick) + " " + std::string(channel) + " :You're not channel operator\r\n"

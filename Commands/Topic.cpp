@@ -16,12 +16,12 @@ void Server::TOPIChandler(const std::vector<std::string> &data, int fd)
 
     // Check if the user is in the channel
     if (!channel->hasUser(fd))
-        return SENDMESSAGE(ERR_NOTONCHANNEL(Server_Name ,channelName), fd);
+        return SENDMESSAGE(ERR_NOTONCHANNEL(Server_Name, user.getNickName(), channelName), fd);
 
     // If only one argument is given, return the current topic
     if (data.size() == 2)
     {
-        if (channel->getTopic().empty())
+        if (channel->getTopic() == "TOPIC Not set")
             return SENDMESSAGE(RPL_NOTOPIC(user.getNickName(), Server_Name, channelName), fd);
         else
             return (SENDMESSAGE(RPL_TOPIC( Server_Name, channel->getTopic(), user.getNickName(), channelName), fd));
@@ -29,7 +29,7 @@ void Server::TOPIChandler(const std::vector<std::string> &data, int fd)
 
     // Ensure the user has permission to change the topic
     if (channel->getTopicRestricted() && !channel->isOperator(fd))
-        return SENDMESSAGE(ERR_CHANOPRIVSNEEDED(user.getNickName(), Server_Name), fd);
+        return SENDMESSAGE(ERR_CHANOPRIVSNEEDED(Server_Name, user.getNickName(), channelName), fd);
     
     // Set the new topic
 

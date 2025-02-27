@@ -70,18 +70,17 @@ void Server::INVITEhandler(const std::vector<std::string> &data, int fd)
 
     // Check if user is in channel
     if (!channel->isUserInChannel(fd))
-        return SENDMESSAGE(ERR_NOTONCHANNEL(Server_Name, channelName), fd);
+        return SENDMESSAGE(ERR_NOTONCHANNEL(Server_Name, user.getNickName(), channelName), fd);
 
     // Check channel modes and privileges
     if (channel->getInviteOnly() && !channel->isOperator(fd))
-        return SENDMESSAGE(ERR_CHANOPRIVSNEEDED(user.getNickName(), Server_Name), fd);
+        return SENDMESSAGE(ERR_CHANOPRIVSNEEDED(Server_Name, user.getNickName(), channelName), fd);
 
     // Find target client
     std::string targetNick = data[1];
     int targetFd = getClientByName(targetNick);
     if (targetFd == -1)
     {
-        std::cout << "here i am " << std::endl;
         return SENDMESSAGE(ERR_NOSUCHNICK(Server_Name, channelName, targetNick), fd);
     }
 
@@ -91,4 +90,6 @@ void Server::INVITEhandler(const std::vector<std::string> &data, int fd)
 
     //Invite User to channel
     channel->sendInvite(targetFd);
+    SENDMESSAGE(RPL_INVITING(Server_Name, user.getNickName(), targetNick, channelName), fd);
+    SENDMESSAGE(RPL_INVITED(user.getNickName(), Server_Name, targetNick, channelName), targetFd);
 }

@@ -83,14 +83,6 @@ class Server
             std::cout << "Server Destructor is called !"<< std::endl;
         }
 
-
-        void printUsersByNickname() const
-        {
-             for (std::map<int, Client>::const_iterator it = Users.begin(); it != Users.end(); ++it)
-            {
-                std::cout << "Nickname: " << it->second.getNickName() << std::endl;
-            }
-        }
         void functionCheck(std::vector <std::string> *val, int where);
         void ctrlD(char *Recv_Buffer, int flag);
         int functioncheck(std::string Nick, int fd);
@@ -98,15 +90,13 @@ class Server
         int Authenticate_User(int fd);
         void Check_Commands(std::string Command, int fd);
         void receiveData(const std::vector<std::string> &data, int fd);
+        void removeClient(int fd);
 
 
         // Channel Operations
         void fdToremove (int fd);
     	Channel* getChannel(const std::string& channelName);
     	Channel* createChannel(const std::string& channelName);
-
-        void removeClient(int fd);
-
         std::vector<std::string> getJoinedChannels(int fd);
 
 

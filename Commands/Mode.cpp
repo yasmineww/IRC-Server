@@ -6,7 +6,7 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 10:51:36 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/02/25 00:09:02 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/02/27 05:46:57 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,8 +142,8 @@ void Server::MODEhandler(const std::vector<std::string> &data, int fd)
 	std::vector<std::string> NONpermittedOPTIONS; // to store options with (-)
 
 
-    int sizee = data.size();
-    if (sizee == 1)
+    int size = data.size();
+    if (size == 1)
     {
         return (SENDMESSAGE(ERR_NEEDMOREPARAMS(user.getNickName(),  Server_Name, data[0]), fd));
     }
@@ -164,23 +164,21 @@ void Server::MODEhandler(const std::vector<std::string> &data, int fd)
     // Check if the channel exists
     Channel *channel = getChannel(chanName);
     if (!channel)
-        return SENDMESSAGE(":Laymouna.chat 403 " + user.getNickName() + " " + chanName + " :No such channel\n", fd);
+        return SENDMESSAGE(ERR_NOSUCHCHANNEL(Server_Name, chanName, user.getNickName()), fd);
 
-    if (sizee == 2 && !data[1].empty()) // MODE #chan only if you are not in the channel
+    if (size == 2 && !data[1].empty()) // MODE #chan only if you are not in the channel
     {
         // Get current mode settings
         std::string modes = channel->getModeString(); //  take a look on this function
-        return SENDMESSAGE(":Laymouna.chat 324 " + user.getNickName() + " " + chanName + " " + modes + "\r\n", fd);
+        return SENDMESSAGE(RPL_CHANNELMODEIS(user.getNickName(), Server_Name, chanName, modes), fd);
     }
 
-
     if (!channel->isUserInChannel(fd))
-        return SENDMESSAGE(ERR_NOTONCHANNEL(user.getHostName(), chanName), fd);
-
+        return SENDMESSAGE(ERR_NOTONCHANNEL(Server_Name, user.getNickName(), chanName), fd);
 
     // Verify that the user has operator privileges to modify modes
     if (channel->isOperator(fd) == false)
-        return SENDMESSAGE(":Laymouna.chat 482 " + user.getNickName() + " " + chanName + " :You're not a channel operator\n", fd);
+        return SENDMESSAGE(ERR_CHANOPRIVSNEEDED(Server_Name, user.getNickName(), chanName), fd);
 
     // Apply permitted modes (+)
     for (size_t i = 0, valIndex = 0; i < permittedOPTIONS.size(); i++)
@@ -194,10 +192,7 @@ void Server::MODEhandler(const std::vector<std::string> &data, int fd)
         else if (mode == "k")
         {
             if (valIndex < Values.size())
-            {
-                std::cout << "index is --> [" << valIndex << "]" << std::endl;
                 channel->setKey(Values[valIndex++]);  // Assign password
-            }
             else
                  SENDMESSAGE(":Laymouna.chat 461 " + user.getNickName() + " MODE +k :Not enough parameters\n", user.getClientFd());
         }
@@ -210,7 +205,7 @@ void Server::MODEhandler(const std::vector<std::string> &data, int fd)
                     channel->addOperator(target);
                 else
                 {
-                    SENDMESSAGE(":Server 401 " + user.getNickName() + " " + Values[valIndex - 1] + " :No such nick\n", user.getClientFd());
+                    SENDMESSAGE(ERR_USERNOTINCHANNEL(Server_Name, user.getNickName(), Values[valIndex - 1], chanName), fd);
                 }
             }
             else
@@ -251,7 +246,7 @@ void Server::MODEhandler(const std::vector<std::string> &data, int fd)
                 if (target != -1 && channel->hasUser(target))
                     channel->removeOperator(target);
                 else
-                    SENDMESSAGE(":Laymouna.chat 401 " + user.getNickName() + " " + Values[valIndex - 1] + " :No such nick\n", user.getClientFd());
+                    SENDMESSAGE(ERR_USERNOTINCHANNEL(Server_Name, user.getNickName(), Values[valIndex - 1], chanName), fd);
             }
             else
                 SENDMESSAGE(":Laymouna.chat 461 " + user.getNickName() + " MODE -o :Not enough parameters\n", user.getClientFd());
@@ -260,11 +255,20 @@ void Server::MODEhandler(const std::vector<std::string> &data, int fd)
             channel->removeUserLimit();
     }
 
-    // Broadcast mode changes to all users in the channel
-    std::string modeChangeMessage = ":" + user.getNickName() + "!~@127.0.0.1" + " MODE " + chanName; // needs the ip address
+    // A comment for younes: Here, i needed to add the name of the user who s affected by the mode. Example: MODE #chan +o salma --> :yasmine!~Laymouna.chat MODE #chan +o salma
+    // std::string modeChangeMessage = ":" + user.getNickName() + "!~" + Server_Name;
 
+    // // Append each string from the vector to the modeChangeMessage
+    // for (size_t i = 0; i < 4; ++i) {
+    //     if (data[i].empty())
+    //         break ;
+    //     modeChangeMessage += " ";
+    //     modeChangeMessage += data[i];
+    // }
+
+    std::string modeChangeMessage = ":" + user.getNickName() + "!~" + Server_Name + " MODE " + chanName; // needs the ip address
     for (size_t i = 0; i < permittedOPTIONS.size(); i++) modeChangeMessage += " +" + permittedOPTIONS[i];
     for (size_t i = 0; i < NONpermittedOPTIONS.size(); i++) modeChangeMessage += " -" + NONpermittedOPTIONS[i];
 
-    channel->broadcast(modeChangeMessage + "\n");
+    channel->broadcast(modeChangeMessage);
 }
