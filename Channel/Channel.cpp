@@ -26,6 +26,8 @@ Channel::Channel(std::string _name, std::string key) : name(_name), _key(key)
     topic = "TOPIC Not set";
     ClientsAmount = 0;
     userLimit = -1;
+    inviteOnly = false;
+    topicRestricted = false;
 }
 
 Channel::~Channel()
@@ -270,7 +272,7 @@ int Channel::getUserCount() const
 
 int Channel::getNewClient(int fd)
 {
-    
+
     for (std::map<int, Client>::iterator it = users.begin(); it != users.end(); ++it)
     {
         cout << "*it === " << it->first << endl;

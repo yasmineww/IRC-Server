@@ -66,6 +66,12 @@
         "type_traits": "cpp",
         "typeinfo": "cpp",
         "unordered_map": "cpp",
-        "vector": "cpp"
+        "vector": "cpp",
+        "__verbose_abort": "cpp",
+        "clocale": "cpp",
+        "execution": "cpp",
+        "print": "cpp",
+        "queue": "cpp",
+        "variant": "cpp"
     }
 }
