@@ -116,7 +116,6 @@ int Server::Authenticate_User(int fd)
 
     memset(Recv_Buffer, 0, sizeof(Recv_Buffer));
     Size_Read = recv(fd, Recv_Buffer, sizeof(Recv_Buffer) , 0);
-    std::cout << fd <<  " Recived From -> " << Recv_Buffer << std::endl ;
     check_status(Size_Read, "Error in setsockopt !");
     pas = functionSearchNewline(Recv_Buffer);
     functionCheck(pas, fd) ;
@@ -180,11 +179,9 @@ void functionhandler(int signal)
 // bind failed prob fixed
 
 void PrintArray(struct pollfd* pol){
-    std::cout << "==================================================" << std::endl ;
     for (int index = 0; index < Clientcount; index++){
         std::cout << "at  " << index <<  "Printing Client Fd => " << pol[index].fd << std::endl ;
     }
-    std::cout << "==================================================---------------" ;
 }
 
 void Server_Socket_Creation(std::string Port, std::string Pass_Code)
@@ -263,7 +260,6 @@ void Server_Socket_Creation(std::string Port, std::string Pass_Code)
             }
                 if (server_Cls.pollAr[0].revents & POLLIN)
                 {
-                    // std::cout << "Event Happended" << std::endl ;
                     server_Cls.acceptSocket_id = accept(socket_connection, (sockaddr *)&client_address, &client_addr_len);
                     int fcntlerror = fcntl(server_Cls.acceptSocket_id, F_SETFL, O_NONBLOCK);
                     if (fcntlerror < 0)
@@ -289,7 +285,6 @@ void Server_Socket_Creation(std::string Port, std::string Pass_Code)
                         TOADD.first = server_Cls.acceptSocket_id ;
                         TOADD.second.fd = server_Cls.acceptSocket_id;  // Adding User Socker ID to the USER Struct
                         server_Cls.Users.insert(TOADD);
-                        std::cout << "Here " << std::endl ;
                     }
                 }
             server_Cls.Check_client_Request();
