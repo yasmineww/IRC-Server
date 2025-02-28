@@ -29,6 +29,7 @@ class Channel
         bool    inviteOnly;
         bool    topicRestricted;
         int     userLimit;
+        bool    limitsBoolean;
 
     public:
         int     ClientsAmount;
@@ -37,6 +38,15 @@ class Channel
         Channel();
         Channel(std::string _name, std::string key = "");
         ~Channel();
+
+        bool getLimitsBoolean()
+        {
+            return limitsBoolean ;
+        };
+        void  setLimitsBoolean(bool status)
+        {
+            limitsBoolean = status;
+        };
 
         // Getters
         std::string getName() const;

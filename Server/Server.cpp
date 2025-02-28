@@ -120,10 +120,6 @@ int Server::Authenticate_User(int fd)
     functionCheck(pas, fd) ;
     if (Size_Read == 0)
     {
-        cout << "ctrl cc" << endl;
-
-
-
         removeClient(fd);
         std::cout << "\033[91mTHE CLIENT *** " << user.getNickName() << " *** DISCONNECTED\033[0m" << std::endl;
         return (-1);
@@ -161,7 +157,7 @@ void Server::Check_client_Request()
                     // fdToremove(it->fd);
                     // close(it->fd);
                     pollAr.erase(it);
-                    std::cout << "Removed " << std::endl ;
+                    // std::cout << "Removed " << std::endl ;
                     return ;
                 }
             }

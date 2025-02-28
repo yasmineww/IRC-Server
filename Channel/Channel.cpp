@@ -18,8 +18,9 @@ Channel::Channel()
     _key = "";
     topic = "TOPIC Not set";
     inviteOnly = false;
-    topicRestricted = false;
+    topicRestricted = true;
     userLimit = -1;
+    limitsBoolean = false;
 }
 
 Channel::Channel(std::string _name, std::string key) : name(_name), _key(key)
@@ -28,7 +29,8 @@ Channel::Channel(std::string _name, std::string key) : name(_name), _key(key)
     ClientsAmount = 0;
     userLimit = -1;
     inviteOnly = false;
-    topicRestricted = false;
+    topicRestricted = true;
+    limitsBoolean = false;
 }
 
 Channel::~Channel()
@@ -38,13 +40,23 @@ Channel::~Channel()
 
 std::string Channel::getModeString() const
 {
+
+
     std::string modeString = "+";
 
     if (inviteOnly) modeString += "i";
-    if (topicRestricted) modeString += "t";
-    if (hasKey()) modeString += "k";
-    if (userLimit > 0) modeString += "l";
-    // if (operatorOnly) modeString += "o";
+
+    if (topicRestricted)
+    {
+        modeString += "t";
+    }
+
+    if (hasKey())
+        modeString += "k";
+
+    if (userLimit > 0)
+        modeString += "l " + std::to_string(userLimit);
+
 
     if (modeString == "+") // No modes set
         return "+t";
@@ -195,12 +207,8 @@ void Channel::removeUser(int fd)
 
 bool Channel::hasUser(int fd)
 {
-    cout <<  "debugging : file descp " <<  fd  << endl;
     if (users.find(fd) != users.end())
-    {
-        cout << "the user is in the channel "<< endl;
         return (true);
-    }
     return false;
 }
 
@@ -276,7 +284,6 @@ int Channel::getNewClient(int fd)
 
     for (std::map<int, Client>::iterator it = users.begin(); it != users.end(); ++it)
     {
-        cout << "*it === " << it->first << endl;
         if (it->first != fd)
             return (it->first);
     }

@@ -13,11 +13,11 @@
 #include "../Utils/Macros.hpp"
 
 void Server::JOINhandler(const std::vector<std::string> &data, int fd){
-    
+
     Client user = Users[fd];
     if (data.size() < 2)
         return (SENDMESSAGE(ERR_NEEDMOREPARAMS(user.getNickName(),  Server_Name, data[0]), fd));
-    
+
     std::vector<std::string> channels;
     std::vector<std::string> keys;
     std::string store;
@@ -32,16 +32,17 @@ void Server::JOINhandler(const std::vector<std::string> &data, int fd){
             keys.push_back(store);
     }
 
-    for (size_t i = 0; i < channels.size(); i++){
+    for (size_t i = 0; i < channels.size(); i++)
+    {
         if (channels[i][0] != '#' && (channels[i][0] != '&')){
             SENDMESSAGE(ERR_NOSUCHCHANNEL(Server_Name, channels[i], user.getNickName()), fd);
-            continue;   
+            continue;
         }
         Channel *channel = getChannel(channels[i]);
         if (!channel) {
             channel = createChannel(channels[i]);
             channel->addOperator(fd);
-            
+
         }
         else {
             if (channel->isUserInChannel(fd))
@@ -53,7 +54,7 @@ void Server::JOINhandler(const std::vector<std::string> &data, int fd){
             }
             if (channel->getInviteOnly() == true && !channel->isInvited(fd)){
                 SENDMESSAGE(ERR_INVITEONLYCHAN(user.getNickName(), Server_Name, channel->getName()), fd);
-                continue;   
+                continue;
             }
             if (channel->getUserLimit() != -1 && channel->getUserCount() >= channel->getUserLimit()){
                 SENDMESSAGE(ERR_CHANNELISFULL(user.getNickName(),  Server_Name, channel->getName()), fd);
@@ -63,26 +64,46 @@ void Server::JOINhandler(const std::vector<std::string> &data, int fd){
         channel->addUser(user, fd);
         channel->broadcast(RPL_JOIN(user.getNickName(), user.getUserName(), channels[i], "127.0.0.1"));
         // :Pentagone.chat MODE #chan +t we will turn msg into this
-        std::string msg = ":" + Server_Name + " MODE " + channel->getName() + " +t\r\n"; 
-        SENDMESSAGE(msg, fd); 
+        std::string msg = ":" + Server_Name + " MODE " + channel->getName() + " +t\r\n";
+        SENDMESSAGE(msg, fd);
         SENDMESSAGE(RPL_NAMREPLY(Server_Name, channel->getUserList(), channels[i] ,user.getNickName()), fd);
         SENDMESSAGE(RPL_ENDOFNAMES(Server_Name, user.getNickName(), channels[i]), fd);
         SENDMESSAGE(RPL_TOPIC(Server_Name, channel->getTopic(),  user.getNickName(), channel->getName()), fd);
+        if (channel->getTopicRestricted())
+        {
+            std::string modeChangeMessage = ":" + user.getNickName() + "!~" + Server_Name + " MODE " + channels[i] + " +" + "t\r\n";
+            SENDMESSAGE(modeChangeMessage, fd);
+        }
+        if (channel->getLimitsBoolean())
+        {
+            std::string modeChangeMessage = ":" + user.getNickName() + "!~" + Server_Name + " MODE " + channels[i] + " +" + "l " + std::to_string(channel->getUserLimit()) + "\r\n";
+            SENDMESSAGE(modeChangeMessage, fd);
+        }
+        if (channel->getInviteOnly())
+        {
+            std::string modeChangeMessage = ":" + user.getNickName() + "!~" + Server_Name + " MODE " + channels[i] + " +" + "i" + "\r\n";
+            SENDMESSAGE(modeChangeMessage, fd);
+        }
+        if (channel->hasKey())
+        {
+            std::string modeChangeMessage = ":" + user.getNickName() + "!~" + Server_Name + " MODE " + channels[i] + " +" + "k " + channel->getKey() + "\r\n";
+            SENDMESSAGE(modeChangeMessage, fd);
+        }
     }
 }
-        
+
 // Replies that I added
-// ERR_NEEDMOREPARAMS RPL_NAMREPLY RPL_ENDOFNAMES 
+// ERR_NEEDMOREPARAMS RPL_NAMREPLY RPL_ENDOFNAMES
 //need ip address
- 
+
 //JOIN Command
 //check which replies are being broadcasted
 //should i add mode notice when joining the channel??
 
-//MODE Command 
-// MODE #chan1 +i              
+//MODE Command
+// MODE #chan1 +i
 // :yasmine!~Pentagone.chat MODE #chan1 +i
-// if you are not on the channel, and do MODE #chan1, the output is :Pentagone.chat 324 mohamed #chan1 +t 
+// if you are not on the channel, and do MODE #chan1, the output is :Pentagone.chat 324 mohamed #chan1 +t
 
 //INVITE mama #chan1
 // :Pentagone.chat 341 yasmine mama #chan1 -->channel op
