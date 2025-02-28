@@ -50,19 +50,35 @@ void Server::removeClient(int fd)
     std::string nickname = client.getNickName();
 
     // Notify all channels and remove client from them
+    std::vector<std::string> channelsToRemove;
     for (std::map<std::string, Channel*>::iterator chIt = channels.begin(); chIt != channels.end(); ++chIt)
     {
         Channel *channel = chIt->second;
         if (channel->hasUser(it->first))
         {
             channel->broadcast(":" + nickname + " QUIT :Client disconnected\r\n");
+            if (channel->getUserCount() > 1 && channel->isOperator(fd))
+                channel->addOperator(channel->getNewClient(fd));
             channel->removeUser(fd);
+
+        }
+        if (!channel->getUserCount())
+            channelsToRemove.push_back(chIt->first); // Collect channel names to delete
+    }
+
+    Users.erase(fd);
+
+
+    for (size_t i = 0; i < channelsToRemove.size(); i++)
+    {
+        std::map<std::string, Channel*>::iterator it = channels.find(channelsToRemove[i]);
+        if (it != channels.end())
+        {
+            delete it->second;
+            channels.erase(it);
         }
     }
 
-    // Remove the client from the server's user list
-    Users.erase(fd);
-    std::cout << "\033[91mTHE CLIENT *** " << nickname << " *** DISCONNECTED\033[0m" << std::endl;
     close(fd);
 }
 

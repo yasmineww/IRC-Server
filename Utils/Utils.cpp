@@ -11,6 +11,7 @@ int check_status(int status, std::string value) {
 }
 
 void SENDMESSAGE(std::string MESSAGE, int fd){
+
     ssize_t s = send(fd, MESSAGE.c_str(), MESSAGE.size(), 0);
     if (s < 0) throw (std::logic_error("Error Sending Message"));
 }

@@ -55,7 +55,8 @@ int lenth(char *lenth){
     return (i);
 }
 
-void Server::ctrlD(char *Recv_Buffer, int fd){
+void Server::ctrlD(char *Recv_Buffer, int fd)
+{
     std::map<int, Client>::iterator it ;
     if (lenth(Recv_Buffer) > 0 && Recv_Buffer[lenth(Recv_Buffer) - 1] != '\n'){
         this->Users.find(fd)->second.Buffering = 1;
@@ -81,14 +82,12 @@ std::vector<std::string> *functionSearchNewline(char *Recvbuffer){
     for (size_t i = 0; i < vec->size(); i++){
         vec->pop_back();
     };
-    // int counter = 0;
     for (int i = 0; i < lenth(Recvbuffer); i++){
         store += Recvbuffer[i];
         if (Recvbuffer[i] == '\n'){
             store += '\0';
             vec->push_back(store) ;
             store = "";
-            // counter++ ;
         }
     }
     vec->push_back(store) ;
@@ -121,8 +120,12 @@ int Server::Authenticate_User(int fd)
     functionCheck(pas, fd) ;
     if (Size_Read == 0)
     {
-        std::cout << "\033[91mTHE CLIENT *** " << user.getNickName() << " *** DISCONNECTED\033[0m" << std::endl;
+        cout << "ctrl cc" << endl;
+
+
+
         removeClient(fd);
+        std::cout << "\033[91mTHE CLIENT *** " << user.getNickName() << " *** DISCONNECTED\033[0m" << std::endl;
         return (-1);
     }
     // ctrlD(Recv_Buffer, this->start->fd);
@@ -167,9 +170,13 @@ void Server::Check_client_Request()
 
 }
 
-void functionhandler(int signal)
+
+void    functionhandler(int signal)
 {
-    if (signal == SIGINT){
+    if (signal == SIGINT)
+    {
+        std::cout << BLUE << "Server is shutting down\033[0m" << RESET << std::endl;
+
         close(socket_connection);
         exit(1);
     }

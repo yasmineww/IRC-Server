@@ -144,6 +144,7 @@ int	store_options(std::vector<std::string> &data, std::vector<std::string> &perm
 
 void Server::MODEhandler(const std::vector<std::string> &data, int fd)
 {
+    int counter = 0;
     Client user = Users[fd];
 
 
@@ -172,11 +173,11 @@ void Server::MODEhandler(const std::vector<std::string> &data, int fd)
 
 
 
-    if (flagorico == 0x0)
-    {
-        flagorico = 0;
-        return ;
-    }
+    // if (flagorico == 0x0)
+    // {
+    //     flagorico = 1;
+    //     return ;
+    // }
 
     // Check if the channel exists
     Channel *channel = getChannel(chanName);
@@ -200,6 +201,11 @@ void Server::MODEhandler(const std::vector<std::string> &data, int fd)
     // Apply permitted modes (+)
     for (size_t i = 0, valIndex = 0; i < permittedOPTIONS.size(); i++)
     {
+        if (flagorico == 0 && counter == 1)
+        {
+            flagorico = 1;
+            return ;
+        }
         std::string mode = permittedOPTIONS[i];
 
         if (mode == "i" && channel->getInviteOnly() == false)
@@ -264,12 +270,18 @@ void Server::MODEhandler(const std::vector<std::string> &data, int fd)
 
             SENDMESSAGE(":Laymouna.chat 472 " + user.getNickName() + " " +  mode  + " :is an unknown mode char to me\n", user.getClientFd());
         }
+        counter++;
 
     }
-
+    counter = 0;
     // Apply non-permitted modes (-)
     for (size_t i = 0, valIndex = 0; i < NONpermittedOPTIONS.size(); i++)
     {
+        if (flagorico == 0 && counter == 1)
+        {
+            flagorico = 1;
+            return ;
+        }
         std::string mode = NONpermittedOPTIONS[i];
 
         if (mode == "i" && channel->getInviteOnly() == true)
@@ -315,8 +327,9 @@ void Server::MODEhandler(const std::vector<std::string> &data, int fd)
         {
             SENDMESSAGE(":Laymouna.chat 472 " + user.getNickName() + " " +  mode  + " :is an unknown mode char to me\n", user.getClientFd());
         }
+        counter++;
     }
-
+    counter = 0;
     // A comment for younes: Here, i needed to add the name of the user who s affected by the mode. Example: MODE #chan +o salma --> :yasmine!~Laymouna.chat MODE #chan +o salma
     // std::string modeChangeMessage = ":" + user.getNickName() + "!~" + Server_Name;
 

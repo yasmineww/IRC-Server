@@ -12,7 +12,8 @@
 
 #include "Channel.hpp"
 
-Channel::Channel(){
+Channel::Channel()
+{
     name = "";
     _key = "";
     topic = "TOPIC Not set";

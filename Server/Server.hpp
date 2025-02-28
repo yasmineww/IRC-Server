@@ -102,6 +102,10 @@ class Server
 
         int getClientByName(const std::string& nickname);
 
+        void     CtrlC_handle();
+
+
+
 
 };
 

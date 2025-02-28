@@ -39,7 +39,9 @@ Client::Client(int fd, std::string user, std::string nickname)
 
 
 
-Client::~Client() {}
+Client::~Client()
+{
+}
 
 
 
