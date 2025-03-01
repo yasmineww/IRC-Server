@@ -6,11 +6,11 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 11:04:43 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/02/27 10:12:49 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/03/01 16:03:09 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Channel.hpp"
+#include "../Headers/Channel.hpp"
 
 Channel::Channel()
 {
@@ -40,16 +40,12 @@ Channel::~Channel()
 
 std::string Channel::getModeString() const
 {
-
-
     std::string modeString = "+";
 
     if (inviteOnly) modeString += "i";
 
     if (topicRestricted)
-    {
         modeString += "t";
-    }
 
     if (hasKey())
         modeString += "k";
@@ -57,22 +53,17 @@ std::string Channel::getModeString() const
     if (userLimit > 0)
         modeString += "l " + std::to_string(userLimit);
 
-
     if (modeString == "+") // No modes set
         return "+t";
 
     return modeString;
 }
 
-// Add user to channel
 void Channel::addUser(Client user, int fd)
 {
-    // cout << "actual user AMount " << getUserCount() << endl;
-    // cout << "actual user Limit " << userLimit << endl;
     users[fd] = user;
 }
 
-// Check if a user is in the channel
 bool Channel::isUserInChannel(int fd)
 {
 
@@ -81,7 +72,6 @@ bool Channel::isUserInChannel(int fd)
     return (false);
 }
 
-// Add operator
 void Channel::addOperator(int fd)
 {
     if (!isOperator(fd))
@@ -93,7 +83,6 @@ void Channel::sendInvite(int fd)
     invited.push_back(fd);
 }
 
-// Remove operator
 void Channel::removeOperator(int fd)
 {
     for (std::vector<int>::iterator it = operators.begin(); it != operators.end(); ++it)
@@ -106,7 +95,6 @@ void Channel::removeOperator(int fd)
     }
 }
 
-// Check if a user is an operator
 bool Channel::isOperator(int fd)
 {
     if (std::find(operators.begin(), operators.end(), fd) != operators.end())
@@ -115,7 +103,6 @@ bool Channel::isOperator(int fd)
 
 }
 
-// Check if a user is invited
 bool Channel::isInvited(int fd)
 {
     if (std::find(invited.begin(), invited.end(), fd) != invited.end())
@@ -124,17 +111,13 @@ bool Channel::isInvited(int fd)
 
 }
 
-// Set the channel topic
 void Channel::setTopic(std::string newTopic){
     topic = newTopic;
 }
 
-// Get the channel topic
 std::string Channel::getTopic() const{
     return topic;
 }
-
-// Broadcast message to all users in the channel4
 
 void Channel::broadcast_priv(const std::string& message, int sender_fd)
 {
@@ -160,10 +143,8 @@ std::string Channel::getName() const{
     return name;
 }
 
-// printf op
 void Channel::print_operators(){
 
-    // cout << " OPERATORSSSS   >>> " << endl;
     std::cout << "Number of operators: " << operators.size() << std::endl;
 
     for (std::vector<int>::iterator it = operators.begin(); it != operators.end(); ++it) {
@@ -188,7 +169,6 @@ std::string Channel::getKey() const{
     return _key;
 }
 
-// Function to set/change the key of the channel
 void Channel::setKey(const std::string &key)
 {
     _key = key;

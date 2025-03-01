@@ -6,11 +6,11 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/21 17:33:39 by ymakhlou          #+#    #+#             */
-/*   Updated: 2025/02/26 23:45:17 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/03/01 17:24:22 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../Utils/Macros.hpp"
+#include "../Headers/Macros.hpp"
 
 
 bool Client::check_Authentication()
@@ -20,7 +20,7 @@ bool Client::check_Authentication()
     return false;
 }
 
- Client::Client()
+Client::Client()
 {
     this->Auth_PASS = false ;
     this->Auth_NICK = false ;

@@ -6,7 +6,7 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 10:52:04 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/02/27 17:08:14 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/03/01 18:07:20 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,11 +41,11 @@ static int socket_connection ;
 
 using namespace std;
 
-# include "../Client/Client.hpp"
-# include "../Server/Server.hpp"
-# include "../Channel/Channel.hpp"
+# include "../Headers/Client.hpp"
+# include "../Headers/Server.hpp"
+# include "../Headers/Channel.hpp"
 
-#define PAIN 999999
+#define MAX_BUFF 100000 
 
 # define GREEN "\e[1;32m"
 # define RESET "\e[0m"
@@ -63,7 +63,7 @@ using namespace std;
 
 
 /* Extra Temp Func */
-void    printchannelvectorlist(std::string msg, std::vector<std::string> channels);
+// void    printchannelvectorlist(std::string msg, std::vector<std::string> channels);
 
 
 #define PART_RPL(nick, channelName) (":")+ std::string(nick)+ std::string(" !~ ") + std::string(nick) + std::string(" @localhost ") + std::string(" PART ") + std::string(channelName) + std::string("\r\n");

@@ -6,11 +6,11 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 13:35:59 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/02/27 10:45:37 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/03/01 18:07:25 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../Utils/Macros.hpp"
+#include "../Headers/Macros.hpp"
 
 std::string	Welcome_mssg(void)
 {
@@ -43,7 +43,6 @@ std::string	Server_Opening(void)
 	welcome.append(RESET);
 	return (welcome);
 };
-
 
 int lenth(char *lenth){
     long long i = 0;
@@ -110,7 +109,7 @@ int Server::Authenticate_User(int fd)
 {
     Client user = Users[fd];
     int Size_Read = 0;
-    char Recv_Buffer[PAIN];
+    char Recv_Buffer[MAX_BUFF];
     std::vector<std::string> *pas ;
 
     memset(Recv_Buffer, 0, sizeof(Recv_Buffer));
@@ -124,7 +123,6 @@ int Server::Authenticate_User(int fd)
         std::cout << "\033[91mTHE CLIENT *** " << user.getNickName() << " *** DISCONNECTED\033[0m" << std::endl;
         return (-1);
     }
-    // ctrlD(Recv_Buffer, this->start->fd);
     memset(Recv_Buffer, 0, sizeof(Recv_Buffer));
     return (0);
 }
@@ -166,7 +164,6 @@ void Server::Check_client_Request()
 
 }
 
-
 void    functionhandler(int signal)
 {
     if (signal == SIGINT)
@@ -178,8 +175,6 @@ void    functionhandler(int signal)
     }
 }
 
-
-// bind failed prob fixed
 
 void PrintArray(struct pollfd* pol){
     for (int index = 0; index < Clientcount; index++){
@@ -243,7 +238,6 @@ void Server_Socket_Creation(std::string Port, std::string Pass_Code)
 
         Clientcount++;
 
-
         server_Cls.pollAr.push_back(server_Cls.poll_strc);
         int checkfcntl = fcntl(socket_connection, F_SETFL, O_NONBLOCK);
         if (checkfcntl < 0)
@@ -253,6 +247,8 @@ void Server_Socket_Creation(std::string Port, std::string Pass_Code)
         }
         signal(SIGINT, functionhandler);
         signal(SIGPIPE, functionhandler);
+
+        
         while (1)
         {
             server_Cls.poll_returnV = poll(server_Cls.pollAr.data(), server_Cls.pollAr.size() , -1);
