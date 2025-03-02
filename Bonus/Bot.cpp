@@ -6,7 +6,7 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/01 16:04:37 by ymakhlou          #+#    #+#             */
-/*   Updated: 2025/03/01 19:32:14 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/03/02 17:43:51 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,8 @@ Bot::~Bot(){}
 
 void Bot::sendMessage(std::string MESSAGE){
 
-    if (send(sockfd, MESSAGE.c_str(), MESSAGE.size(), 0) < 0){
-        close(sockfd);
+    if (send(sockfd, MESSAGE.c_str(), MESSAGE.size(), 0) < 0)
         throw (std::logic_error("Error: Failed to send message."));
-    }
 }
 
 void Bot::connectToServer(){
@@ -39,14 +37,13 @@ void Bot::connectToServer(){
     // htons == Host TO Network Short, converts the port number from host byte order to network byte order
     // network protocols expect data in a specific byte order (big-endian).
     server_addr.sin_addr.s_addr = inet_addr("127.0.0.1"); // Server is on localhost and is running on the same machine as the bot.
-    if (connect(sockfd, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
-        close(sockfd);
+    if (connect(sockfd, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0)
         throw std::logic_error("Error: Failed to connect to server. Make sure the server is running on port " + port);
-    }
-    std::cout << "Bot is connected." << std::endl;
 }
 
-void Bot::authenticate(){
+void Bot::authenticate()
+{
+
     std::string passCmd = "PASS " + password + "\r\n";
     std::string nickCmd = "NICK Bot\r\n";
     std::string userCmd = "USER Bot 0 * :Bot\r\n";
@@ -54,11 +51,11 @@ void Bot::authenticate(){
     sendMessage(passCmd);
     sendMessage(nickCmd);
     sendMessage(userCmd);
-    std::cout << "Bot is authenticated." << std::endl;
+    // std::cout << "Bot is authenticated." << std::endl;
 }
 
-void Bot::sendRandomFact(const std::string &sender, const std::string &category) {
-
+void Bot::sendRandomFact(const std::string &sender, const std::string &category)
+{   
     std::vector<std::string> historyFacts;
     historyFacts.push_back("The Great Wall of China is over 13,000 miles long.");
     historyFacts.push_back("The ancient Egyptians built the pyramids as tombs for pharaohs.");
@@ -74,34 +71,45 @@ void Bot::sendRandomFact(const std::string &sender, const std::string &category)
     techFacts.push_back("The iPhone was introduced by Apple in 2007.");
     techFacts.push_back("The World Wide Web was invented by Tim Berners-Lee in 1989.");
 
-    std::vector<std::string> *facts = nullptr;
-    if (category == "History") {
-        facts = &historyFacts;
+    std::vector<std::string> facts;
+    if (category == "History")
+    {
+        facts = historyFacts;
     } else if (category == "Sport") {
-        facts = &sportFacts;
+        facts = sportFacts;
     } else if (category == "Tech") {
-        facts = &techFacts;
+        facts = techFacts;
     }
 
-    if (facts && !facts->empty()) {
+    if (!facts.empty())
+    {
         int randomIndex = rand() % 3;
 
-        std::string fact = (*facts)[randomIndex] + "\r\n";
+        std::string fact = (facts)[randomIndex] + "\r\n";
 
         std::string response = PRIVMSG_FORMAT("Bot", "Bot", "127.0.0.1", sender, fact);
         sendMessage(response);
-    } else {
-        std::string message = "Try 'History', 'Sport', or 'Tech' and I'll provide a fun fact correspondingly.\r\n";
+    } else
+    {
+        std::string message = " Try 'History', 'Sport', or 'Tech'.\r\n";
         std::string defaultResponse = PRIVMSG_FORMAT("Bot", "Bot", "127.0.0.1", sender, message);
         sendMessage(defaultResponse);
     }
 }
 
-void Bot::handlePrivmsg(const std::string &message) {
-
+void Bot::handlePrivmsg(const std::string &message)
+{
+    
     std::string sender = message.substr(1, message.find('!') - 1); // get sender's nickname, according to privmsg format ":" + user.getNickName() + "!~"
-    std::string content = message.substr(message.find(':', 1));
-    sendRandomFact(sender, content);
+    std::string content = message.substr(message.find(':', 2) + 1); //add case when there is no ':'
+
+    std::string contentwe = "";
+    for (size_t i = 0; i < content.size(); i++)
+    {
+        if (content[i] != ' ' && content[i] != '\n' &&  content[i] != '\r')
+            contentwe += content[i];
+    }
+    sendRandomFact(sender, contentwe);
 }
 
 void Bot::handleMessages(){
@@ -111,20 +119,36 @@ void Bot::handleMessages(){
     {
         memset(buffer, 0, sizeof(buffer));
         int bytesReceived = recv(sockfd, buffer, sizeof(buffer), 0);
-        if (bytesReceived <= 0){
-            close(sockfd);
+        if (bytesReceived <= 0)
             throw std::logic_error("Error: Connection closed or error occurred. " + port);
-        }
 
         std::string message(buffer);
-        std::cout << "Received: " << message << std::endl; //debug
+        // std::cout << "Received: " << message << std::endl; //debug
 
+        if(message.find("Password incorrect") != std::string::npos)
+            throw (std::logic_error("Incorrect Password. Please try again."));
         if (message.find("PRIVMSG") != std::string::npos) {
             handlePrivmsg(message);
             continue;
         }
-        std::string msg = "I only respond to PRIVMSG commands.\r\n";
-        sendMessage(msg);
+        sendMessage("I only respond to PRIVMSG commands.\r\n");
+    } 
+}
+
+int main (int ac, char **av){
+    
+    try 
+    {
+        if (ac != 3)
+            throw (std::logic_error("Usage: ./Bot <Port> <Password> \n"));
+        Bot bot(av[1], av[2]);
+        bot.connectToServer();
+        bot.authenticate();
+        bot.handleMessages();
+
     }
-    close(sockfd);    
+    catch (std::exception &e){
+         std::cerr << e.what() << std::endl;
+    }
+
 }

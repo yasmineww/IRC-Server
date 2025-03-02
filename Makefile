@@ -6,7 +6,7 @@
 #    By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/10 10:52:26 by youmoukh          #+#    #+#              #
-#    Updated: 2025/03/01 19:12:30 by ymakhlou         ###   ########.fr        #
+#    Updated: 2025/03/02 17:19:20 by ymakhlou         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,7 +25,7 @@ SRC = main.cpp Server/Utils.cpp Server/Server.cpp Server/Server_Commands.cpp Ser
 	  Commands/Topic.cpp Commands/Mode.cpp Commands/Notice.cpp Commands/Quit.cpp \
 	  Commands/Privmsg.cpp Channel/Channel.cpp \
 
-BONUS = Bonus/Bot.cpp Bonus/mainBonus.cpp
+BONUS = Bonus/Bot.cpp
 
 HEADERS = Headers/Macros.hpp Headers/Server.hpp Headers/Client.hpp Headers/Channel.hpp
 
@@ -60,7 +60,8 @@ ${BNAME} : $(OBJB) $(BHEADERS)
 	@$(CC) $(FLAGS) -c $< -o $@
 	@echo "\r\t\t\t\t\t\t\t$(GREEN){DONE}$(RED) █$(RESET)"
 
-bonus : ${BNAME}
+bonus : ${BNAME} ${BHEADERS}
+	@echo "$(GREEN)█████████████████████ Making Bot 🍊 █████████████████████████$(RESET)"
 
 clean :
 	@echo "$(YELLOW)--> $(RESET)$(RED)Deleting files$(RESET) : " $(OBJS)

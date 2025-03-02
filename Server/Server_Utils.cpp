@@ -83,7 +83,10 @@ void Server::removeClient(int fd)
 }
 
 void Server::receiveData(const std::vector<std::string> &data, int fd)
-{
+{   
+    for(size_t i = 0; i < data.size(); i++)
+        std::cout << "Data[" << i << "] : " << data[i] << std::endl;
+
     if (!data.empty())
     {
         const std::string &command = data[0];

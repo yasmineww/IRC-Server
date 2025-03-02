@@ -6,7 +6,7 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 13:35:59 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/03/01 18:07:25 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/03/02 17:41:55 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,7 +114,6 @@ int Server::Authenticate_User(int fd)
 
     memset(Recv_Buffer, 0, sizeof(Recv_Buffer));
     Size_Read = recv(fd, Recv_Buffer, sizeof(Recv_Buffer) , 0);
-    check_status(Size_Read, "Error in setsockopt !");
     pas = functionSearchNewline(Recv_Buffer);
     functionCheck(pas, fd) ;
     if (Size_Read == 0)
@@ -205,11 +204,13 @@ void Server_Socket_Creation(std::string Port, std::string Pass_Code)
 
         if(socket_connection == -1) check_status(server_Cls.bind_Arg, "Error in the Socket Creation !");
 
-        if (setsockopt(socket_connection, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
-        {
-            close (socket_connection);
-            check_status(server_Cls.bind_Arg, "Error in setsockopt !");
-        }
+
+        setsockopt(socket_connection, SOL_SOCKET, SO_REUSEPORT, &opt, sizeof(opt));
+        // check_status(eror, "Error in setsockopt !");
+        // if (eror < 0)
+        // {
+            // close (socket_connection);
+        // }
 
         server_Cls.bind_Arg = bind(socket_connection, (struct sockaddr *)&server_Cls.bindSocket_str, sizeof(server_Cls.bindSocket_str));
         if (server_Cls.bind_Arg < 0)
