@@ -124,8 +124,8 @@ void Server::PASShandler(const std::vector<std::string> &data, int fd)
         return (SENDMESSAGE(ERR_ALREADYREGISTERED(user.getNickName(),  Server_Name), fd));
     if (data.size() != 2)
         return (SENDMESSAGE(ERR_PASSWDMISMATCH(user.getNickName(),  Server_Name), fd));
-    if (data[1] == Server_PassCode){
-        std::cout << Users.size() << std::endl ;
+    if (data[1] == Server_PassCode)
+    {
         it->second.AuthStep += 1;
         it->second.Auth_PASS = true ;
         return ;

@@ -12,7 +12,6 @@ void Server::KICKhandler(const std::vector<std::string> &data, int fd)
     std::string reason = (data.size() > 3) ? data[3] : "No reason specified";
     if (reason[0] == ':')
         reason = reason.substr(1);
-    cout << channelName << " " << targetNick << " " << reason << endl;
 
     // Retrieve the channel
     Channel *channel = getChannel(channelName);

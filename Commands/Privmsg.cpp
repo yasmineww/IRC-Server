@@ -2,7 +2,7 @@
 #include "../Headers/Macros.hpp"
 
 void Server::PRIVMSGhandler(const std::vector<std::string> &data, int fd){
-   
+
     Client user = Users[fd];
 
     if (data.size() < 3)
@@ -24,8 +24,7 @@ void Server::PRIVMSGhandler(const std::vector<std::string> &data, int fd){
     if (data[2][0] == ':')
         message = data[2].substr(1);
 
-    std::cout << "The message is " << message << std::endl;
-    
+
     for (size_t i = 0; i < receivers.size(); i++)
     {
         if (receivers[i][0] == '#' || receivers[i][0] == '&')
@@ -69,7 +68,7 @@ void Server::PRIVMSGhandler(const std::vector<std::string> &data, int fd){
 
            ERR_NORECIPIENT
 
-            
+
         ERR_NOTEXTTOSEND
            ERR_CANNOTSENDTOCHAN            ERR_NOTOPLEVEL
            ERR_WILDTOPLEVEL                ERR_TOOMANYTARGETS

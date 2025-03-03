@@ -114,14 +114,14 @@ int Server::Authenticate_User(int fd)
 
     memset(Recv_Buffer, 0, sizeof(Recv_Buffer));
     Size_Read = recv(fd, Recv_Buffer, sizeof(Recv_Buffer) , 0);
-    pas = functionSearchNewline(Recv_Buffer);
-    functionCheck(pas, fd) ;
     if (Size_Read == 0)
     {
         removeClient(fd);
         std::cout << "\033[91mTHE CLIENT *** " << user.getNickName() << " *** DISCONNECTED\033[0m" << std::endl;
         return (-1);
     }
+    pas = functionSearchNewline(Recv_Buffer);
+    functionCheck(pas, fd) ;
     memset(Recv_Buffer, 0, sizeof(Recv_Buffer));
     return (0);
 }
@@ -167,33 +167,26 @@ void    functionhandler(int signal)
 {
     if (signal == SIGINT)
     {
-        std::cout << BLUE << "Server is shutting down\033[0m" << RESET << std::endl;
-
+        std::cout << BLUE << "Server is shutting down." << RESET << std::endl;
         close(socket_connection);
-        exit(1);
+        exit(130);
+        // 130 for ctrl + c exit_status
     }
 }
 
-
-void PrintArray(struct pollfd* pol){
-    for (int index = 0; index < Clientcount; index++){
-        std::cout << "at  " << index <<  "Printing Client Fd => " << pol[index].fd << std::endl ;
-    }
-}
 
 void Server_Socket_Creation(std::string Port, std::string Pass_Code)
 {
-        cout << Server_Opening() << endl;
+        std::cout << Server_Opening() << std::endl;
 
         int opt = 1;
 
         Server server_Cls ;
         Client ForMulti_poll ;
 
-        if (Pass_Code.size() == 0) {
-            check_status(-1, "Error invalid Passcode!");
-            return ;
-        }
+        if (Pass_Code.size() == 0)
+            throw (std::logic_error("Error invalid Passcode!"));
+
         server_Cls.bindSocket_str.sin_family = AF_INET ;
         server_Cls.bindSocket_str.sin_addr.s_addr = INADDR_ANY;
         server_Cls.bindSocket_str.sin_port = htons(atoi(Port.c_str()));
@@ -202,28 +195,28 @@ void Server_Socket_Creation(std::string Port, std::string Pass_Code)
         server_Cls.Server_PassCode = Pass_Code ;
         socket_connection = socket(AF_INET, SOCK_STREAM, 0);
 
-        if(socket_connection == -1) check_status(server_Cls.bind_Arg, "Error in the Socket Creation !");
+        if(socket_connection < 0)
+            throw (std::logic_error(std::strerror(errno)));
 
-
-        setsockopt(socket_connection, SOL_SOCKET, SO_REUSEPORT, &opt, sizeof(opt));
-        // check_status(eror, "Error in setsockopt !");
-        // if (eror < 0)
-        // {
-            // close (socket_connection);
-        // }
+        int error = setsockopt(socket_connection, SOL_SOCKET, SO_REUSEPORT, &opt, sizeof(opt));
+        if (error < 0)
+        {
+            close (socket_connection);
+            throw (std::logic_error(std::strerror(errno)));
+        }
 
         server_Cls.bind_Arg = bind(socket_connection, (struct sockaddr *)&server_Cls.bindSocket_str, sizeof(server_Cls.bindSocket_str));
         if (server_Cls.bind_Arg < 0)
         {
             close(socket_connection);
-            check_status(server_Cls.bind_Arg, "Bind Faild !");
+            throw (std::logic_error(std::strerror(errno)));
         }
 
         server_Cls.Socket_listen = listen(socket_connection, 3);
         if (server_Cls.Socket_listen < 0)
         {
             close(socket_connection);
-            check_status(server_Cls.bind_Arg, "Listen Faild !");
+            throw (std::logic_error(std::strerror(errno)));
         }
 
         // the Client Struct For the Accept() function
@@ -244,49 +237,45 @@ void Server_Socket_Creation(std::string Port, std::string Pass_Code)
         if (checkfcntl < 0)
         {
             close(socket_connection);
-            check_status(checkfcntl, "Fcntl Faild !");
+            throw (std::logic_error(std::strerror(errno)));
         }
         signal(SIGINT, functionhandler);
         signal(SIGPIPE, functionhandler);
 
-        
+
         while (1)
         {
             server_Cls.poll_returnV = poll(server_Cls.pollAr.data(), server_Cls.pollAr.size() , -1);
             if (server_Cls.poll_returnV < 0)
             {
                 close(socket_connection);
-                check_status(server_Cls.poll_returnV, "Poll Faild !");
+                throw (std::logic_error(std::strerror(errno)));
             }
-                if (server_Cls.pollAr[0].revents & POLLIN)
+            if (server_Cls.pollAr[0].revents & POLLIN)
+            {
+                server_Cls.acceptSocket_id = accept(socket_connection, (sockaddr *)&client_address, &client_addr_len);
+                int fcntlerror = fcntl(server_Cls.acceptSocket_id, F_SETFL, O_NONBLOCK);
+                if (fcntlerror < 0)
                 {
-                    server_Cls.acceptSocket_id = accept(socket_connection, (sockaddr *)&client_address, &client_addr_len);
-                    int fcntlerror = fcntl(server_Cls.acceptSocket_id, F_SETFL, O_NONBLOCK);
-                    if (fcntlerror < 0)
-                    {
-                        close(socket_connection);
-                        check_status(fcntlerror, "Fcntl Faild !");
-                    }
-                    if (server_Cls.acceptSocket_id < 0)
-                    {
-                        close(socket_connection);
-                        check_status(server_Cls.acceptSocket_id, "Accept Command Faild !");
-                    }
-                    else
-                    {
-                        check_status(server_Cls.acceptSocket_id, "Accept Command Faild !");
-                        SENDMESSAGE(Welcome_mssg(),server_Cls.acceptSocket_id) ;
-
-                        server_Cls.poll_strc.fd = server_Cls.acceptSocket_id ;
-                        server_Cls.poll_strc.events = POLLIN ;
-
-                        server_Cls.pollAr.push_back(server_Cls.poll_strc);
-
-                        TOADD.first = server_Cls.acceptSocket_id ;
-                        TOADD.second.fd = server_Cls.acceptSocket_id;  // Adding User Socker ID to the USER Struct
-                        server_Cls.Users.insert(TOADD);
-                    }
+                    close(socket_connection);
+                    throw (std::logic_error(std::strerror(errno)));
                 }
+                if (server_Cls.acceptSocket_id < 0)
+                {
+                    close(socket_connection);
+                    throw (std::logic_error(std::strerror(errno)));
+                }
+                else
+                {
+                    SENDMESSAGE(Welcome_mssg(),server_Cls.acceptSocket_id) ;
+                    server_Cls.poll_strc.fd = server_Cls.acceptSocket_id ;
+                    server_Cls.poll_strc.events = POLLIN ;
+                    server_Cls.pollAr.push_back(server_Cls.poll_strc);
+                    TOADD.first = server_Cls.acceptSocket_id ;
+                    TOADD.second.fd = server_Cls.acceptSocket_id;  // Adding User Socker ID to the USER Struct
+                    server_Cls.Users.insert(TOADD);
+                }
+            }
             server_Cls.Check_client_Request();
         }
 }

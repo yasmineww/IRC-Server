@@ -19,14 +19,14 @@
 #include <iostream>
 
 
-class Bot 
+class Bot
 {
 
     private:
         std::string port;
         std::string password;
         int sockfd;
-    
+
     public:
         Bot(const std::string &port, const std::string &password);
         ~Bot();

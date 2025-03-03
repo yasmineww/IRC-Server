@@ -143,15 +143,6 @@ std::string Channel::getName() const{
     return name;
 }
 
-void Channel::print_operators(){
-
-    std::cout << "Number of operators: " << operators.size() << std::endl;
-
-    for (std::vector<int>::iterator it = operators.begin(); it != operators.end(); ++it) {
-        std::cout << "->>>>>>> " << *it << std::endl;
-    }
-
-}
 
 std::string Channel::getUserList() {
     std::stringstream ss;

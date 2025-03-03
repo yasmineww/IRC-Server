@@ -41,10 +41,7 @@ void Server::removeClient(int fd)
     // Check if the client exists
     std::map<int, Client>::iterator it = Users.find(fd);
     if (it == Users.end())
-    {
-        std::cerr << "Error: Client with fd " << fd << " not found.\n";
         return;
-    }
 
     Client &client = it->second;
     std::string nickname = client.getNickName();
@@ -83,10 +80,7 @@ void Server::removeClient(int fd)
 }
 
 void Server::receiveData(const std::vector<std::string> &data, int fd)
-{   
-    for(size_t i = 0; i < data.size(); i++)
-        std::cout << "Data[" << i << "] : " << data[i] << std::endl;
-
+{
     if (!data.empty())
     {
         const std::string &command = data[0];
@@ -99,8 +93,6 @@ void Server::receiveData(const std::vector<std::string> &data, int fd)
                 return (SENDMESSAGE(ERR_NOTREGISTERED(Server_Name, user.getHostName()), fd));
             (this->*commandMap[command])(data, fd);// calls the function (value) stored in the map at the key command
         }
-        else
-            std::cout << ": Invalid COMMAND " << command << std::endl ;
     }
 }
 
@@ -112,11 +104,7 @@ int Server::getClientByName(const std::string& nickname)
     for (std::map<int, Client>::iterator it = Users.begin(); it != Users.end(); ++it)
     {
         if (it->second.getNickName() == nickname)
-        {
-            cout << "Client found " << endl;
-            cout << it->second.getNickName() << "  " << nickname << "] fd -> [" << it->first << endl;
             return it->first; // Return the found  fd client .
-        }
     }
     return -1 ; // Return -1 for error
 }
