@@ -85,7 +85,7 @@ void Bot::sendRandomFact(const std::string &sender, const std::string &category)
     } else if (category == "Tech") {
         facts = techFacts;
     }
-    else if (category == "Founders") {
+    else if (category == "Team") {
         facts = Users;
     }
 
@@ -100,7 +100,7 @@ void Bot::sendRandomFact(const std::string &sender, const std::string &category)
         sendMessage(response);
     } else
     {
-        std::string message = " Try 'History', 'Sport', 'Tech' or 'Founders' .\r\n";
+        std::string message = " Try 'History', 'Sport', 'Tech' or 'Team' .\r\n";
         std::string defaultanswer = std::string("PRIVMSG ") + sender +  std::string(" ") + std::string(":bot!~127.0.0.1 PRIVMSG ") + std::string("") + message;
         sendMessage(defaultanswer);
     }
