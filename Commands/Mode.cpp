@@ -6,7 +6,7 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 10:51:36 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/03/01 15:57:25 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/03/04 01:24:33 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -318,7 +318,7 @@ void Server::MODEhandler(const std::vector<std::string> &data, int fd)
                 if (target != -1 && channel->hasUser(target))
                 {
                     channel->removeOperator(target);
-                    std::string modeChangeMessage = ":" + user.getNickName() + "!~" + Server_Name + " MODE " + chanName + " -" + mode;
+                    std::string modeChangeMessage = ":" + user.getNickName() + "!~" + Server_Name + " MODE " + chanName + " -" + mode + " " +  clientname;
                     channel->broadcast(modeChangeMessage + "\n");
 
                 }
