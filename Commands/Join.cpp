@@ -6,7 +6,7 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 10:52:17 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/03/01 15:57:25 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/03/04 22:39:14 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ void Server::JOINhandler(const std::vector<std::string> &data, int fd){
 
     for (size_t i = 0; i < channels.size(); i++)
     {
-        if (channels[i][0] != '#' && (channels[i][0] != '&')){
+        if ((channels[i][0] != '#' && channels[i][0] != '&') || channels[i].size() < 2){
             SENDMESSAGE(ERR_NOSUCHCHANNEL(Server_Name, channels[i], user.getNickName()), fd);
             continue;
         }

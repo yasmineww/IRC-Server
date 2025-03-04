@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mohammdmaghri <mohammdmaghri@student.42    +#+  +:+       +#+        */
+/*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 13:35:59 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/03/04 20:33:28 by mohammdmagh      ###   ########.fr       */
+/*   Updated: 2025/03/04 22:58:57 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ std::string	Server_Opening(void)
 
 int lenth(char *lenth){
     long long i = 0;
-    if (lenth == nullptr || lenth == NULL || lenth[0] == '\0')
+    if (lenth == NULL || lenth[0] == '\0')
         return (0);
     while (lenth[i])
         i++;
@@ -199,17 +199,18 @@ void Server_Socket_Creation(std::string Port, std::string Pass_Code)
         if(socket_connection < 0)
             throw (std::logic_error(std::strerror(errno)));
 
-        int error = setsockopt(socket_connection, SOL_SOCKET, SO_REUSEPORT, &opt, sizeof(opt));
-        if (error < 0)
-        {
-            close (socket_connection);
-            throw (std::logic_error(std::strerror(errno)));
-        }
 
         server_Cls.bind_Arg = bind(socket_connection, (struct sockaddr *)&server_Cls.bindSocket_str, sizeof(server_Cls.bindSocket_str));
         if (server_Cls.bind_Arg < 0)
         {
+            std::cout << "Wili " << std::endl ;
             close(socket_connection);
+            throw (std::logic_error(std::strerror(errno)));
+        }
+        int error = setsockopt(socket_connection, SOL_SOCKET, SO_REUSEPORT, &opt, sizeof(opt));
+        if (error < 0)
+        {
+            close (socket_connection);
             throw (std::logic_error(std::strerror(errno)));
         }
 
@@ -246,7 +247,7 @@ void Server_Socket_Creation(std::string Port, std::string Pass_Code)
 
         while (1)
         {
-            server_Cls.poll_returnV = poll(server_Cls.pollAr.data(), server_Cls.pollAr.size() , -1);
+            server_Cls.poll_returnV = poll(&server_Cls.pollAr[0], server_Cls.pollAr.size() , -1);
             if (server_Cls.poll_returnV < 0)
             {
                 close(socket_connection);
