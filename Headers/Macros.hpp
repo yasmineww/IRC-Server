@@ -6,7 +6,7 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 10:52:04 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/03/01 18:07:20 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/03/04 01:45:42 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,3 +144,4 @@ using namespace std;
 #define RPL_CHANNELMODEIS(nick, hostname, channel, mode)                  std::string(":") + std::string(hostname) + " 324 " + std::string(nick) + " " + std::string(channel) + " " + std::string(mode) + "\r\n"
 #define ERR_USERNOTINCHANNEL(hostname, nick, nick2, channel)              std::string(":") + std::string(hostname) + " 441 " + std::string(nick) + " " + std::string(nick2) + " " + std::string(channel) + " :They aren't on that channel\r\n"
 #define ERR_CHANOPRIVSNEEDED(hostname, nick, channel)                     std::string(":") + std::string(hostname) + " 482 " + std::string(nick) + " " + std::string(channel) + " :You're not channel operator\r\n"
+#define ERR_CHANOPRIVSNEEDED2(hostname, nick, channel)                     std::string(":") + std::string(hostname) + " 482 " + std::string(nick) + " " + std::string(channel) + " :You cannot kick channel operator\r\n"

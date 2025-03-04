@@ -30,6 +30,9 @@ void Server::KICKhandler(const std::vector<std::string> &data, int fd)
     // Check if the target user is in the channel
     if (!channel->hasUser(target))
         SENDMESSAGE(ERR_USERNOTINCHANNEL(Server_Name, user.getNickName(), targetNick, channelName), fd);
+    //add case to not kick channel operators
+    if (channel->isOperator(target))
+        return SENDMESSAGE(ERR_CHANOPRIVSNEEDED2(Server_Name, user.getNickName(), channelName), fd);
 
     // Broadcast the KICK message to the channel
     std::string kickMessage = ":" + user.getNickName() + "!~" + Server_Name + " KICK " + channelName + " " + targetNick + " :" + reason + "\r\n";

@@ -6,7 +6,7 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 10:51:36 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/03/04 01:24:33 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/03/04 01:31:05 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -331,6 +331,7 @@ void Server::MODEhandler(const std::vector<std::string> &data, int fd)
         else if (mode == "l")
         {
             channel->removeUserLimit();
+            // std::string modeChangeMessage = ":" + user.getNickName() + "!~" + Server_Name + " MODE " + chanName + " +" + mode + " " + temp;
             std::string modeChangeMessage = ":" + user.getNickName() + "!~" + Server_Name + " MODE " + chanName + " -" + mode;
             channel->broadcast(modeChangeMessage + "\n");
 
