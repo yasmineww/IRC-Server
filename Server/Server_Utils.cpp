@@ -38,7 +38,6 @@ Channel* Server::createChannel(const std::string& channelName)
 
 void Server::removeClient(int fd)
 {
-    // Check if the client exists
     std::map<int, Client>::iterator it = Users.find(fd);
     if (it == Users.end())
         return;
@@ -48,19 +47,27 @@ void Server::removeClient(int fd)
 
     // Notify all channels and remove client from them
     std::vector<std::string> channelsToRemove;
+    std::cout << "------------- 1.5 -------------" << std::endl;
     for (std::map<std::string, Channel*>::iterator chIt = channels.begin(); chIt != channels.end(); ++chIt)
     {
+        std::cout << "------------- 2 -------------" << std::endl;
         Channel *channel = chIt->second;
         if (channel->hasUser(it->first))
         {
+            std::cout << "------------- 3 -------------" << std::endl;
             channel->broadcast(":" + nickname + " QUIT :Client disconnected\r\n");
-            if (channel->getUserCount() > 1 && channel->isOperator(fd))
+            if (channel->getUserCount() > 1 && channel->isOperator(fd)){
+
+                std::cout << "------------- 4 -------------" << std::endl;
                 channel->addOperator(channel->getNewClient(fd));
+            }
             channel->removeUser(fd);
 
         }
-        if (!channel->getUserCount())
+        if (!channel->getUserCount()){
+            std::cout << "------------- 5 -------------" << std::endl;
             channelsToRemove.push_back(chIt->first); // Collect channel names to delete
+        }
     }
 
     Users.erase(fd);
@@ -91,22 +98,24 @@ void Server::receiveData(const std::vector<std::string> &data, int fd)
 
             if (command != "PASS"  && command != "USER" && command != "NICK" && !user.check_Authentication())
                 return (SENDMESSAGE(ERR_NOTREGISTERED(Server_Name, user.getHostName()), fd));
-            (this->*commandMap[command])(data, fd);// calls the function (value) stored in the map at the key command
+            (this->*commandMap[command])(data, fd);
+        }
+        else
+        {
+            Client user = Users[fd];
+            SENDMESSAGE(ERR_UNKNOWNCOMMAND(Server_Name, user.getNickName(), command), fd);
         }
     }
 }
-
-// PRIVMSG younes : hello younes how are you
-// PRIVMSG younes hello younes how are you
 
 int Server::getClientByName(const std::string& nickname)
 {
     for (std::map<int, Client>::iterator it = Users.begin(); it != Users.end(); ++it)
     {
         if (it->second.getNickName() == nickname)
-            return it->first; // Return the found  fd client .
+            return it->first;
     }
-    return -1 ; // Return -1 for error
+    return -1 ;
 }
 
 void Server::Check_Commands(std::string Command, int fd)
@@ -115,11 +124,10 @@ void Server::Check_Commands(std::string Command, int fd)
 
     size_t found = Command.find(":");
     std::string store;
-    // std::cout << "Command : " << Command << std::endl;
 
     if (found != std::string::npos){
-        std::string first = Command.substr(0, found);  //PRIVMSG younes
-        Command.erase(0, found);  //: hello younes how are you
+        std::string first = Command.substr(0, found); 
+        Command.erase(0, found);
         std::stringstream s(first);
         while (s >> store){
             data.push_back(store);

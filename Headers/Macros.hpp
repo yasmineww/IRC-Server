@@ -6,7 +6,7 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 10:52:04 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/03/04 01:45:42 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/03/04 14:15:48 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,7 @@ using namespace std;
 #define RPL_MYINFO(nick, hostname)   std::string(":") + std::string(hostname) + std::string(" 004 ") + std::string(nick) + " " + std::string(hostname) + std::string(", Version: 1.0, User mode: none, Channel modes: i, t, k, o, l\r\n")
 
 
+#define ERR_UNKNOWNCOMMAND(nick, hostname, command)                       std::string(":") + std::string(hostname) + " 421 " + std::string(nick) + " " + std::string(command) + " :Unknown command\r\n"
 #define ERR_NEEDMOREPARAMS(nick, hostname, command)                       std::string(":") + std::string(hostname) + " 461 " + std::string(nick) + " " + std::string(command) + " :Not enough parameters\r\n"
 #define ERR_PASSWDMISMATCH(nick, hostname)                                std::string(":") + std::string(hostname) + " 464 " + std::string(nick) + " :Password incorrect\r\n"
 #define ERR_ALREADYREGISTERED(nick, hostname)                             std::string(":") + std::string(hostname) + " 462 " + std::string(nick) + " :You may not reregister\r\n"
@@ -142,6 +143,9 @@ using namespace std;
 //MODE
 
 #define RPL_CHANNELMODEIS(nick, hostname, channel, mode)                  std::string(":") + std::string(hostname) + " 324 " + std::string(nick) + " " + std::string(channel) + " " + std::string(mode) + "\r\n"
+
 #define ERR_USERNOTINCHANNEL(hostname, nick, nick2, channel)              std::string(":") + std::string(hostname) + " 441 " + std::string(nick) + " " + std::string(nick2) + " " + std::string(channel) + " :They aren't on that channel\r\n"
+
 #define ERR_CHANOPRIVSNEEDED(hostname, nick, channel)                     std::string(":") + std::string(hostname) + " 482 " + std::string(nick) + " " + std::string(channel) + " :You're not channel operator\r\n"
+
 #define ERR_CHANOPRIVSNEEDED2(hostname, nick, channel)                     std::string(":") + std::string(hostname) + " 482 " + std::string(nick) + " " + std::string(channel) + " :You cannot kick channel operator\r\n"
