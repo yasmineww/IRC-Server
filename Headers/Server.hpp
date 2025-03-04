@@ -83,7 +83,7 @@ class Server
             std::cout << "Server Destructor is called !"<< std::endl;
         }
 
-        void functionCheck(std::vector <std::string> *val, int where);
+        void functionCheck(std::vector <std::string> val, int where);
         void ctrlD(char *Recv_Buffer, int flag);
         int functioncheck(std::string Nick, int fd);
         void Check_client_Request();

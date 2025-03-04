@@ -75,21 +75,22 @@ int countNewline(char *Recvbuffer){
     }
     return flag;
 }
-std::vector<std::string> *functionSearchNewline(char *Recvbuffer, int bytes_read){
+std::vector<std::string> functionSearchNewline(char *Recvbuffer, int bytes_read)
+{
     std::string store ;
-    std::vector<std::string> *vec = new std::vector<std::string>;
-    for (size_t i = 0; i < vec->size(); i++){
-        vec->pop_back();
+    std::vector<std::string> vec;
+    for (size_t i = 0; i < vec.size(); i++){
+        vec.pop_back();
     };
     for (int i = 0; i < bytes_read; i++){
         store += Recvbuffer[i];
         if (Recvbuffer[i] == '\n'){
             store += '\0';
-            vec->push_back(store) ;
+            vec.push_back(store) ;
             store = "";
         }
     }
-    vec->push_back(store) ;
+    vec.push_back(store) ;
     return (vec) ;
 }
 
@@ -99,9 +100,9 @@ int countDouble(std::string **array){
     }
     return 0;
 }
-void Server::functionCheck(std::vector <std::string> *val, int where){
-    for (size_t index = 0; index < val->size(); index++){
-        ctrlD((char *)val->at(index).c_str(), where);
+void Server::functionCheck(std::vector <std::string> val, int where){
+    for (size_t index = 0; index < val.size(); index++){
+        ctrlD((char *)val.at(index).c_str(), where);
     }
 }
 
@@ -110,7 +111,7 @@ int Server::Authenticate_User(int fd)
     Client user = Users[fd];
     int Size_Read = 0;
     char Recv_Buffer[MAX_BUFF];
-    std::vector<std::string> *pas ;
+    std::vector<std::string> pas ;
 
     memset(Recv_Buffer, 0, sizeof(Recv_Buffer));
     Size_Read = recv(fd, Recv_Buffer, sizeof(Recv_Buffer) , 0);
@@ -172,9 +173,6 @@ void    functionhandler(int signal)
         exit(130);
         // 130 for ctrl + c exit_status
     }
-    // if (signal == SIGTSTP){
-    //     std::cout << "This is me Testing this " << std::endl ;
-    // }
 }
 
 
@@ -244,7 +242,6 @@ void Server_Socket_Creation(std::string Port, std::string Pass_Code)
         }
         signal(SIGINT, functionhandler);
         signal(SIGPIPE, functionhandler);
-        signal(SIGTSTP, functionhandler);
 
 
         while (1)
