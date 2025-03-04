@@ -12,6 +12,8 @@ int check_status(int status, std::string value) {
 
 void SENDMESSAGE(std::string MESSAGE, int fd){
 
-    if (send(fd, MESSAGE.c_str(), MESSAGE.size(), 0) < 0) 
-        throw (std::logic_error("Error: Failed to send message."));
+    if (send(fd, MESSAGE.c_str(), MESSAGE.size(), 0) < 0) {
+        std::cout << "Error " << std::endl ;
+        // throw (std::logic_error("Error: Failed to send message."));
+    }
 }

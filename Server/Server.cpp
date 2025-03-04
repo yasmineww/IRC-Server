@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mohammdmaghri <mohammdmaghri@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 13:35:59 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/03/02 17:41:55 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/03/04 20:33:28 by mohammdmagh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,13 +75,13 @@ int countNewline(char *Recvbuffer){
     }
     return flag;
 }
-std::vector<std::string> *functionSearchNewline(char *Recvbuffer){
+std::vector<std::string> *functionSearchNewline(char *Recvbuffer, int bytes_read){
     std::string store ;
     std::vector<std::string> *vec = new std::vector<std::string>;
     for (size_t i = 0; i < vec->size(); i++){
         vec->pop_back();
     };
-    for (int i = 0; i < lenth(Recvbuffer); i++){
+    for (int i = 0; i < bytes_read; i++){
         store += Recvbuffer[i];
         if (Recvbuffer[i] == '\n'){
             store += '\0';
@@ -120,7 +120,7 @@ int Server::Authenticate_User(int fd)
         std::cout << "\033[91mTHE CLIENT *** " << user.getNickName() << " *** DISCONNECTED\033[0m" << std::endl;
         return (-1);
     }
-    pas = functionSearchNewline(Recv_Buffer);
+    pas = functionSearchNewline(Recv_Buffer,Size_Read);
     functionCheck(pas, fd) ;
     memset(Recv_Buffer, 0, sizeof(Recv_Buffer));
     return (0);
@@ -172,6 +172,9 @@ void    functionhandler(int signal)
         exit(130);
         // 130 for ctrl + c exit_status
     }
+    // if (signal == SIGTSTP){
+    //     std::cout << "This is me Testing this " << std::endl ;
+    // }
 }
 
 
@@ -241,6 +244,7 @@ void Server_Socket_Creation(std::string Port, std::string Pass_Code)
         }
         signal(SIGINT, functionhandler);
         signal(SIGPIPE, functionhandler);
+        signal(SIGTSTP, functionhandler);
 
 
         while (1)

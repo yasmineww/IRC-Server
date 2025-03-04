@@ -12,7 +12,7 @@ int main (int argc, char **argv)
     }
 	catch (const std::exception &e)
 	{
-        std ::cout << e.what() << std::endl ;
+        std ::cout << "Tst -> " << e.what() << std::endl ;
     };
     return (0);
 };
