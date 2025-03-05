@@ -47,25 +47,18 @@ void Server::removeClient(int fd)
 
     // Notify all channels and remove client from them
     std::vector<std::string> channelsToRemove;
-    std::cout << "------------- 1.5 -------------" << std::endl;
     for (std::map<std::string, Channel*>::iterator chIt = channels.begin(); chIt != channels.end(); ++chIt)
     {
-        std::cout << "------------- 2 -------------" << std::endl;
         Channel *channel = chIt->second;
         if (channel->hasUser(it->first))
         {
-            std::cout << "------------- 3 -------------" << std::endl;
             channel->broadcast(":" + nickname + " QUIT :Client disconnected\r\n");
-            if (channel->getUserCount() > 1 && channel->isOperator(fd)){
-
-                std::cout << "------------- 4 -------------" << std::endl;
+            if (channel->getUserCount() > 1 && channel->isOperator(fd))
                 channel->addOperator(channel->getNewClient(fd));
-            }
             channel->removeUser(fd);
 
         }
         if (!channel->getUserCount()){
-            std::cout << "------------- 5 -------------" << std::endl;
             channelsToRemove.push_back(chIt->first); // Collect channel names to delete
         }
     }
@@ -126,7 +119,7 @@ void Server::Check_Commands(std::string Command, int fd)
     std::string store;
 
     if (found != std::string::npos){
-        std::string first = Command.substr(0, found); 
+        std::string first = Command.substr(0, found);
         Command.erase(0, found);
         std::stringstream s(first);
         while (s >> store){

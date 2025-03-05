@@ -14,9 +14,6 @@
 #pragma once
 
 
-#include "stdio.h"
-
-// --------
 #include <fcntl.h>
 # include <csignal>
 # include <sys/socket.h>
@@ -39,13 +36,12 @@
 
 static int socket_connection ;
 
-using namespace std;
 
 # include "../Headers/Client.hpp"
 # include "../Headers/Server.hpp"
 # include "../Headers/Channel.hpp"
 
-#define MAX_BUFF 100000 
+#define MAX_BUFF 100000
 
 # define GREEN "\e[1;32m"
 # define RESET "\e[0m"
@@ -62,8 +58,7 @@ using namespace std;
 # define HOSTNAME 66
 
 
-/* Extra Temp Func */
-// void    printchannelvectorlist(std::string msg, std::vector<std::string> channels);
+
 
 
 #define PART_RPL(nick, channelName) (":")+ std::string(nick)+ std::string(" !~ ") + std::string(nick) + std::string(" @localhost ") + std::string(" PART ") + std::string(channelName) + std::string("\r\n");

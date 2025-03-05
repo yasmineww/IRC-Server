@@ -313,7 +313,6 @@ void Server::MODEhandler(const std::vector<std::string> &data, int fd)
             if (valIndex < Values.size())
             {
                 std::string clientname = Values[valIndex++];
-                cout << clientname << endl;
                 int target = getClientByName(clientname);
                 if (target != -1 && channel->hasUser(target))
                 {

@@ -31,7 +31,7 @@ void Server::JOINhandler(const std::vector<std::string> &data, int fd){
         while (std::getline(s, store, ','))
             keys.push_back(store);
     }
-
+    int flag = 0;
     for (size_t i = 0; i < channels.size(); i++)
     {
         if ((channels[i][0] != '#' && channels[i][0] != '&') || channels[i].size() < 2){
@@ -40,6 +40,8 @@ void Server::JOINhandler(const std::vector<std::string> &data, int fd){
         }
         Channel *channel = getChannel(channels[i]);
         if (!channel) {
+
+            flag = 1;
             channel = createChannel(channels[i]);
             channel->addOperator(fd);
 
@@ -64,12 +66,16 @@ void Server::JOINhandler(const std::vector<std::string> &data, int fd){
         channel->addUser(user, fd);
         channel->broadcast(RPL_JOIN(user.getNickName(), user.getUserName(), channels[i], "127.0.0.1"));
         // :Pentagone.chat MODE #chan +t we will turn msg into this
-        std::string msg = ":" + Server_Name + " MODE " + channel->getName() + " +t\r\n";
-        SENDMESSAGE(msg, fd);
+
+        if (flag == 1)
+        {
+            std::string msg = ":" + Server_Name + " MODE " + channel->getName() + " +t\r\n";
+            SENDMESSAGE(msg, fd);
+        }
         SENDMESSAGE(RPL_NAMREPLY(Server_Name, channel->getUserList(), channels[i] ,user.getNickName()), fd);
         SENDMESSAGE(RPL_ENDOFNAMES(Server_Name, user.getNickName(), channels[i]), fd);
         SENDMESSAGE(RPL_TOPIC(Server_Name, channel->getTopic(),  user.getNickName(), channel->getName()), fd);
-        if (channel->getTopicRestricted())
+        if (channel->getTopicRestricted() && flag == 0)
         {
             std::string modeChangeMessage = ":" + user.getNickName() + "!~" + Server_Name + " MODE " + channels[i] + " +" + "t\r\n";
             SENDMESSAGE(modeChangeMessage, fd);
