@@ -14,16 +14,15 @@ void Server::INVITEhandler(const std::vector<std::string> &data, int fd)
     // Channel existence check
 
     std::string channelName = data[2];
-    Channel* channel = getChannel(channelName);
-    if (!channel)
+    if (channels.find(channelName) == channels.end())
         return SENDMESSAGE(ERR_NOSUCHCHANNEL(Server_Name, channelName, user.getNickName()), fd);
 
     // Check if user is in channel
-    if (!channel->isUserInChannel(fd))
+    if (!channels[channelName].isUserInChannel(fd))
         return SENDMESSAGE(ERR_NOTONCHANNEL(Server_Name, user.getNickName(), channelName), fd);
 
     // Check channel modes and privileges
-    if (channel->getInviteOnly() && !channel->isOperator(fd))
+    if (channels[channelName].getInviteOnly() && !channels[channelName].isOperator(fd))
         return SENDMESSAGE(ERR_CHANOPRIVSNEEDED(Server_Name, user.getNickName(), channelName), fd);
 
     // Find target client
@@ -33,11 +32,11 @@ void Server::INVITEhandler(const std::vector<std::string> &data, int fd)
         return SENDMESSAGE(ERR_NOSUCHNICK(Server_Name, channelName, targetNick), fd);
 
     // Check if target is already in channel
-    if (channel->isUserInChannel(targetFd))
+    if (channels[channelName].isUserInChannel(targetFd))
         return SENDMESSAGE(ERR_USERONCHANNEL(Server_Name, channelName, user.getNickName()), fd);
 
     //Invite User to channel
-    channel->sendInvite(targetFd);
+    channels[channelName].sendInvite(targetFd);
     SENDMESSAGE(RPL_INVITING(Server_Name, user.getNickName(), targetNick, channelName), fd);
     SENDMESSAGE(RPL_INVITED(user.getNickName(), Server_Name, targetNick, channelName), targetFd);
 }

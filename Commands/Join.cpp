@@ -6,7 +6,7 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 10:52:17 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/03/04 22:39:14 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/03/05 21:55:01 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,13 +18,13 @@ void Server::JOINhandler(const std::vector<std::string> &data, int fd){
     if (data.size() < 2)
         return (SENDMESSAGE(ERR_NEEDMOREPARAMS(user.getNickName(),  Server_Name, data[0]), fd));
 
-    std::vector<std::string> channels;
+    std::vector<std::string> _channels;
     std::vector<std::string> keys;
     std::string store;
 
     std::stringstream s(data[1]);
     while (std::getline(s, store, ','))
-        channels.push_back(store);
+        _channels.push_back(store);
 
     if ((data.size() > 2)){
         std::stringstream s(data[2]);
@@ -32,67 +32,68 @@ void Server::JOINhandler(const std::vector<std::string> &data, int fd){
             keys.push_back(store);
     }
     int flag = 0;
-    for (size_t i = 0; i < channels.size(); i++)
+
+    for (size_t i = 0; i < _channels.size(); i++)
+
     {
-        if ((channels[i][0] != '#' && channels[i][0] != '&') || channels[i].size() < 2){
-            SENDMESSAGE(ERR_NOSUCHCHANNEL(Server_Name, channels[i], user.getNickName()), fd);
+        if ((_channels[i][0] != '#' && _channels[i][0] != '&') || _channels[i].size() < 2){
+            SENDMESSAGE(ERR_NOSUCHCHANNEL(Server_Name, _channels[i], user.getNickName()), fd);
             continue;
         }
-        Channel *channel = getChannel(channels[i]);
-        if (!channel) {
 
+        if (channels.find(_channels[i]) == channels.end()) {
             flag = 1;
-            channel = createChannel(channels[i]);
-            channel->addOperator(fd);
+            channels[_channels[i]] = Channel();
+            channels[_channels[i]].addOperator(fd);
 
         }
         else {
-            if (channel->isUserInChannel(fd))
+            if (channels[_channels[i]].isUserInChannel(fd))
                 continue;
-            if ((!channel->getKey().empty() && (i >= keys.size() || keys[i] != channel->getKey())))
+            if ((!channels[_channels[i]].getKey().empty() && (i >= keys.size() || keys[i] != channels[_channels[i]].getKey())))
             {
-                SENDMESSAGE(ERR_BADCHANNELKEY(user.getNickName(), Server_Name, channel->getName()), fd);
+                SENDMESSAGE(ERR_BADCHANNELKEY(user.getNickName(), Server_Name, channels[_channels[i]].getName()), fd);
                 continue;
             }
-            if (channel->getInviteOnly() == true && !channel->isInvited(fd)){
-                SENDMESSAGE(ERR_INVITEONLYCHAN(user.getNickName(), Server_Name, channel->getName()), fd);
+            if (channels[_channels[i]].getInviteOnly() == true && !channels[_channels[i]].isInvited(fd)){
+                SENDMESSAGE(ERR_INVITEONLYCHAN(user.getNickName(), Server_Name, channels[_channels[i]].getName()), fd);
                 continue;
             }
-            if (channel->getUserLimit() != -1 && channel->getUserCount() >= channel->getUserLimit()){
-                SENDMESSAGE(ERR_CHANNELISFULL(user.getNickName(),  Server_Name, channel->getName()), fd);
+            if (channels[_channels[i]].getUserLimit() != -1 && channels[_channels[i]].getUserCount() >= channels[_channels[i]].getUserLimit()){
+                SENDMESSAGE(ERR_CHANNELISFULL(user.getNickName(),  Server_Name, channels[_channels[i]].getName()), fd);
                 continue;
             }
         }
-        channel->addUser(user, fd);
-        channel->broadcast(RPL_JOIN(user.getNickName(), user.getUserName(), channels[i], "127.0.0.1"));
+        channels[_channels[i]].addUser(user, fd);
+        channels[_channels[i]].broadcast(RPL_JOIN(user.getNickName(), user.getUserName(), _channels[i], "127.0.0.1"));
         // :Pentagone.chat MODE #chan +t we will turn msg into this
 
         if (flag == 1)
         {
-            std::string msg = ":" + Server_Name + " MODE " + channel->getName() + " +t\r\n";
+            std::string msg = ":" + Server_Name + " MODE " + channels[_channels[i]].getName() + " +t\r\n";
             SENDMESSAGE(msg, fd);
         }
-        SENDMESSAGE(RPL_NAMREPLY(Server_Name, channel->getUserList(), channels[i] ,user.getNickName()), fd);
-        SENDMESSAGE(RPL_ENDOFNAMES(Server_Name, user.getNickName(), channels[i]), fd);
-        SENDMESSAGE(RPL_TOPIC(Server_Name, channel->getTopic(),  user.getNickName(), channel->getName()), fd);
-        if (channel->getTopicRestricted() && flag == 0)
+        SENDMESSAGE(RPL_NAMREPLY(Server_Name, channels[_channels[i]].getUserList(), _channels[i] ,user.getNickName()), fd);
+        SENDMESSAGE(RPL_ENDOFNAMES(Server_Name, user.getNickName(), _channels[i]), fd);
+        SENDMESSAGE(RPL_TOPIC(Server_Name, channels[_channels[i]].getTopic(),  user.getNickName(), channels[_channels[i]].getName()), fd);
+        if (channels[_channels[i]].getTopicRestricted() && flag == 0)
         {
-            std::string modeChangeMessage = ":" + user.getNickName() + "!~" + Server_Name + " MODE " + channels[i] + " +" + "t\r\n";
+            std::string modeChangeMessage = ":" + user.getNickName() + "!~" + Server_Name + " MODE " + _channels[i] + " +" + "t\r\n";
             SENDMESSAGE(modeChangeMessage, fd);
         }
-        if (channel->getLimitsBoolean())
+        if (channels[_channels[i]].getLimitsBoolean())
         {
-            std::string modeChangeMessage = ":" + user.getNickName() + "!~" + Server_Name + " MODE " + channels[i] + " +" + "l " + std::to_string(channel->getUserLimit()) + "\r\n";
+            std::string modeChangeMessage = ":" + user.getNickName() + "!~" + Server_Name + " MODE " + _channels[i] + " +" + "l " + std::to_string(channels[_channels[i]].getUserLimit()) + "\r\n";
             SENDMESSAGE(modeChangeMessage, fd);
         }
-        if (channel->getInviteOnly())
+        if (channels[_channels[i]].getInviteOnly())
         {
-            std::string modeChangeMessage = ":" + user.getNickName() + "!~" + Server_Name + " MODE " + channels[i] + " +" + "i" + "\r\n";
+            std::string modeChangeMessage = ":" + user.getNickName() + "!~" + Server_Name + " MODE " + _channels[i] + " +" + "i" + "\r\n";
             SENDMESSAGE(modeChangeMessage, fd);
         }
-        if (channel->hasKey())
+        if (channels[_channels[i]].hasKey())
         {
-            std::string modeChangeMessage = ":" + user.getNickName() + "!~" + Server_Name + " MODE " + channels[i] + " +" + "k " + channel->getKey() + "\r\n";
+            std::string modeChangeMessage = ":" + user.getNickName() + "!~" + Server_Name + " MODE " + _channels[i] + " +" + "k " + channels[_channels[i]].getKey() + "\r\n";
             SENDMESSAGE(modeChangeMessage, fd);
         }
     }

@@ -40,7 +40,7 @@ class Server
         // Client Class That WE FILL FOR EACH User
 
 		// Channels on the server.
-		std::map<std::string, Channel*> channels;
+		std::map<std::string, Channel> channels;
 
         Client Client_User;
 
@@ -95,17 +95,11 @@ class Server
 
         // Channel Operations
         void fdToremove (int fd);
-    	Channel* getChannel(const std::string& channelName);
-    	Channel* createChannel(const std::string& channelName);
+    	// Channel* getChannel(const std::string& channelName);
+    	// Channel* createChannel(const std::string& channelName);
         std::vector<std::string> getJoinedChannels(int fd);
 
-
         int getClientByName(const std::string& nickname);
-
-        void     CtrlC_handle();
-
-
-
 
 };
 

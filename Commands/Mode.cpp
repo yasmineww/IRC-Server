@@ -6,7 +6,7 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 10:51:36 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/03/04 01:31:05 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/03/05 20:03:26 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,22 +173,21 @@ void Server::MODEhandler(const std::vector<std::string> &data, int fd)
 
 
     // Check if the channel exists
-    Channel *channel = getChannel(chanName);
-    if (!channel)
+    if (channels.find(chanName) == channels.end())
         return SENDMESSAGE(ERR_NOSUCHCHANNEL(Server_Name, chanName, user.getNickName()), fd);
 
     if (size == 2 && !data[1].empty()) // MODE #chan only if you are not in the channel
     {
         // Get current mode settings
-        std::string modes = channel->getModeString(); //  take a look on this function
+        std::string modes = channels[chanName].getModeString(); //  take a look on this function
         return SENDMESSAGE(RPL_CHANNELMODEIS(user.getNickName(), Server_Name, chanName, modes), fd);
     }
 
-    if (!channel->isUserInChannel(fd))
+    if (!channels[chanName].isUserInChannel(fd))
         return SENDMESSAGE(ERR_NOTONCHANNEL(Server_Name, user.getNickName(), chanName), fd);
 
     // Verify that the user has operator privileges to modify modes
-    if (channel->isOperator(fd) == false)
+    if (channels[chanName].isOperator(fd) == false)
         return SENDMESSAGE(ERR_CHANOPRIVSNEEDED(Server_Name, user.getNickName(), chanName), fd);
 
     // Apply permitted modes (+)
@@ -201,26 +200,26 @@ void Server::MODEhandler(const std::vector<std::string> &data, int fd)
         }
         std::string mode = permittedOPTIONS[i];
 
-        if (mode == "i" && channel->getInviteOnly() == false)
+        if (mode == "i" && channels[chanName].getInviteOnly() == false)
         {
-            channel->setInviteOnly(true);
+            channels[chanName].setInviteOnly(true);
             std::string modeChangeMessage = ":" + user.getNickName() + "!~" + Server_Name + " MODE " + chanName + " +" + mode;
-            channel->broadcast(modeChangeMessage + "\n");
+            channels[chanName].broadcast(modeChangeMessage + "\n");
         }
-        else if (mode == "t" && channel->getTopicRestricted() != true)
+        else if (mode == "t" && channels[chanName].getTopicRestricted() != true)
         {
-            channel->setTopicRestricted(true);
+            channels[chanName].setTopicRestricted(true);
             std::string modeChangeMessage = ":" + user.getNickName() + "!~" + Server_Name + " MODE " + chanName + " +" + mode;
-            channel->broadcast(modeChangeMessage + "\n");
+            channels[chanName].broadcast(modeChangeMessage + "\n");
         }
         else if (mode == "k")
         {
             if (valIndex < Values.size())
             {
                 std::string temp = Values[valIndex++];
-                channel->setKey(temp);  // Assign password
+                channels[chanName].setKey(temp);  // Assign password
                 std::string modeChangeMessage = ":" + user.getNickName() + "!~" + Server_Name + " MODE " + chanName + " +" + mode + " " + temp;
-                channel->broadcast(modeChangeMessage + "\n");
+                channels[chanName].broadcast(modeChangeMessage + "\n");
             }
             else
                  SENDMESSAGE(":Laymouna.chat 461 " + user.getNickName() + " MODE +k :Not enough parameters\n", user.getClientFd());
@@ -231,13 +230,13 @@ void Server::MODEhandler(const std::vector<std::string> &data, int fd)
             {
                 std::string temp = Values[valIndex++];
                 int target = getClientByName(temp);
-                if (channel->isOperator(target) == false)
+                if (channels[chanName].isOperator(target) == false)
                 {
-                    if (target != -1 && channel->hasUser(target))
+                    if (target != -1 && channels[chanName].hasUser(target))
                     {
-                        channel->addOperator(target);
+                        channels[chanName].addOperator(target);
                         std::string modeChangeMessage = ":" + user.getNickName() + "!~" + Server_Name + " MODE " + chanName + " +" + mode + " " +  temp;
-                        channel->broadcast(modeChangeMessage + "\n");
+                        channels[chanName].broadcast(modeChangeMessage + "\n");
                     }
                 }
                 else
@@ -261,10 +260,10 @@ void Server::MODEhandler(const std::vector<std::string> &data, int fd)
                 if (flago == 0)
                 {
                     int limit = std::atoi(temp.c_str());
-                    channel->setLimitsBoolean(true);
-                    channel->setUserLimit(limit);
+                    channels[chanName].setLimitsBoolean(true);
+                    channels[chanName].setUserLimit(limit);
                     std::string modeChangeMessage = ":" + user.getNickName() + "!~" + Server_Name + " MODE " + chanName + " +" + mode + " " + temp;
-                    channel->broadcast(modeChangeMessage + "\n");
+                    channels[chanName].broadcast(modeChangeMessage + "\n");
                 }
             }
             else
@@ -289,24 +288,24 @@ void Server::MODEhandler(const std::vector<std::string> &data, int fd)
         }
         std::string mode = NONpermittedOPTIONS[i];
 
-        if (mode == "i" && channel->getInviteOnly() == true)
+        if (mode == "i" && channels[chanName].getInviteOnly() == true)
         {
-            channel->setInviteOnly(false);
+            channels[chanName].setInviteOnly(false);
             std::string modeChangeMessage = ":" + user.getNickName() + "!~" + Server_Name + " MODE " + chanName + " -" + mode;
-            channel->broadcast(modeChangeMessage + "\n");
+            channels[chanName].broadcast(modeChangeMessage + "\n");
 
         }
-        else if (mode == "t" && channel->getTopicRestricted() == true)
+        else if (mode == "t" && channels[chanName].getTopicRestricted() == true)
         {
-            channel->setTopicRestricted(false);
+            channels[chanName].setTopicRestricted(false);
             std::string modeChangeMessage = ":" + user.getNickName() + "!~" + Server_Name + " MODE " + chanName + " -" + mode;
-            channel->broadcast(modeChangeMessage + "\n");
+            channels[chanName].broadcast(modeChangeMessage + "\n");
         }
         else if (mode == "k")
         {
-            channel->removeKey();
+            channels[chanName].removeKey();
             std::string modeChangeMessage = ":" + user.getNickName() + "!~" + Server_Name + " MODE " + chanName + " -" + mode;
-            channel->broadcast(modeChangeMessage + "\n");
+            channels[chanName].broadcast(modeChangeMessage + "\n");
         }
         else if (mode == "o")
         {
@@ -314,11 +313,11 @@ void Server::MODEhandler(const std::vector<std::string> &data, int fd)
             {
                 std::string clientname = Values[valIndex++];
                 int target = getClientByName(clientname);
-                if (target != -1 && channel->hasUser(target))
+                if (target != -1 && channels[chanName].hasUser(target))
                 {
-                    channel->removeOperator(target);
+                    channels[chanName].removeOperator(target);
                     std::string modeChangeMessage = ":" + user.getNickName() + "!~" + Server_Name + " MODE " + chanName + " -" + mode + " " +  clientname;
-                    channel->broadcast(modeChangeMessage + "\n");
+                    channels[chanName].broadcast(modeChangeMessage + "\n");
 
                 }
                 else
@@ -329,16 +328,13 @@ void Server::MODEhandler(const std::vector<std::string> &data, int fd)
         }
         else if (mode == "l")
         {
-            channel->removeUserLimit();
-            // std::string modeChangeMessage = ":" + user.getNickName() + "!~" + Server_Name + " MODE " + chanName + " +" + mode + " " + temp;
+            channels[chanName].removeUserLimit();
             std::string modeChangeMessage = ":" + user.getNickName() + "!~" + Server_Name + " MODE " + chanName + " -" + mode;
-            channel->broadcast(modeChangeMessage + "\n");
+            channels[chanName].broadcast(modeChangeMessage + "\n");
 
         }
         else if (mode != "i" && mode != "t" && mode != "o" && mode != "k" && mode != "l")
-        {
             SENDMESSAGE(":Laymouna.chat 472 " + user.getNickName() + " " +  mode  + " :is an unknown mode char to me\n", user.getClientFd());
-        }
         counter++;
     }
     counter = 0;

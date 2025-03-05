@@ -13,10 +13,9 @@ void Server::NOTICEhandler(const std::vector<std::string> &data, int fd)
 
     if (target[0] == '#' || target[0] == '&')
     {
-        Channel *channel = getChannel(target);
-        if (!channel)
+        if (channels.find(target) == channels.end())
             return;
-        channel->broadcast(":" + sender.getNickName() + " NOTICE " + target + " :" + message + "\r\n");
+        channels[target].broadcast(":" + sender.getNickName() + " NOTICE " + target + " :" + message + "\r\n");
     }
     else
     {

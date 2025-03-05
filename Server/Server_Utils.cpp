@@ -5,35 +5,24 @@ std::vector<std::string> Server::getJoinedChannels(int fd)
     std::vector<std::string> Joinedchannels;
 
     // Iterate through all channels in the server
-    for (std::map<std::string, Channel*>::iterator it = channels.begin(); it != channels.end(); ++it)
+    for (std::map<std::string, Channel>::iterator it = channels.begin(); it != channels.end(); ++it)
     {
-        if (it->second->hasUser(fd)) // Check if the client is in the channel
+        if (it->second.hasUser(fd)) // Check if the client is in the channel
             Joinedchannels.push_back(it->first); // Store the channel name
     }
     return Joinedchannels;
 }
 
-Channel* Server::getChannel(const std::string& channelName)
-{
+std::string Returnname (std::map<int, Client> ser,int fd) {
+    std::map<int, Client>::iterator it = ser.begin();
+    std::map<int, Client>::iterator end = ser.end();
 
-    // Check if the channel exists in the map
-    if (channels.find(channelName) != channels.end())
-        return channels[channelName];
-    return 0x0; // Return null if the channel doesn't exist
-}
-
-// Create a new channel if it doesn't exist
-Channel* Server::createChannel(const std::string& channelName)
-{
-    // Check if the channel already exists
-    if (channels.find(channelName) != channels.end())
-        return channels[channelName]; // Return the existing channell
-
-    // Create a new channel
-    Channel* newChannel = new Channel(channelName);
-
-    channels[channelName] = newChannel; // Store the new channel in the channel's    map
-    return newChannel;
+    for (;it != end; it++){
+        if (it->first == fd){
+            return (it->second.getNickName());
+        }
+    }
+    return (NULL);
 }
 
 void Server::removeClient(int fd)
@@ -44,36 +33,40 @@ void Server::removeClient(int fd)
 
     Client &client = it->second;
     std::string nickname = client.getNickName();
+    std::string hostname = client.getHostName();
 
     // Notify all channels and remove client from them
     std::vector<std::string> channelsToRemove;
-    for (std::map<std::string, Channel*>::iterator chIt = channels.begin(); chIt != channels.end(); ++chIt)
+    for (std::map<std::string, Channel>::iterator chIt = channels.begin(); chIt != channels.end(); ++chIt)
     {
-        Channel *channel = chIt->second;
-        if (channel->hasUser(it->first))
+        // if (channel->hasUser(it->first))
+        if (chIt->second.hasUser(it->first))
         {
-            channel->broadcast(":" + nickname + " QUIT :Client disconnected\r\n");
-            if (channel->getUserCount() > 1 && channel->isOperator(fd))
-                channel->addOperator(channel->getNewClient(fd));
-            channel->removeUser(fd);
+            std::string Message = ":" + nickname + "!~" + Server_Name + " MODE " + chIt->first + " +o " + Returnname(Users, chIt->second.getNewClient(fd)) + "\r\n";
+            std::string partMessage = ":" + nickname + "!~" + hostname + "@" + Server_Name + " PART " + chIt->first + " :Without reason\r\n";
+            std ::cout << partMessage << std::endl;
+            SENDMESSAGE(partMessage, fd);
+            chIt->second.broadcast(Message);
+            chIt->second.broadcast(partMessage);
+            chIt->second.broadcast(":" + nickname + " QUIT :Client disconnected\r\n");
+            if (chIt->second.getUserCount() > 1 && chIt->second.isOperator(fd)){
+                std::cout << "Removing operator" << std::endl;
+                chIt->second.addOperator(chIt->second.getNewClient(fd));
+            }
+            chIt->second.removeUser(fd);
 
         }
-        if (!channel->getUserCount()){
+        if (!chIt->second.getUserCount())
             channelsToRemove.push_back(chIt->first); // Collect channel names to delete
-        }
     }
 
     Users.erase(fd);
 
-
     for (size_t i = 0; i < channelsToRemove.size(); i++)
     {
-        std::map<std::string, Channel*>::iterator it = channels.find(channelsToRemove[i]);
+        std::map<std::string, Channel>::iterator it = channels.find(channelsToRemove[i]);
         if (it != channels.end())
-        {
-            delete it->second;
             channels.erase(it);
-        }
     }
 
     close(fd);

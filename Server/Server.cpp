@@ -6,7 +6,7 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 13:35:59 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/03/04 22:58:57 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/03/05 20:41:54 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,12 +166,15 @@ void Server::Check_client_Request()
 
 void    functionhandler(int signal)
 {
-    if (signal == SIGINT)
-    {
-        std::cout << BLUE << "Server is shutting down." << RESET << std::endl;
-        close(socket_connection);
-        exit(130);
-        // 130 for ctrl + c exit_status
+    try {
+        if (signal == SIGINT)
+        {
+            std::cout << BLUE << "Server is shutting down." << RESET << std::endl;
+            close(socket_connection);
+            throw (std::logic_error(std::strerror(errno)));
+        }
+    } catch (std::exception &e){
+        std::cout << e.what() << std::endl;
     }
 }
 
@@ -243,7 +246,6 @@ void Server_Socket_Creation(std::string Port, std::string Pass_Code)
         }
         signal(SIGINT, functionhandler);
         signal(SIGPIPE, functionhandler);
-
 
         while (1)
         {

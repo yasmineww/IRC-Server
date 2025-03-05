@@ -42,7 +42,7 @@ void Server::USERhandler(const std::vector<std::string> &data, int fd)
         return (SENDMESSAGE(ERR_ALREADYREGISTERED(it->second.getNickName(), Server_Name), fd));
     if (!it->second.Auth_PASS)
         return (SENDMESSAGE(ERR_NOTAUTHENTICATED(it->second.getNickName(), Server_Name), fd));
-    if (data.size() < 5)
+    if (data.size() < 5 || data.size() > 5)
         return (SENDMESSAGE(ERR_NEEDMOREPARAMS(it->second.getNickName(), Server_Name, ""), fd));
 
     std::string username = data[1];

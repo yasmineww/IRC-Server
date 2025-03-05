@@ -6,7 +6,7 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 11:04:43 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/03/01 16:03:09 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/03/05 21:38:29 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -247,7 +247,6 @@ int Channel::getUserCount() const
 {
     return users.size();
 }
-
 
 
 int Channel::getNewClient(int fd)

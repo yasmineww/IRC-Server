@@ -14,12 +14,11 @@ void Server::KICKhandler(const std::vector<std::string> &data, int fd)
         reason = reason.substr(1);
 
     // Retrieve the channel
-    Channel *channel = getChannel(channelName);
-    if (!channel)
+    if (channels.find(channelName) == channels.end())
         return SENDMESSAGE(ERR_NOSUCHCHANNEL(Server_Name, channelName, user.getNickName()), fd);
 
     // Check if the user issuing the command is an operator
-    if (!channel->isOperator(fd))
+    if (!channels[channelName].isOperator(fd))
         return SENDMESSAGE(ERR_CHANOPRIVSNEEDED(Server_Name, user.getNickName(), channelName), fd);
 
     // Retrieve the target client
@@ -28,16 +27,16 @@ void Server::KICKhandler(const std::vector<std::string> &data, int fd)
         return SENDMESSAGE(ERR_NOSUCHNICK(Server_Name, channelName, targetNick), fd);
 
     // Check if the target user is in the channel
-    if (!channel->hasUser(target))
+    if (!channels[channelName].hasUser(target))
         SENDMESSAGE(ERR_USERNOTINCHANNEL(Server_Name, user.getNickName(), targetNick, channelName), fd);
     //add case to not kick channel operators
-    if (channel->isOperator(target))
+    if (channels[channelName].isOperator(target))
         return SENDMESSAGE(ERR_CHANOPRIVSNEEDED2(Server_Name, user.getNickName(), channelName), fd);
 
     // Broadcast the KICK message to the channel
     std::string kickMessage = ":" + user.getNickName() + "!~" + Server_Name + " KICK " + channelName + " " + targetNick + " :" + reason + "\r\n";
-    channel->broadcast(kickMessage);
+    channels[channelName].broadcast(kickMessage);
 
     // Remove the target user from the channel
-    channel->removeUser(target);
+    channels[channelName].removeUser(target);
 }

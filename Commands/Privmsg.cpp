@@ -29,17 +29,16 @@ void Server::PRIVMSGhandler(const std::vector<std::string> &data, int fd){
     {
         if (receivers[i][0] == '#' || receivers[i][0] == '&')
         {
-            Channel *channel = getChannel(receivers[i]);
-            if (!channel){
+            if (channels.find(receivers[i]) == channels.end()){
                 SENDMESSAGE(ERR_NOSUCHCHANNEL(Server_Name, receivers[i], user.getNickName()), fd);
                 continue;
             }
-            if (!channel->hasUser(fd)){
+            if (!channels[receivers[i]].hasUser(fd)){
                 SENDMESSAGE(ERR_NOTONCHANNEL(Server_Name, user.getNickName(), receivers[i]), fd);
                 continue;
             }
             std::string msgToSend = ":" + user.getNickName() + "!~" + user.getUserName() + "@" + "127.0.0.1" + " PRIVMSG " + receivers[i] + " :" + message + "\r\n";
-            channel->broadcast_priv(msgToSend, fd);
+            channels[receivers[i]].broadcast_priv(msgToSend, fd);
             //:yasmine!~127.0.0.1 PRIVMSG salma :hey
             //when sending message in channel, the sender should be excluded from the receivers. Otherwise, he gets the message
         }

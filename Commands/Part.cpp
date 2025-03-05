@@ -6,7 +6,7 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 10:51:45 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/03/01 15:57:25 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/03/05 20:06:05 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,40 +42,32 @@ void Server::PARThandler(const std::vector<std::string> &data, int fd)
         if (chanName.empty() || (chanName[0] != '#' && chanName[0] != '&'))
             return(SENDMESSAGE(ERR_NOSUCHCHANNEL(Server_Name, chanName, user.getNickName()), fd));
 
-        Channel *channel = getChannel(chanName);
-
-
-        if (!channel)
+        if (channels.find(chanName) == channels.end())
         {
             SENDMESSAGE(ERR_NOSUCHCHANNEL(Server_Name, chanName, user.getNickName()), fd);
             continue;
         }
-        if (!channel->isUserInChannel(fd))
+        if (!channels[chanName].isUserInChannel(fd))
         {
             SENDMESSAGE(ERR_NOTONCHANNEL(Server_Name, user.getNickName(), chanName), fd);
             continue;
         }
-           // if the operator wants to leave and there is another client on the channel, he must be the new governor.\
-           //add check if there is no other operator
-        if (channel->isOperator(fd) && channel->getUserCount() && channel->getOperatorsSize() == 1) 
+        if (channels[chanName].isOperator(fd) && channels[chanName].getUserCount() && channels[chanName].getOperatorsSize() == 1) 
         {
-            int newfd = channel->getNewClient(fd);
+            int newfd = channels[chanName].getNewClient(fd);
             if (newfd != -1){
-                channel->addOperator(newfd);
+                channels[chanName].addOperator(newfd);
                 std::string Message = ":" + user.getNickName() + "!~" + Server_Name + " MODE " + chanName + " +o " + Users[newfd].getNickName() + "\n";
-                channel->broadcast(Message);           
+                channels[chanName].broadcast(Message);           
             }
         }
-        channel->removeUser(fd);
+        channels[chanName].removeUser(fd);
 
         std::string partMessage = ":" + user.getNickName() + "!~" + user.getHostName() + "@" + Server_Name + " PART " + chanName + " :" + reason +"\n";
         SENDMESSAGE(partMessage, fd);
-        channel->broadcast(partMessage);
+        channels[chanName].broadcast(partMessage);
 
-		if (!channel->getUserCount())
-		{
+		if (!channels[chanName].getUserCount())
 			channels.erase(channels.find(chanName));
-			delete channel;
-		}
     }
 }
