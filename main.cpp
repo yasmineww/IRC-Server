@@ -10,7 +10,7 @@ int main (int argc, char **argv)
 {
     try
 	{
-        atexit(f);
+        // atexit(f);
         if (argc != 3) throw (std::logic_error("./irc <Port> <Password> \n"));
         if (atoi(argv[1]) < 1024) throw (std::logic_error("Port Must Be Greater Than 1024 !"));
         isString_Ch_DG(argv[1]);
