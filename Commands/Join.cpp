@@ -6,7 +6,7 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 10:52:17 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/03/05 21:55:01 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/03/06 00:11:24 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,15 +52,15 @@ void Server::JOINhandler(const std::vector<std::string> &data, int fd){
                 continue;
             if ((!channels[_channels[i]].getKey().empty() && (i >= keys.size() || keys[i] != channels[_channels[i]].getKey())))
             {
-                SENDMESSAGE(ERR_BADCHANNELKEY(user.getNickName(), Server_Name, channels[_channels[i]].getName()), fd);
+                SENDMESSAGE(ERR_BADCHANNELKEY(user.getNickName(), Server_Name, _channels[i]), fd);
                 continue;
             }
             if (channels[_channels[i]].getInviteOnly() == true && !channels[_channels[i]].isInvited(fd)){
-                SENDMESSAGE(ERR_INVITEONLYCHAN(user.getNickName(), Server_Name, channels[_channels[i]].getName()), fd);
+                SENDMESSAGE(ERR_INVITEONLYCHAN(user.getNickName(), Server_Name, _channels[i]), fd);
                 continue;
             }
             if (channels[_channels[i]].getUserLimit() != -1 && channels[_channels[i]].getUserCount() >= channels[_channels[i]].getUserLimit()){
-                SENDMESSAGE(ERR_CHANNELISFULL(user.getNickName(),  Server_Name, channels[_channels[i]].getName()), fd);
+                SENDMESSAGE(ERR_CHANNELISFULL(user.getNickName(),  Server_Name, _channels[i]), fd);
                 continue;
             }
         }
@@ -70,12 +70,12 @@ void Server::JOINhandler(const std::vector<std::string> &data, int fd){
 
         if (flag == 1)
         {
-            std::string msg = ":" + Server_Name + " MODE " + channels[_channels[i]].getName() + " +t\r\n";
+            std::string msg = ":" + Server_Name + " MODE " + _channels[i] + " +t\r\n";
             SENDMESSAGE(msg, fd);
         }
         SENDMESSAGE(RPL_NAMREPLY(Server_Name, channels[_channels[i]].getUserList(), _channels[i] ,user.getNickName()), fd);
         SENDMESSAGE(RPL_ENDOFNAMES(Server_Name, user.getNickName(), _channels[i]), fd);
-        SENDMESSAGE(RPL_TOPIC(Server_Name, channels[_channels[i]].getTopic(),  user.getNickName(), channels[_channels[i]].getName()), fd);
+        SENDMESSAGE(RPL_TOPIC(Server_Name, channels[_channels[i]].getTopic(),  user.getNickName(), _channels[i]), fd);
         if (channels[_channels[i]].getTopicRestricted() && flag == 0)
         {
             std::string modeChangeMessage = ":" + user.getNickName() + "!~" + Server_Name + " MODE " + _channels[i] + " +" + "t\r\n";
