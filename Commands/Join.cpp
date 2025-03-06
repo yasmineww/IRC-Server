@@ -6,7 +6,7 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 10:52:17 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/03/06 00:11:24 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/03/06 23:41:37 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ void Server::JOINhandler(const std::vector<std::string> &data, int fd){
 
         if (channels.find(_channels[i]) == channels.end()) {
             flag = 1;
-            channels[_channels[i]] = Channel();
+            channels[_channels[i]] = Channel(_channels[i]);
             channels[_channels[i]].addOperator(fd);
 
         }
@@ -98,23 +98,3 @@ void Server::JOINhandler(const std::vector<std::string> &data, int fd){
         }
     }
 }
-
-// Replies that I added
-// ERR_NEEDMOREPARAMS RPL_NAMREPLY RPL_ENDOFNAMES
-//need ip address
-
-//JOIN Command
-//check which replies are being broadcasted
-//should i add mode notice when joining the channel??
-
-//MODE Command
-// MODE #chan1 +i
-// :yasmine!~Pentagone.chat MODE #chan1 +i
-// if you are not on the channel, and do MODE #chan1, the output is :Pentagone.chat 324 mohamed #chan1 +t
-
-//INVITE mama #chan1
-// :Pentagone.chat 341 yasmine mama #chan1 -->channel op
-// :yasmine!~Pentagone.chat INVITE mama :#chan1 -->user that is invited
-
-//SERVER
-//if NICKNAME is already in use, limechat wont work

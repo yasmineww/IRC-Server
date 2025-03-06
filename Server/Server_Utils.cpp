@@ -47,7 +47,6 @@ void Server::removeClient(int fd)
             chIt->second.broadcast(":" + nickname + " QUIT :Client disconnected\r\n");
             if (chIt->second.getUserCount() > 1 && chIt->second.isOperator(fd))
             {
-                std::cout << "Removing operator" << std::endl;
                 chIt->second.addOperator(chIt->second.getNewClient(fd));
                 std::string Message = ":" + nickname + "!~" + Server_Name + " MODE " + chIt->first + " +o " + Returnname(Users, chIt->second.getNewClient(fd)) + "\r\n";
                 chIt->second.broadcast(Message);
