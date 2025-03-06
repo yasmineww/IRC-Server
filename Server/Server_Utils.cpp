@@ -13,12 +13,15 @@ std::vector<std::string> Server::getJoinedChannels(int fd)
     return Joinedchannels;
 }
 
-std::string Returnname (std::map<int, Client> ser,int fd) {
+std::string Returnname (std::map<int, Client> ser,int fd)
+{
     std::map<int, Client>::iterator it = ser.begin();
     std::map<int, Client>::iterator end = ser.end();
 
-    for (;it != end; it++){
-        if (it->first == fd){
+    for (;it != end; it++)
+    {
+        if (it->first == fd)
+        {
             return (it->second.getNickName());
         }
     }
@@ -39,19 +42,15 @@ void Server::removeClient(int fd)
     std::vector<std::string> channelsToRemove;
     for (std::map<std::string, Channel>::iterator chIt = channels.begin(); chIt != channels.end(); ++chIt)
     {
-        // if (channel->hasUser(it->first))
         if (chIt->second.hasUser(it->first))
         {
-            std::string Message = ":" + nickname + "!~" + Server_Name + " MODE " + chIt->first + " +o " + Returnname(Users, chIt->second.getNewClient(fd)) + "\r\n";
-            std::string partMessage = ":" + nickname + "!~" + hostname + "@" + Server_Name + " PART " + chIt->first + " :Without reason\r\n";
-            std ::cout << partMessage << std::endl;
-            SENDMESSAGE(partMessage, fd);
-            chIt->second.broadcast(Message);
-            chIt->second.broadcast(partMessage);
             chIt->second.broadcast(":" + nickname + " QUIT :Client disconnected\r\n");
-            if (chIt->second.getUserCount() > 1 && chIt->second.isOperator(fd)){
+            if (chIt->second.getUserCount() > 1 && chIt->second.isOperator(fd))
+            {
                 std::cout << "Removing operator" << std::endl;
                 chIt->second.addOperator(chIt->second.getNewClient(fd));
+                std::string Message = ":" + nickname + "!~" + Server_Name + " MODE " + chIt->first + " +o " + Returnname(Users, chIt->second.getNewClient(fd)) + "\r\n";
+                chIt->second.broadcast(Message);
             }
             chIt->second.removeUser(fd);
 
@@ -78,6 +77,8 @@ void Server::receiveData(const std::vector<std::string> &data, int fd)
     {
         const std::string &command = data[0];
 
+        if (command.compare("PONG") == 0)
+            return;
         if (commandMap.find(command) != commandMap.end())
         {
             Client user = Users[fd];

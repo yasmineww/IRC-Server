@@ -3,11 +3,12 @@
 
 # include "../Headers/Macros.hpp"
 
+# include "../Headers/Channel.hpp"
+# include "../Headers/Client.hpp"
+
 class Channel;
 class Client;
 
-static int Clientcount ;
-static char local_IP[1024];
 
 class Server
 {
@@ -29,6 +30,7 @@ class Server
         void MODEhandler(const std::vector<std::string> &data, int fd);
 
     public  :
+
         // ARRAY'S ----------
         std::map<int, Client> Users ; // the Array of Clients Contains each One
         std::vector<struct pollfd> pollAr;

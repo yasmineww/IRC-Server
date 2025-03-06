@@ -12,13 +12,17 @@
 
 #include "Bot.hpp"
 
-Bot::Bot(const std::string &port, const std::string &password){
+Bot::Bot(const std::string &port, const std::string &password)
+{
     this->port = port;
     this->password = password;
     sockfd = -1;
+
 }
 
 Bot::~Bot(){}
+
+
 
 void Bot::sendMessage(std::string MESSAGE){
 
@@ -26,7 +30,8 @@ void Bot::sendMessage(std::string MESSAGE){
         throw (std::logic_error(std::strerror(errno)));
 }
 
-void Bot::connectToServer(){
+void Bot::connectToServer()
+{
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0)
         throw (std::logic_error(std::strerror(errno)));
@@ -37,10 +42,12 @@ void Bot::connectToServer(){
     server_addr.sin_port = htons(std::atoi(port.c_str())); // Convert port to integer
     // htons == Host TO Network Short, converts the port number from host byte order to network byte order
     // network protocols expect data in a specific byte order (big-endian).
-    server_addr.sin_addr.s_addr = inet_addr(local_IP); // Server is on localhost and is running on the same machine as the bot.
+
+    server_addr.sin_addr.s_addr = inet_addr("127.0.0.1"); // Server is on localhost and is running on the same machine as the bot.
     if (connect(sockfd, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0)
         throw std::logic_error("Error: Failed to connect to server. Make sure the server is running on port " + port);
 }
+
 
 void Bot::authenticate()
 {
@@ -73,9 +80,9 @@ void Bot::sendRandomFact(const std::string &sender, const std::string &category)
 
 
     std::vector<std::string> Users;
-    Users.push_back("When he codes, he activates \033[41mGODMODE\033[0m.");
-    Users.push_back("Beautifull, smart, funny ...  & the last one, she can splendidly CODE.");
-    Users.push_back("ila Rj3t Irc ra bsabab Beautifull, smart, funny .... ") ; // simo speaking > Mt9isssihaaach khaLihha hhhhhh
+    Users.push_back("Younes - When he codes, he activates GODMODE.");
+    Users.push_back("Yasmine - Beautifull, smart, funny ...  & the last one, she can splendidly CODE.");
+    Users.push_back("Mohammed - The BRAIN's Team, Codes without touchin Keys ... ") ;
 
     std::vector<std::string> facts;
     if (category == "History"){
@@ -91,17 +98,16 @@ void Bot::sendRandomFact(const std::string &sender, const std::string &category)
 
     if (!facts.empty())
     {
+		srand(time(NULL));
         int randomIndex = std::rand() % 3;
 
         std::string fact = (facts)[randomIndex] + "\r\n";
-
         std::string response = std::string("PRIVMSG ") + sender +  std::string(" ") + std::string(":bot!~127.0.0.1 PRIVMSG ") + std::string("") + fact;
-        // std::string response = PRIVMSG_FORMAT("Bot", "Bot", "127.0.0.1", sender, fact);
         sendMessage(response);
     } else
     {
         std::string message = " Try 'History', 'Sport', 'Tech' or 'Team' .\r\n";
-        std::string defaultanswer = std::string("PRIVMSG ") + sender +  std::string(" ") + std::string(":bot!~0.0.0.0 PRIVMSG ") + std::string("") + message;
+        std::string defaultanswer = std::string("PRIVMSG ") + sender +  std::string(" ") + std::string(":bot!~") + local_IP +  std::string (" PRIVMSG ") + std::string("") + message ;
         sendMessage(defaultanswer);
     }
 }
@@ -121,7 +127,8 @@ void Bot::handlePrivmsg(const std::string &message)
     sendRandomFact(sender, contentwe);
 }
 
-void Bot::handleMessages(){
+void Bot::handleMessages()
+{
 
     char buffer[MAX_BUFF];
     while (1)
@@ -135,15 +142,16 @@ void Bot::handleMessages(){
 
         if(message.find("Password incorrect") != std::string::npos)
             throw (std::logic_error("Incorrect Password. Please try again."));
-        if (message.find("PRIVMSG") != std::string::npos) {
+        if (message.find("PRIVMSG") != std::string::npos)
+        {
             handlePrivmsg(message);
             continue;
         }
-        sendMessage("I only respond to PRIVMSG commands.\r\n");
     }
 }
 
 int main (int ac, char **av){
+
 
     try
     {

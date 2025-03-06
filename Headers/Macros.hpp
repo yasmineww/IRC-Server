@@ -14,13 +14,14 @@
 #pragma once
 
 
-#include <fcntl.h>
+# include <fcntl.h>
 # include <csignal>
 # include <sys/socket.h>
 # include <sys/poll.h>
 # include <netinet/in.h>
-# include <arpa/inet.h>
 # include <unistd.h>
+# include "arpa/inet.h"
+# include "netdb.h"
 
 
 # include <fstream>
@@ -35,13 +36,15 @@
 
 
 static int socket_connection ;
+static char local_IP[1024];
 
 
+# include "../Bonus/Bot.hpp"
 # include "../Headers/Client.hpp"
 # include "../Headers/Server.hpp"
 # include "../Headers/Channel.hpp"
 
-#define MAX_BUFF 100000
+#define MAX_BUFF 10000
 
 # define GREEN "\e[1;32m"
 # define RESET "\e[0m"

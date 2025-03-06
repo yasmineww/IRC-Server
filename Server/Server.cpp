@@ -11,8 +11,7 @@
 /* ************************************************************************** */
 
 #include "../Headers/Macros.hpp"
-#include "arpa/inet.h"
-#include "netdb.h"
+
 
 std::string	Welcome_mssg(void)
 {
@@ -96,17 +95,14 @@ std::vector<std::string> functionSearchNewline(char *Recvbuffer, int bytes_read)
     return (vec) ;
 }
 
-int countDouble(std::string **array){
-    for (int index = 0; array[index] != nullptr ;index++){
-
-    }
-    return 0;
-}
-void Server::functionCheck(std::vector <std::string> val, int where){
-    for (size_t index = 0; index < val.size(); index++){
+void Server::functionCheck(std::vector <std::string> val, int where)
+{
+    for (size_t index = 0; index < val.size(); index++)
+    {
         ctrlD((char *)val.at(index).c_str(), where);
     }
 }
+
 
 int Server::Authenticate_User(int fd)
 {
@@ -117,7 +113,10 @@ int Server::Authenticate_User(int fd)
 
     memset(Recv_Buffer, 0, sizeof(Recv_Buffer));
     Size_Read = recv(fd, Recv_Buffer, sizeof(Recv_Buffer) , 0);
-    if (Size_Read == 0)
+
+    if (std::strcmp(Recv_Buffer, "MODE #chan +sn\r\n") == 0)
+        return 0;
+    if (Size_Read == 0 || std::strcmp(Recv_Buffer, "QUIT Leaving...\r\n") == 0)
     {
         removeClient(fd);
         std::cout << "\033[91mTHE CLIENT *** " << user.getNickName() << " *** DISCONNECTED\033[0m" << std::endl;
@@ -153,11 +152,9 @@ void Server::Check_client_Request()
         for (;it != end; it++){
             if (it->revents & POLLIN){
                 Auth_Flag = Authenticate_User(it->fd);
-                if (Auth_Flag == -1){
-                    // fdToremove(it->fd);
-                    // close(it->fd);
+                if (Auth_Flag == -1)
+                {
                     pollAr.erase(it);
-                    // std::cout << "Removed " << std::endl ;
                     return ;
                 }
             }
@@ -165,21 +162,6 @@ void Server::Check_client_Request()
     }
 
 }
-
-void    functionhandler(int signal)
-{
-    try {
-        if (signal == SIGINT)
-        {
-            std::cout << BLUE << "Server is shutting down." << RESET << std::endl;
-            close(socket_connection);
-            throw (std::logic_error(std::strerror(errno)));
-        }
-    } catch (std::exception &e){
-        std::cout << e.what() << std::endl;
-    }
-}
-
 
 void Server_Socket_Creation(std::string Port, std::string Pass_Code)
 {
@@ -198,22 +180,13 @@ void Server_Socket_Creation(std::string Port, std::string Pass_Code)
         // Creation Of a socket, struct pollfd StrcPol
 
         server_Cls.Server_PassCode = Pass_Code ;
-        // struct hostent *host_entry;
-        // char *ip_address;
-
 
         int turnHost = gethostname(local_IP, sizeof(local_IP));
-        if (turnHost < 0){
-            strcpy(local_IP, "localhost");
-        }
-        std::cout << " --- > " << local_IP<< std::endl ;
-        // std::cout << host_entry << std::endl ;
-        // ip_address = inet_ntoa(*((struct in_addr*)host_entry->h_addr_list[0]));
-        // std::cout << " ---<>  " << ip_address << std::endl ;
-        
+        if (turnHost < 0)
+            std::strcpy(local_IP, "localhost");
+
+
         socket_connection = socket(AF_INET, SOCK_STREAM, 0);
-        // char *ip ;
-        // bzero(&client_info, sizeof(client_info));
 
         if(socket_connection < 0)
             throw (std::logic_error(std::strerror(errno)));
@@ -228,7 +201,6 @@ void Server_Socket_Creation(std::string Port, std::string Pass_Code)
         server_Cls.bind_Arg = bind(socket_connection, (struct sockaddr *)&server_Cls.bindSocket_str, sizeof(server_Cls.bindSocket_str));
         if (server_Cls.bind_Arg < 0)
         {
-            std::cout << "Wili " << std::endl ;
             close(socket_connection);
             throw (std::logic_error(std::strerror(errno)));
         }
@@ -251,7 +223,6 @@ void Server_Socket_Creation(std::string Port, std::string Pass_Code)
         server_Cls.poll_strc.fd = socket_connection ;
         server_Cls.poll_strc.events = POLLIN ;
 
-        Clientcount++;
 
         server_Cls.pollAr.push_back(server_Cls.poll_strc);
         int checkfcntl = fcntl(socket_connection, F_SETFL, O_NONBLOCK);
@@ -260,12 +231,12 @@ void Server_Socket_Creation(std::string Port, std::string Pass_Code)
             close(socket_connection);
             throw (std::logic_error(std::strerror(errno)));
         }
-        signal(SIGINT, functionhandler);
-        signal(SIGPIPE, functionhandler);
-        
+        signal(SIGPIPE, SIG_IGN);
+
 
         while (1)
         {
+
             server_Cls.poll_returnV = poll(&server_Cls.pollAr[0], server_Cls.pollAr.size() , -1);
             if (server_Cls.poll_returnV < 0)
             {

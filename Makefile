@@ -37,13 +37,12 @@ OBJB = $(BONUS:.cpp=.o)
 
 CC =  c++
 
-FLAGS = -Wall -Wextra -Werror -std=c++98 #-fsanitize=address -g
+FLAGS = -Wall -Wextra -Werror -std=c++98
 
 RM = rm -rf
 
 all : credit $(NAME)
 	@echo "$(GREEN)██████████████████████ Compiling is DONE ███████████████████████$(RESET)"
-	clear
 
 top:
 	@echo "$(GREEN)█████████████████████ Making ft_irc 🍊 █████████████████████████$(RESET)"
@@ -80,7 +79,7 @@ credit:
 	@echo " 			 ┃┃ ┃┏┓┏┛┃┃ ┏┓ 				"
 	@echo " 			┏┫┣┓┃┃┃┗┓┃┗━┛┃ 				"
 	@echo " 			┗━━┛┗┛┗━┛┗━━━┛ 	$(YELLOW)🍊 LAYMOUNA 🍊 $(RESET)	"
-	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-	@echo "━━━━━━━━━┃ 🍊 Made with $(RED)❤️$(RESET) by : \033[1;91 gyoumoukh ymakhlou mmaghri\033[m ┃━━━━━━━━━"
-	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+	@echo "━━━━━━━━━┃ 🍊 Made with $(RED)❤️$(RESET) by : \033[1;91 gyoumoukh ymakhlou mmaghri\033[m ┃━━━━━━"
+	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 

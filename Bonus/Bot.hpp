@@ -12,11 +12,9 @@
 
 #pragma once
 
-#define PRIVMSG_FORMAT(senderNick, senderUsername, senderHostname, receiver, message) std::string("PRIVMSG") + std::string(" ") + receiver + std::string(" ") + std::string(":") + senderNick + std::string("!~") + senderUsername + std::string("@") + senderHostname + std::string(" PRIVMSG ") + receiver + std::string(" :") + message + std::string("\r\n")
-
-
 #include "../Headers/Macros.hpp"
-#include <iostream>
+
+#define PRIVMSG_FORMAT(senderNick, senderUsername, senderHostname, receiver, message) std::string("PRIVMSG") + std::string(" ") + receiver + std::string(" ") + std::string(":") + senderNick + std::string("!~") + senderUsername + std::string("@") + senderHostname + std::string(" PRIVMSG ") + receiver + std::string(" :") + message + std::string("\r\n")
 
 
 class Bot
@@ -36,5 +34,6 @@ class Bot
         void handlePrivmsg(const std::string &message);
         void sendRandomFact(const std::string &sender, const std::string &category);
         void sendMessage(std::string MESSAGE);
+
 
 };
