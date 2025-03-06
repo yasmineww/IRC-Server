@@ -7,6 +7,7 @@ class Channel;
 class Client;
 
 static int Clientcount ;
+static char local_IP[1024];
 
 class Server
 {

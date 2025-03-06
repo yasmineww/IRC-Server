@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Macros.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mohammdmaghri <mohammdmaghri@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 10:52:04 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/03/04 14:15:48 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/03/06 00:50:44 by mohammdmagh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ static int socket_connection ;
 
 
 
-#define PART_RPL(nick, channelName) (":")+ std::string(nick)+ std::string(" !~ ") + std::string(nick) + std::string(" @localhost ") + std::string(" PART ") + std::string(channelName) + std::string("\r\n");
+#define PART_RPL(nick, channelName) (":")+ std::string(nick)+ std::string(" !~ ") + std::string(nick) + std::string(" @") + local_IP+ std::string(" PART ") + std::string(channelName) + std::string("\r\n");
 
 #define ERR_UNKNOWNMODE(nick, modechar, servername) (std::string(":") + std::string(servername) + " 472 " + std::string(nick) + " " + std::string(modechar) + " :is an unknown mode char to me\r\n")
 
