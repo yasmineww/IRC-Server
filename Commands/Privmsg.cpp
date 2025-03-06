@@ -37,7 +37,7 @@ void Server::PRIVMSGhandler(const std::vector<std::string> &data, int fd){
                 SENDMESSAGE(ERR_NOTONCHANNEL(Server_Name, user.getNickName(), receivers[i]), fd);
                 continue;
             }
-            std::string msgToSend = ":" + user.getNickName() + "!~" + user.getUserName() + "@" + "127.0.0.1" + " PRIVMSG " + receivers[i] + " :" + message + "\r\n";
+            std::string msgToSend = ":" + user.getNickName() + "!~" + user.getUserName() + "@" + local_IP + " PRIVMSG " + receivers[i] + " :" + message + "\r\n";
             channels[receivers[i]].broadcast_priv(msgToSend, fd);
             //:yasmine!~127.0.0.1 PRIVMSG salma :hey
             //when sending message in channel, the sender should be excluded from the receivers. Otherwise, he gets the message
@@ -50,7 +50,7 @@ void Server::PRIVMSGhandler(const std::vector<std::string> &data, int fd){
                 SENDMESSAGE(ERR_NORECIPIENT(user.getNickName(), Server_Name), fd);
                 continue;
             }
-            std::string msgToSend = ":" + user.getNickName() + "!~" + user.getUserName() + "@" + "127.0.0.1" + " PRIVMSG " + receivers[i] + " :" + message + "\r\n";
+            std::string msgToSend = ":" + user.getNickName() + "!~" + user.getUserName() + "@" + local_IP + " PRIVMSG " + receivers[i] + " :" + message + "\r\n";
             SENDMESSAGE(msgToSend, receiver);
 
         }

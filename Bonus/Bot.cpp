@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Bot.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mohammdmaghri <mohammdmaghri@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/01 16:04:37 by ymakhlou          #+#    #+#             */
-/*   Updated: 2025/03/02 17:43:51 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/03/06 00:48:52 by mohammdmagh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void Bot::connectToServer(){
     server_addr.sin_port = htons(std::atoi(port.c_str())); // Convert port to integer
     // htons == Host TO Network Short, converts the port number from host byte order to network byte order
     // network protocols expect data in a specific byte order (big-endian).
-    server_addr.sin_addr.s_addr = inet_addr("127.0.0.1"); // Server is on localhost and is running on the same machine as the bot.
+    server_addr.sin_addr.s_addr = inet_addr(local_IP); // Server is on localhost and is running on the same machine as the bot.
     if (connect(sockfd, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0)
         throw std::logic_error("Error: Failed to connect to server. Make sure the server is running on port " + port);
 }
@@ -101,7 +101,7 @@ void Bot::sendRandomFact(const std::string &sender, const std::string &category)
     } else
     {
         std::string message = " Try 'History', 'Sport', 'Tech' or 'Team' .\r\n";
-        std::string defaultanswer = std::string("PRIVMSG ") + sender +  std::string(" ") + std::string(":bot!~127.0.0.1 PRIVMSG ") + std::string("") + message;
+        std::string defaultanswer = std::string("PRIVMSG ") + sender +  std::string(" ") + std::string(":bot!~0.0.0.0 PRIVMSG ") + std::string("") + message;
         sendMessage(defaultanswer);
     }
 }

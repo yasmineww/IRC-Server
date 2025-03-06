@@ -6,11 +6,13 @@
 /*   By: mohammdmaghri <mohammdmaghri@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 13:35:59 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/03/05 22:19:21 by mohammdmagh      ###   ########.fr       */
+/*   Updated: 2025/03/06 00:49:38 by mohammdmagh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../Headers/Macros.hpp"
+#include "arpa/inet.h"
+#include "netdb.h"
 
 std::string	Welcome_mssg(void)
 {
@@ -182,7 +184,6 @@ void    functionhandler(int signal)
 void Server_Socket_Creation(std::string Port, std::string Pass_Code)
 {
         std::cout << Server_Opening() << std::endl;
-
         int opt = 1;
 
         Server server_Cls ;
@@ -197,7 +198,22 @@ void Server_Socket_Creation(std::string Port, std::string Pass_Code)
         // Creation Of a socket, struct pollfd StrcPol
 
         server_Cls.Server_PassCode = Pass_Code ;
+        // struct hostent *host_entry;
+        // char *ip_address;
+
+
+        int turnHost = gethostname(local_IP, sizeof(local_IP));
+        if (turnHost < 0){
+            strcpy(local_IP, "localhost");
+        }
+        std::cout << " --- > " << local_IP<< std::endl ;
+        // std::cout << host_entry << std::endl ;
+        // ip_address = inet_ntoa(*((struct in_addr*)host_entry->h_addr_list[0]));
+        // std::cout << " ---<>  " << ip_address << std::endl ;
+        
         socket_connection = socket(AF_INET, SOCK_STREAM, 0);
+        // char *ip ;
+        // bzero(&client_info, sizeof(client_info));
 
         if(socket_connection < 0)
             throw (std::logic_error(std::strerror(errno)));
@@ -246,6 +262,7 @@ void Server_Socket_Creation(std::string Port, std::string Pass_Code)
         }
         signal(SIGINT, functionhandler);
         signal(SIGPIPE, functionhandler);
+        
 
         while (1)
         {
