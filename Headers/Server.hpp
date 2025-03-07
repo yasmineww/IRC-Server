@@ -94,12 +94,10 @@ class Server
         void Check_Commands(std::string Command, int fd);
         void receiveData(const std::vector<std::string> &data, int fd);
         void removeClient(int fd);
-
+        std::string Returnname(std::map<int, Client> ser,int fd);
 
         // Channel Operations
         void fdToremove (int fd);
-    	// Channel* getChannel(const std::string& channelName);
-    	// Channel* createChannel(const std::string& channelName);
         std::vector<std::string> getJoinedChannels(int fd);
 
         int getClientByName(const std::string& nickname);

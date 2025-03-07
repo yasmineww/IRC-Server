@@ -13,7 +13,7 @@ std::vector<std::string> Server::getJoinedChannels(int fd)
     return Joinedchannels;
 }
 
-std::string Returnname (std::map<int, Client> ser,int fd)
+std::string Server::Returnname(std::map<int, Client> ser,int fd)
 {
     std::map<int, Client>::iterator it = ser.begin();
     std::map<int, Client>::iterator end = ser.end();
@@ -66,7 +66,6 @@ void Server::removeClient(int fd)
         if (it != channels.end())
             channels.erase(it);
     }
-
     close(fd);
 }
 
