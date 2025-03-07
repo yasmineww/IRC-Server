@@ -40,21 +40,27 @@ Channel::~Channel()
 
 std::string Channel::getModeString() const
 {
+    int counter = 0;
+
     std::string modeString = "+";
 
-    if (inviteOnly) modeString += "i";
+    if (inviteOnly)
+        (1) && (modeString += "i", counter++);
 
     if (topicRestricted)
-        modeString += "t";
+        (1) && (modeString += "t", counter++);
 
     if (hasKey())
-        modeString += "k";
+        (1) && (modeString += "k", counter++);
 
     if (userLimit > 0)
-        modeString += "l " + std::to_string(userLimit);
+        (1) && (modeString += "l " + std::to_string(userLimit), counter++);
 
-    if (modeString == "+") // No modes set
+    if (modeString == "+" && topicRestricted) // No modes set
         return "+t";
+
+    if (!counter)
+        modeString = "";
 
     return modeString;
 }
