@@ -6,7 +6,7 @@
 /*   By: ymakhlou <ymakhlou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 10:52:17 by youmoukh          #+#    #+#             */
-/*   Updated: 2025/03/06 23:41:37 by ymakhlou         ###   ########.fr       */
+/*   Updated: 2025/03/06 23:50:46 by ymakhlou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,6 @@ void Server::JOINhandler(const std::vector<std::string> &data, int fd){
         }
         channels[_channels[i]].addUser(user, fd);
         channels[_channels[i]].broadcast(RPL_JOIN(user.getNickName(), user.getUserName(), _channels[i], "127.0.0.1"));
-        // :Pentagone.chat MODE #chan +t we will turn msg into this
 
         if (flag == 1)
         {
@@ -78,22 +77,22 @@ void Server::JOINhandler(const std::vector<std::string> &data, int fd){
         SENDMESSAGE(RPL_TOPIC(Server_Name, channels[_channels[i]].getTopic(),  user.getNickName(), _channels[i]), fd);
         if (channels[_channels[i]].getTopicRestricted() && flag == 0)
         {
-            std::string modeChangeMessage = ":" + user.getNickName() + "!~" + Server_Name + " MODE " + _channels[i] + " +" + "t\r\n";
+            std::string modeChangeMessage = ":" + Server_Name + " MODE " + _channels[i] + " +" + "t\r\n";
             SENDMESSAGE(modeChangeMessage, fd);
         }
         if (channels[_channels[i]].getLimitsBoolean())
         {
-            std::string modeChangeMessage = ":" + user.getNickName() + "!~" + Server_Name + " MODE " + _channels[i] + " +" + "l " + std::to_string(channels[_channels[i]].getUserLimit()) + "\r\n";
+            std::string modeChangeMessage = ":" + Server_Name + " MODE " + _channels[i] + " +" + "l " + std::to_string(channels[_channels[i]].getUserLimit()) + "\r\n";
             SENDMESSAGE(modeChangeMessage, fd);
         }
         if (channels[_channels[i]].getInviteOnly())
         {
-            std::string modeChangeMessage = ":" + user.getNickName() + "!~" + Server_Name + " MODE " + _channels[i] + " +" + "i" + "\r\n";
+            std::string modeChangeMessage = ":" + Server_Name + " MODE " + _channels[i] + " +" + "i" + "\r\n";
             SENDMESSAGE(modeChangeMessage, fd);
         }
         if (channels[_channels[i]].hasKey())
         {
-            std::string modeChangeMessage = ":" + user.getNickName() + "!~" + Server_Name + " MODE " + _channels[i] + " +" + "k " + channels[_channels[i]].getKey() + "\r\n";
+            std::string modeChangeMessage = ":" + Server_Name + " MODE " + _channels[i] + " +" + "k " + channels[_channels[i]].getKey() + "\r\n";
             SENDMESSAGE(modeChangeMessage, fd);
         }
     }

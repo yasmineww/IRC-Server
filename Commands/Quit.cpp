@@ -13,7 +13,7 @@ void Server::QUIThandler(const std::vector<std::string> &data, int fd)
     std::vector<std::string> joinedChannels = getJoinedChannels(fd);
     for (size_t i = 0; i < joinedChannels.size(); i++)
     {
-        if (channels.find(joinedChannels[i]) == channels.end())
+        if (channels.find(joinedChannels[i]) != channels.end())
         {
             std::string partMessage = ":" + user.getNickName() + "!~" + user.getHostName() + "@" + Server_Name + " PART " + channels[joinedChannels[i]].getName() + " :Client Quit\n";
             channels[joinedChannels[i]].removeUser(fd);
