@@ -45,18 +45,16 @@ std::string	Server_Opening(void)
 	return (welcome);
 };
 
-int lenth(char *lenth){
-    long long i = 0;
+int lenth(char *lenth)
+{
     if (lenth == NULL || lenth[0] == '\0')
         return (0);
-    while (lenth[i])
-        i++;
-        strlen(lenth);
-    return (i);
+    return (lenth) ? std::strlen(lenth) : 0;
 }
 
 void Server::ctrlD(char *Recv_Buffer, int fd)
 {
+
     std::map<int, Client>::iterator it ;
     if (lenth(Recv_Buffer) > 0 && Recv_Buffer[lenth(Recv_Buffer) - 1] != '\n'){
         this->Users.find(fd)->second.Buffering = 1;
