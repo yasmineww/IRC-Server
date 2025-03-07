@@ -38,24 +38,24 @@ void Server::removeClient(int fd)
     std::string nickname = client.getNickName();
     std::string hostname = client.getHostName();
 
-    // Notify all channels and remove client from them
     std::vector<std::string> channelsToRemove;
     for (std::map<std::string, Channel>::iterator chIt = channels.begin(); chIt != channels.end(); ++chIt)
     {
         if (chIt->second.hasUser(it->first))
         {
-            chIt->second.broadcast(":" + nickname + " QUIT :Client disconnected\r\n");
             if (chIt->second.getUserCount() > 1 && chIt->second.isOperator(fd))
             {
                 chIt->second.addOperator(chIt->second.getNewClient(fd));
                 std::string Message = ":" + nickname + "!~" + Server_Name + " MODE " + chIt->first + " +o " + Returnname(Users, chIt->second.getNewClient(fd)) + "\r\n";
                 chIt->second.broadcast(Message);
             }
+            std::string partMessage = ":" + nickname + "!~" + hostname + "@" + Server_Name + " PART " + chIt->first + " :Client QUIT\r\n";
+            chIt->second.broadcast(partMessage);
             chIt->second.removeUser(fd);
 
         }
         if (!chIt->second.getUserCount())
-            channelsToRemove.push_back(chIt->first); // Collect channel names to delete
+            channelsToRemove.push_back(chIt->first);
     }
 
     Users.erase(fd);
@@ -75,6 +75,7 @@ void Server::receiveData(const std::vector<std::string> &data, int fd)
     if (!data.empty())
     {
         const std::string &command = data[0];
+
 
         if (command.compare("PONG") == 0)
             return;
