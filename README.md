@@ -35,3 +35,5 @@ The server allows multiple clients to connect, join channels, send messages, and
 ```bash
 git clone https://github.com/yasmineww/IRC-Server
 cd irc-server
+
+make
