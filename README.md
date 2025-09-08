@@ -41,6 +41,24 @@ cd irc-server
 make
 ```
 3. **Run the Server**
+```bash
 ./ircserv <PORT> <PASSWORD>
+```
+
+3. **Connecting a Client**
+-You can connect using any IRC client or simple tools like netcat
+
+```bash
+nc 127.0.0.1 6667
+```
+
+## . Technical Details
+
+- Written in **C++** (C++98 standard)  
+- Uses **BSD sockets** for network communication  
+- Uses **poll()** for managing multiple simultaneous client connections  
+- Implements basic IRC protocol messages and parsing  
+- Handles errors gracefully and sends appropriate IRC error messages
+
 
 
